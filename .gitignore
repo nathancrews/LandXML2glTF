@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/LandXML2glTF/LXML2glTF/x64/Debug
+/LandXML2glTF/x64/Debug
+/.vs
+/LandXML2glTF/.vs/LandXML2glTF
+/LandXML2glTF/LandXML2glTF/x64/Debug

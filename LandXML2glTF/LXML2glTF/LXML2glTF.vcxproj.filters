@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LXML2glTF.cpp">
+    <ClCompile Include="Source\LXML2glTF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

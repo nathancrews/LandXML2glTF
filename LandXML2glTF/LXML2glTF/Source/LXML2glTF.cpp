@@ -4,18 +4,14 @@
 #include "Windows.h"
 #endif
 
-#include <cstdlib>
-#include <iostream>
-#include <cmath>
 #include "LandXML2glTFDll.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::string LandXMLFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\KYRoad.xml";
+    std::string glTFFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\KYRoad.gltf";
 
-    LandXMLModel *newFoo = new LandXMLModel;
-
-    newFoo->run();
+    LandXMLModel2GLTF::ConvertFile(LandXMLFilename, glTFFilename);
 }
 
 

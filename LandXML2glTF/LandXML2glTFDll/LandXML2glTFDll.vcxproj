@@ -39,8 +39,10 @@
     <ClInclude Include="Inc\LandXML2glTFDll.h" />
     <ClInclude Include="Inc\LandXMLModel.h" />
     <ClInclude Include="Inc\targetver.h" />
+    <ClInclude Include="LandXML.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\3rdparty\TinyXML\Source\tinyxml2.cpp" />
     <ClCompile Include="source\LandXML2glTFDll.cpp" />
     <ClCompile Include="source\LandXMLModel.cpp" />
   </ItemGroup>
@@ -161,13 +163,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <OutDir>.\bin\$(Platform)\$(Configuration)</OutDir>
+    <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\int\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <OutDir>.\bin\$(Platform)\$(Configuration)</OutDir>
+    <OutDir>.\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>.\int\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -240,27 +243,38 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>.\inc;../3rdparty;..\3rdparty\gltfsdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\inc;../3rdparty;..\3rdparty\gltfsdk\inc;..\3rdparty\TinyXML\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LANDXML2GLTFDLLAPI_EXPORT;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <AdditionalDependencies>$(CoreLibraryDependencies);GLTFSDKD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\3rdparty\GLTFSDK\lib</AdditionalLibraryDirectories>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)$(TargetName)$(TargetExt) ..\LXML2glTF\bin\x64\Debug /D /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <PreprocessorDefinitions>LANDXML2GLTFDLLAPI_EXPORT;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./inc;..\3rdparty;..\3rdparty\gltfsdk\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./inc;..\3rdparty;..\3rdparty\gltfsdk\inc;..\3rdparty\TinyXML\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <AdditionalLibraryDirectories>..\3rdparty\GLTFSDK\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GLTFSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(OutDir)$(TargetName)$(TargetExt) ..\LXML2glTF\bin\x64\Release /D /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
 ﻿#include "framework.h"
-#include <cerrno>
-#include <cstdlib>
+#include "LandXMLModel.h"
+#include "LandXML2glTFDLL.h"
 
-BOOL APIENTRY DllMain(HMODULE /* hModule */, DWORD ul_reason_for_call, LPVOID /* lpReserved */)
+BOOL APIENTRY DllMain(HMODULE, DWORD ul_reason_for_call, LPVOID)
 {
     switch (ul_reason_for_call)
     {
@@ -15,4 +15,12 @@ BOOL APIENTRY DllMain(HMODULE /* hModule */, DWORD ul_reason_for_call, LPVOID /*
     return TRUE;
 }
 
+using namespace LANDXML2GLTF;
+
+bool LandXMLModel2GLTF::ConvertFile(const std::string& InLandXMLFilename, const std::string& glTFFilename)
+{
+    LandXMLModel LXMLModel;
+
+    return LXMLModel.Convert2glTFModel(InLandXMLFilename, glTFFilename);
+}
 

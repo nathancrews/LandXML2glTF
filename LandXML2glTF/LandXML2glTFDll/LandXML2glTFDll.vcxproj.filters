@@ -11,6 +11,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{a16036ae-49ca-43f5-a04d-2463c7da181e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\tinyxml">
+      <UniqueIdentifier>{dad2a91d-5ccd-4ecc-8977-7c7122b7b787}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h">
@@ -25,6 +28,9 @@
     <ClInclude Include="Inc\LandXMLModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LandXML.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\LandXML2glTFDll.cpp">
@@ -32,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="source\LandXMLModel.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdparty\TinyXML\Source\tinyxml2.cpp">
+      <Filter>Source Files\tinyxml</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include "framework.h"
 #include "LandXML.h"
+#include "Helpers/LXParserHelper.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -19,8 +20,6 @@
 #   pragma warning(disable: 4251)
 #endif
 
-using namespace tinyxml2;
-
 namespace LANDXML2GLTF
 {
 
@@ -29,7 +28,6 @@ namespace LANDXML2GLTF
     public:
 
         bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
-        void ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument);
         void WriteGLTFFile(std::experimental::filesystem::path& glTFFilename);
 
         // helper function to find LandXML Surface triangle texture materials
@@ -38,7 +36,7 @@ namespace LANDXML2GLTF
     private:
 
         tinyxml2::XMLDocument* m_LXDocument = nullptr;
-        std::vector<LandXMLMaterial*> m_landXMLMaterials;
+        LandXMLMaterialTable m_landXMLMaterials;
         std::vector<LandXMLSurface*> m_landxmlSurfaces;
     };
 

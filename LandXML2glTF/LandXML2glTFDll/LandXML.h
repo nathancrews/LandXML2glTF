@@ -8,6 +8,23 @@
 #   pragma warning(disable: 4251)
 #endif
 
+class LANDXML2GLTFDLLAPI LandXMLPoint3D
+{
+public:
+    inline LandXMLPoint3D() {};
+    inline LandXMLPoint3D(double inX, double inY, double inZ)
+    {
+        x = inX;
+        y = inY;
+        z = inZ;
+    };
+
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+};
+
+
 class LANDXML2GLTFDLLAPI LandXMLMaterial
 {
 public:
@@ -19,7 +36,7 @@ public:
     std::string m_textureName;
     std::string m_lineType;
     std::string m_textureImageRef;
-    std::string m_textureImageScale;
+    double m_textureImageScale;
     std::string m_textureImageWorldFile;
     std::string m_textureImageWKT;
     std::string m_symbolReferenceStr;
@@ -29,19 +46,35 @@ public:
     double m_symbolRotation;
 };
 
+class LANDXML2GLTFDLLAPI LandXMLMaterialTable
+{
+public:
+    std::unordered_map<int, LandXMLMaterial> m_MaterialMap;
+};
+
 class LANDXML2GLTFDLLAPI LandXMLPolyline
 {
 public:
     std::string m_name;
     int m_materialID = 0;
     std::string m_description;
-    std::vector<Microsoft::glTF::Vector3> m_polylinePoints;
+    std::vector<LandXMLPoint3D> m_polylinePoints;
 };
 
 class LANDXML2GLTFDLLAPI LandXMLSurfaceFace
 {
 public:
-    std::vector<unsigned int> m_pointIndex;
+    std::vector<unsigned int> m_pointIndices;
+};
+
+class LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
+{
+public:
+    int m_materialID = 0;
+    std::string m_materialName;
+
+    std::vector<LandXMLPoint3D> m_surfacePoints;
+    std::vector<LandXMLSurfaceFace> m_surfaceFaces;
 };
 
 class LANDXML2GLTFDLLAPI LandXMLSurface
@@ -51,8 +84,7 @@ public:
     std::string m_description;
 
     std::vector<LandXMLPolyline> m_textureBoundaries;
-    std::vector<Microsoft::glTF::Vector3> m_surfacePoints;
-    std::vector<LandXMLSurfaceFace> m_surfaceFaces;
+    std::unordered_map<int,LandXMLSurfaceMesh*> m_surfaceMeshes;
 };
 
 #ifdef _MSC_VER

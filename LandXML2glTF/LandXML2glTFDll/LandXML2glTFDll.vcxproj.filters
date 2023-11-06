@@ -14,6 +14,12 @@
     <Filter Include="Source Files\tinyxml">
       <UniqueIdentifier>{dad2a91d-5ccd-4ecc-8977-7c7122b7b787}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Helpers">
+      <UniqueIdentifier>{3a47f2ee-e07f-43e8-aeca-59f69b65061a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Helpers">
+      <UniqueIdentifier>{8b8d8e97-c5ac-4119-a38d-2abed0163eec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h">
@@ -31,6 +37,9 @@
     <ClInclude Include="LandXML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\Helpers\LXParserHelper.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\LandXML2glTFDll.cpp">
@@ -41,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="..\3rdparty\TinyXML\Source\tinyxml2.cpp">
       <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Helpers\LXParserHelper.cpp">
+      <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

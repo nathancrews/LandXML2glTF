@@ -1,9 +1,3 @@
-// LXML2glTF.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-#ifdef _WIN32
-#include "Windows.h"
-#endif
-
 #include "LandXML2glTFDll.h"
 
 int main()

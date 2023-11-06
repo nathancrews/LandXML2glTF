@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h" />
+    <ClInclude Include="Inc\Helpers\LXParserHelper.h" />
     <ClInclude Include="Inc\LandXML2glTFDll.h" />
     <ClInclude Include="Inc\LandXMLModel.h" />
     <ClInclude Include="Inc\targetver.h" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdparty\TinyXML\Source\tinyxml2.cpp" />
+    <ClCompile Include="source\Helpers\LXParserHelper.cpp" />
     <ClCompile Include="source\LandXML2glTFDll.cpp" />
     <ClCompile Include="source\LandXMLModel.cpp" />
   </ItemGroup>

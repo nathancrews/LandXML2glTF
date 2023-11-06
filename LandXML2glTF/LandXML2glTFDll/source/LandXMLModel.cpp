@@ -1,10 +1,10 @@
 
 #include "LandXMLModel.h"
+#include "Helpers/LXParserHelper.h"
 #include <BufferBuilder.h>
 #include <GLTFResourceWriter.h>
 #include <GLBResourceWriter.h>
-#include <Serialize.h>
-#include <regex>
+
 
 namespace LANDXML2GLTF
 {
@@ -27,46 +27,21 @@ namespace LANDXML2GLTF
 
         m_LXDocument->LoadFile(InLandXMLFilename.c_str());
 
-        ParseLandXMLFile(m_LXDocument);
+        LXParserHelper LXHelper;
+
+        LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLMaterials, m_landxmlSurfaces);
+
+
+        // cleanup memory
+        for (int j = 0; j < m_landxmlSurfaces.size(); j++)
+        {
+            delete m_landxmlSurfaces[j];
+        }
+        m_landxmlSurfaces.clear();
+
+        m_landXMLMaterials.m_MaterialMap.clear();
 
         return retval;
-    }
-
-    void LandXMLModel::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument)
-    {
-        if (!LXDocument)
-        {
-            return;
-        }
-
-        XMLElement* LXRoot = LXDocument->RootElement();
-        XMLElement* LXSurfaces = LXRoot->FirstChildElement("Surfaces");
-        XMLElement* LXSurface = LXSurfaces->FirstChildElement("Surface");
-        XMLElement* LXSurfaceData = LXSurface->FirstChildElement("SourceData");
-        XMLElement* LXSurfaceBoundaries = LXSurfaceData->FirstChildElement("Boundaries");
-
-        XMLElement* LXSurfaceBndry = LXSurfaceBoundaries->FirstChildElement("Boundary");
-
-        while (LXSurfaceBndry)
-        {
-            XMLNode* LXPntList = LXSurfaceBndry->FirstChildElement("PntList3D");
-
-
-            if (LXPntList && LXPntList->FirstChild())
-            {
-                std::string pointList = LXPntList->FirstChild()->Value();
-
-                std::regex reg("\\s+");
-                std::sregex_token_iterator iter(pointList.begin(), pointList.end(), reg, -1);
-                std::sregex_token_iterator end;
-
-                std::vector<std::string> pointYXZArray(iter, end);
-
-            }
-
-            LXSurfaceBndry = LXSurfaceBndry->NextSiblingElement("Boundary");
-        }
-
     }
 
     void LandXMLModel::WriteGLTFFile(std::experimental::filesystem::path& glTFFilename)

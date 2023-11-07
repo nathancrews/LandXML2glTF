@@ -36,6 +36,7 @@ public:
     std::string m_textureName;
     std::string m_lineType;
     std::string m_textureImageRef;
+    std::string m_textureImageHexString;
     double m_textureImageScale;
     std::string m_textureImageWorldFile;
     std::string m_textureImageWKT;
@@ -59,6 +60,7 @@ public:
     int m_materialID = 0;
     std::string m_description;
     std::vector<LandXMLPoint3D> m_polylinePoints;
+    double m_area = 0.0;
 };
 
 class LANDXML2GLTFDLLAPI LandXMLSurfaceFace
@@ -73,7 +75,6 @@ public:
     int m_materialID = 0;
     std::string m_materialName;
 
-    std::vector<LandXMLPoint3D> m_surfacePoints;
     std::vector<LandXMLSurfaceFace> m_surfaceFaces;
 };
 
@@ -83,7 +84,8 @@ public:
     std::string m_name;
     std::string m_description;
 
-    std::vector<LandXMLPolyline> m_textureBoundaries;
+    std::vector<LandXMLPoint3D> m_surfacePoints;
+    std::list<LandXMLPolyline> m_textureBoundaries;
     std::unordered_map<int,LandXMLSurfaceMesh*> m_surfaceMeshes;
 };
 

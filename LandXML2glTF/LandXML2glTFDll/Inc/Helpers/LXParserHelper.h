@@ -27,7 +27,7 @@ namespace LANDXML2GLTF
         bool ParsePointList3D(XMLNode* LXPointList, std::vector<LandXMLPoint3D>& OutReturnPointList);
         void SplitPointCData(XMLNode* LXPointList, std::vector<std::string>& OutPointYXZArray);
         bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
-
+        double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
     };
 
 }

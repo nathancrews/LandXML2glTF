@@ -2,10 +2,29 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/LandXML2glTF/LXML2glTF/x64/Debug
-/LandXML2glTF/x64/Debug
 /.vs
 /LandXML2glTF/.vs/LandXML2glTF
-/LandXML2glTF/LandXML2glTF/x64/Debug
+/LandXML2glTF/LXML2glTF/bin/x64/release
+/LandXML2glTF/LXML2glTF/bin/x64/debug
+/LandXML2glTF/LXML2glTF/int/x64/release
+/LandXML2glTF/LXML2glTF/int/x64/debug
+/LandXML2glTF/LandXML2glTF/bin/x64/release
+/LandXML2glTF/LandXML2glTF/bin/x64/debug
+/LandXML2glTF/LandXML2glTF/int/x64/release
+/LandXML2glTF/LandXML2glTF/int/x64/debug
 /glTF-Sample-Models-master
 /glTF-SDK-master
+/COLLADA2GLTF
+/LandXML2glTF/LandXML2glTFDll/bin/x64/Release/LandXML2glTFDll.dll
+/LandXML2glTF/LandXML2glTFDll/bin/x64/Release/LandXML2glTFDll.pdb
+/LandXML2glTF/LandXML2glTFDll/int/x64/Release/LandXML2glTFDll.tlog/LandXML2glTFDll.read.1u.tlog
+/LandXML2glTF/LandXML2glTFDll/int/x64/Release/LandXML2glTFDll.tlog/LandXML2glTFDll.write.1u.tlog
+/LandXML2glTF/LandXML2glTFDll/int/x64/Release/LandXML2glTFDll.tlog/link.write.1.tlog
+/LandXML2glTF/LandXML2glTFDll/int/x64/Release/LandXML2glTFDll.iobj
+/LandXML2glTF/LandXML2glTFDll/int/x64/Release/LandXML2glTFDll.log
+/LandXML2glTF/LXML2glTF/bin/x64/Release/LandXML2glTFDll.dll
+/LandXML2glTF/LXML2glTF/bin/x64/Release/LXML2glTF.exe
+/LandXML2glTF/LXML2glTF/bin/x64/Release/LXML2glTF.pdb
+/LandXML2glTF/LXML2glTF/int/x64/Release/LXML2glTF.tlog/link.write.1.tlog
+/LandXML2glTF/LXML2glTF/int/x64/Release/LXML2glTF.iobj
+/LandXML2glTF/LXML2glTF/int/x64/Release/LXML2glTF.log

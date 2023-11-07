@@ -18,10 +18,7 @@ namespace LANDXML2GLTF
         XMLElement* LXMaterials = LXRoot->FirstChildElement("MaterialTable");
 
         // Not all LandXML files contain materials, so create a single texture material table to use
-        if (LXMaterials)
-        {
-            ParseMaterialTable(LXMaterials, outLandXMLMaterials);
-        }
+        ParseMaterialTable(LXMaterials, outLandXMLMaterials);
 
         // Parse Surfaces
         XMLElement* LXSurfaces = LXRoot->FirstChildElement("Surfaces");
@@ -49,6 +46,30 @@ namespace LANDXML2GLTF
     {
         if (!LXMaterialsNode)
         {
+            // probably a LandXML 1.0 or 1.2 file, so create a single default texture material
+            LandXMLMaterial LXMaterialEntry;
+
+            LXMaterialEntry.m_ID = 1;
+            LXMaterialEntry.m_name = "grass_1";
+            LXMaterialEntry.m_textureName = LXMaterialEntry.m_name;
+            LXMaterialEntry.m_textureImageScale = 10.0;
+
+            XMLDocument textureDoc;
+            if (textureDoc.LoadFile("DefaultTexture.xml") == XML_SUCCESS)
+            {
+                XMLElement* textureImageElem = textureDoc.RootElement();
+
+                if (textureImageElem && textureImageElem->FirstChild())
+                {
+
+                    size_t hexStrLen = strlen(textureImageElem->FirstChild()->Value()) + 1;
+                    LXMaterialEntry.m_textureImageHexString = (char*)malloc(hexStrLen);
+                    strncpy_s(LXMaterialEntry.m_textureImageHexString, hexStrLen, textureImageElem->FirstChild()->Value(), hexStrLen);
+                }
+            }
+
+            outLandXMLMaterials.m_MaterialMap[LXMaterialEntry.m_ID] = LXMaterialEntry;
+
             return;
         }
 
@@ -103,7 +124,9 @@ namespace LANDXML2GLTF
                             
                             if (TextureHexString)
                             {
-                                LXMaterialEntry.m_textureImageHexString = TextureHexString->FirstChild()->Value();
+                                size_t hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
+                                LXMaterialEntry.m_textureImageHexString = (char*)malloc(hexStrLen);
+                                strncpy_s(LXMaterialEntry.m_textureImageHexString, hexStrLen, TextureHexString->FirstChild()->Value(), hexStrLen);
                             }
 
                             break;
@@ -158,9 +181,13 @@ namespace LANDXML2GLTF
             }
         }
 
+        // Create a single surface mesh for LandXML-1.0 files
         if (true == outLandXMLSurface.m_surfaceMeshes.empty())
         {
-            return;
+            size_t matID = inLandXMLMaterials.m_MaterialMap.begin()->first;
+            outLandXMLSurface.m_surfaceMeshes[matID] = new LandXMLSurfaceMesh();
+            outLandXMLSurface.m_surfaceMeshes[matID]->m_materialID = inLandXMLMaterials.m_MaterialMap.begin()->second.m_ID;
+            outLandXMLSurface.m_surfaceMeshes[matID]->m_materialName = inLandXMLMaterials.m_MaterialMap.begin()->second.m_name;
         }
 
         LandXMLSurfaceMesh* addToMesh = outLandXMLSurface.m_surfaceMeshes.begin()->second;

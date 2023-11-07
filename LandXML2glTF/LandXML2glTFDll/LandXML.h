@@ -36,15 +36,15 @@ public:
     std::string m_textureName;
     std::string m_lineType;
     std::string m_textureImageRef;
-    std::string m_textureImageHexString;
-    double m_textureImageScale;
+    double m_textureImageScale = 1.0;
     std::string m_textureImageWorldFile;
     std::string m_textureImageWKT;
     std::string m_symbolReferenceStr;
-    double m_symbolXScale;
-    double m_symbolYScale;
-    double m_symbolZScale;
-    double m_symbolRotation;
+    double m_symbolXScale = 1.0;
+    double m_symbolYScale = 1.0;
+    double m_symbolZScale = 1.0;
+    double m_symbolRotation = 0.0;
+    char* m_textureImageHexString = nullptr;
 };
 
 class LANDXML2GLTFDLLAPI LandXMLMaterialTable

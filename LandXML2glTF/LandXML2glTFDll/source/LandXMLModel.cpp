@@ -33,6 +33,9 @@ namespace LANDXML2GLTF
 
 
         // cleanup memory
+
+        delete m_LXDocument;
+
         for (int j = 0; j < m_landxmlSurfaces.size(); j++)
         {
             delete m_landxmlSurfaces[j];

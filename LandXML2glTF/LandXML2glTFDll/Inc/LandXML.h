@@ -8,9 +8,8 @@
 #   pragma warning(disable: 4251)
 #endif
 
-class LANDXML2GLTFDLLAPI LandXMLPoint3D
+struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 {
-public:
     inline LandXMLPoint3D() {};
     inline LandXMLPoint3D(double inX, double inY, double inZ)
     {
@@ -24,10 +23,8 @@ public:
     double z = 0.0;
 };
 
-
-class LANDXML2GLTFDLLAPI LandXMLMaterial
+struct LANDXML2GLTFDLLAPI LandXMLMaterial
 {
-public:
     std::string m_name;
     int m_ID = 0;
     std::string m_description;
@@ -47,15 +44,13 @@ public:
     char* m_textureImageHexString = nullptr;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLMaterialTable
+struct LANDXML2GLTFDLLAPI LandXMLMaterialTable
 {
-public:
     std::unordered_map<int, LandXMLMaterial> m_MaterialMap;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLPolyline
+struct LANDXML2GLTFDLLAPI LandXMLPolyline
 {
-public:
     std::string m_name;
     int m_materialID = 0;
     std::string m_description;
@@ -63,25 +58,21 @@ public:
     double m_area = 0.0;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLSurfaceFace
+struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
 {
-public:
     std::vector<unsigned int> m_pointIndices;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
+struct LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
 {
-public:
     int m_materialID = 0;
     std::string m_materialName;
 
     std::vector<LandXMLSurfaceFace> m_surfaceFaces;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLSurface
+struct LANDXML2GLTFDLLAPI LandXMLSurface
 {
-public:
-
     ~LandXMLSurface()
     {
         for (int j = 0; j < m_surfaceMeshes.size(); j++)
@@ -100,13 +91,11 @@ public:
 
 struct LANDXML2GLTFDLLAPI LandXMLUnits
 {
-    std::string m_unitString;
+    std::string m_linearUnitString;
 };
 
-class LANDXML2GLTFDLLAPI LandXMLModel
+struct LANDXML2GLTFDLLAPI LandXMLModel
 {
-public:
-
     ~LandXMLModel() 
     {
         for (int j = 0; j < m_landxmlSurfaces.size(); j++)

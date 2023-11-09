@@ -131,6 +131,12 @@
       <Command>
       </Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>xcopy ..\LandXML2glTFDLL\bin\x64\Debug\*.dll $(OutDir) /D /Y
+xcopy ..\3rdparty\gdal\*.dll $(OutDir) /D /Y
+xcopy ..\LandXML\defaultTexture.xml $(OutDir) /D /Y
+</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -153,6 +159,11 @@
       <Command>
       </Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>xcopy ..\LandXML2glTFDLL\bin\x64\Release\*.dll $(OutDir) /D /Y
+xcopy ..\3rdparty\gdal\*.dll $(OutDir) /D /Y
+xcopy ..\LandXML\defaultTexture.xml $(OutDir) /D /Y</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

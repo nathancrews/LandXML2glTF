@@ -17,10 +17,10 @@ BOOL APIENTRY DllMain(HMODULE, DWORD ul_reason_for_call, LPVOID)
     return TRUE;
 }
 
-bool LandXMLModel2GLTFDLL::ConvertFile(const std::string& InLandXMLFilename, const std::string& glTFFilename)
+bool LandXMLModel2GLTFDLL::ConvertFile(const std::string& inLandXMLFilename, const std::string& glTFFilename, const std::string& inAppDataPath)
 {
     LandXMLModel2glTF LXMLModel;
 
-    return LXMLModel.Convert2glTFModel(InLandXMLFilename, glTFFilename);
+    return LXMLModel.Convert2glTFModel(inLandXMLFilename, glTFFilename);
 }
 

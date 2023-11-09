@@ -1,6 +1,7 @@
 
 #include "LandXMLModel2glTF.h"
 #include "Readers/LXParser.h"
+#include "Helpers/MathHelper.h"
 #include <BufferBuilder.h>
 #include <GLTFResourceWriter.h>
 #include <GLBResourceWriter.h>
@@ -30,8 +31,11 @@ namespace LANDXML2GLTF
         LXParser LXHelper;
         LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLModel);
 
+        m_wgsTrans = MathHelper::GetOGRCoordTransform(m_landXMLModel.m_wktString);
+
         // cleanup memory
         delete m_LXDocument;
+        delete m_wgsTrans;
 
         return retval;
     }

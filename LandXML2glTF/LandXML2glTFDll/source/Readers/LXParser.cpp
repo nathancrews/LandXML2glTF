@@ -1,6 +1,7 @@
 #include "Readers/LXParser.h"
 #include "Helpers/MathHelper.h"
 #include <functional>
+#include <iostream>
 #include <fstream>
 
 
@@ -16,8 +17,28 @@ namespace LANDXML2GLTF
 
         XMLElement* LXRoot = LXDocument->RootElement();
 
-        // Parse Material table
+        // Parse Units and coordinate system
+        XMLElement* LXUnits = LXRoot->FirstChildElement("Units");
 
+        // The Units element is REQUIRED for any meaningful conversion
+        if (!LXUnits)
+        {
+            std::cout << "error: The LandXML file is missing the required <Units> element.";
+            return;
+        }
+
+        XMLElement* LXCoordSystem = LXRoot->FirstChildElement("CoordinateSystem");
+
+        if (LXCoordSystem)
+        {
+            const XMLAttribute* cSAt = LXCoordSystem->FindAttribute("ogcWktCode");
+            if (cSAt)
+            {
+                outLandXMLMDoc.m_wktString = cSAt->Value();
+            }
+        }
+
+        // Parse Material table
         XMLElement* LXMaterials = LXRoot->FirstChildElement("MaterialTable");
 
         // Not all LandXML files contain materials, so create a single texture material table to use

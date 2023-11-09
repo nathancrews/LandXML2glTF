@@ -2,6 +2,8 @@
 #include <iostream>
 #include <filesystem>
 
+
+
 int main(int argc, char* argv[])
 {
     // LandXML-2.0 testing with surface texture materials
@@ -11,6 +13,17 @@ int main(int argc, char* argv[])
     // LandXML-1.0 testing without surface texture materials
     //std::filesystem::path LandXMLFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision.xml";
     //std::filesystem::path glTFFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision.gltf";
+
+    std::filesystem::path gdalDataPath;
+
+    if (argc > 0)
+    {
+        // gdal needs this
+        std::filesystem::path exePath = argv[0];
+        gdalDataPath = exePath.remove_filename();
+
+        gdalDataPath.append("data");
+    }
 
     if (argc > 1)
     {
@@ -34,7 +47,7 @@ int main(int argc, char* argv[])
 
         LandXMLModel2GLTFDLL LandXML2glTFConverter;
 
-        LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string());
+        LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string(), gdalDataPath.string());
     }
 }
 

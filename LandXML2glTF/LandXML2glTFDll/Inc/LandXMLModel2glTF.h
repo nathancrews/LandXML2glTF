@@ -19,6 +19,8 @@
 #   pragma warning(disable: 4251)
 #endif
 
+class OGRCoordinateTransformation;
+
 namespace LANDXML2GLTF
 {
 
@@ -34,6 +36,7 @@ namespace LANDXML2GLTF
 
     private:
 
+        OGRCoordinateTransformation* m_wgsTrans = nullptr;
         tinyxml2::XMLDocument* m_LXDocument = nullptr;
         LandXMLModel m_landXMLModel;
     };

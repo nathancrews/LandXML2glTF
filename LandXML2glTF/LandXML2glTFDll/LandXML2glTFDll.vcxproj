@@ -36,17 +36,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h" />
-    <ClInclude Include="Inc\Helpers\LXParserHelper.h" />
+    <ClInclude Include="Inc\Helpers\MathHelper.h" />
+    <ClInclude Include="Inc\LandXML.h" />
     <ClInclude Include="Inc\LandXML2glTFDll.h" />
-    <ClInclude Include="Inc\LandXMLModel.h" />
+    <ClInclude Include="Inc\LandXMLModel2glTF.h" />
+    <ClInclude Include="Inc\Readers\LXParser.h" />
     <ClInclude Include="Inc\targetver.h" />
-    <ClInclude Include="LandXML.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\3rdparty\TinyXML\Source\tinyxml2.cpp" />
-    <ClCompile Include="source\Helpers\LXParserHelper.cpp" />
+    <ClCompile Include="source\Helpers\MathHelper.cpp" />
     <ClCompile Include="source\LandXML2glTFDll.cpp" />
-    <ClCompile Include="source\LandXMLModel.cpp" />
+    <ClCompile Include="source\LandXMLModel2glTF.cpp" />
+    <ClCompile Include="source\Readers\LXParser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{601406f3-3e6d-489b-9cb2-04a978610021}</ProjectGuid>

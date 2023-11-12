@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LandXML2glTFDll\LandXML2glTFDll.vcxproj">
-      <Project>{601406f3-3e6d-489b-9cb2-04a978610021}</Project>
+      <Project>{9c95ab72-1c12-4d69-9133-52fb8ef85b79}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -132,10 +132,8 @@
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>xcopy ..\LandXML2glTFDLL\bin\x64\Debug\*.dll $(OutDir) /D /Y
-xcopy ..\3rdparty\gdal\*.dll $(OutDir) /D /Y
-xcopy ..\LandXML\defaultTexture.xml $(OutDir) /D /Y
-</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,9 +158,8 @@ xcopy ..\LandXML\defaultTexture.xml $(OutDir) /D /Y
       </Command>
     </PreLinkEvent>
     <PreBuildEvent>
-      <Command>xcopy ..\LandXML2glTFDLL\bin\x64\Release\*.dll $(OutDir) /D /Y
-xcopy ..\3rdparty\gdal\*.dll $(OutDir) /D /Y
-xcopy ..\LandXML\defaultTexture.xml $(OutDir) /D /Y</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

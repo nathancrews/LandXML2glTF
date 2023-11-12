@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework.h"
-#include "LandXML.h"
+#include "Models/LandXML.h"
 
 #pragma warning(push)
 #pragma warning(disable: 4005)
@@ -12,6 +12,14 @@
 #ifdef _MSC_VER
 #   pragma warning(push)
 #   pragma warning(disable: 4251)
+#endif
+
+#ifndef USFT2M			// U.S. feet to meters
+#	define USFT2M		0.3048006096012192
+#endif
+
+#ifndef IFT2M			// International feet to meters
+#	define IFT2M		0.3048
 #endif
 
 class OGRCoordinateTransformation;
@@ -25,7 +33,7 @@ namespace LANDXML2GLTF
 
         static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
         static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
-        static OGRCoordinateTransformation* GetOGRCoordTransform(std::string& inWktString);
+        static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
     };
 
 }

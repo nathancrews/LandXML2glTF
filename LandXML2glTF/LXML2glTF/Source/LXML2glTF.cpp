@@ -2,8 +2,6 @@
 #include <iostream>
 #include <filesystem>
 
-
-
 int main(int argc, char* argv[])
 {
     // LandXML-2.0 testing with surface texture materials

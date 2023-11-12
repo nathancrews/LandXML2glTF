@@ -38,12 +38,11 @@ namespace LANDXML2GLTF
         return area;
     }
 
-    OGRCoordinateTransformation* MathHelper::GetOGRCoordTransform(std::string &inWktString)
+    OGRCoordinateTransformation* MathHelper::GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef)
     {
-        OGRSpatialReference wgs84Ref, LXCoordRef;
+        OGRSpatialReference wgs84Ref;
         OGRErr retStat;
 
-        retStat = LXCoordRef.importFromWkt(inWktString.c_str());
         retStat = wgs84Ref.SetWellKnownGeogCS("WGS84");
 
         OGRCoordinateTransformation* wgsTrans = OGRCreateCoordinateTransformation(&LXCoordRef, &wgs84Ref);

@@ -7,6 +7,36 @@
 
 namespace LANDXML2GLTF
 {
+    void LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
+    {
+        if (!LXDocument || !LXDocument->RootElement())
+        {
+            return;
+        }
+
+        XMLElement* LXRoot = LXDocument->RootElement();
+
+        // Parse Units and coordinate system
+        XMLElement* LXUnits = LXRoot->FirstChildElement("Units");
+
+        // The Units element is REQUIRED for any meaningful conversion
+        if (!LXUnits)
+        {
+            std::cout << "error: The LandXML file is missing the required <Units> element.";
+            return;
+        }
+
+        XMLElement* LXCoordSystem = LXRoot->FirstChildElement("CoordinateSystem");
+
+        if (LXCoordSystem)
+        {
+            const XMLAttribute* cSAt = LXCoordSystem->FindAttribute("ogcWktCode");
+            if (cSAt)
+            {
+                outLandXMLMDoc.m_wktString = cSAt->Value();
+            }
+        }
+    }
 
     void LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
     {

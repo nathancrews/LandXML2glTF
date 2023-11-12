@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LandXML.h"
+#include "Models/LandXML.h"
 #include <cmath>
 #include <Serialize.h>
 #include <regex>
@@ -15,6 +15,7 @@ namespace LANDXML2GLTF
     {
     public:
 
+        void ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc);
         void ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc);
 
     private:

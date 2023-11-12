@@ -2,9 +2,6 @@
 #include "LandXMLModel2glTF.h"
 #include "Readers/LXParser.h"
 #include "Helpers/MathHelper.h"
-#include <BufferBuilder.h>
-#include <GLTFResourceWriter.h>
-#include <GLBResourceWriter.h>
 
 
 namespace LANDXML2GLTF
@@ -14,7 +11,7 @@ namespace LANDXML2GLTF
     {
         bool retval = false;
 
-        if (false == std::experimental::filesystem::exists(InLandXMLFilename))
+        if (false == std::filesystem::exists(InLandXMLFilename))
         {
             return retval;
         }
@@ -29,65 +26,35 @@ namespace LANDXML2GLTF
         m_LXDocument->LoadFile(InLandXMLFilename.c_str());
 
         LXParser LXHelper;
+
+        LXHelper.ParseLandXMLHeader(m_LXDocument, m_landXMLModel);
+
+        m_landXMLSpatialRef = new OGRSpatialReference();
+
+        OGRErr tStat = m_landXMLSpatialRef->importFromWkt(m_landXMLModel.m_wktString.c_str());
+
+        m_wgsTrans = MathHelper::GetWGS84CoordTransform(*m_landXMLSpatialRef);
+
         LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLModel);
 
-        m_wgsTrans = MathHelper::GetOGRCoordTransform(m_landXMLModel.m_wktString);
+        LandXMLPoint3D testPnt = m_landXMLModel.m_landxmlSurfaces[0]->m_surfacePoints[1];
+
+        char* units = nullptr;
+        m_unitConversionToWG84 = m_landXMLSpatialRef->GetLinearUnits(&units);
+
+        int success = 0;
+
+        m_wgsTrans->Transform(1, &testPnt.x, &testPnt.y, &testPnt.z, &success);
+
+        testPnt.z = testPnt.z * m_unitConversionToWG84;
 
         // cleanup memory
         delete m_LXDocument;
-        delete m_wgsTrans;
 
         return retval;
     }
 
-    void LandXMLModel2glTF::WriteGLTFFile(std::experimental::filesystem::path& glTFFilename)
-    {
-        Microsoft::glTF::Buffer* LXBuffer = new  Microsoft::glTF::Buffer();
-
-        // Pass the absolute path, without the filename, to the stream writer
-        auto streamWriter = std::make_unique<StreamWriter>(glTFFilename.parent_path());
-
-        std::experimental::filesystem::path pathFile = glTFFilename.filename();
-        std::experimental::filesystem::path pathFileExt = pathFile.extension();
-
-        auto MakePathExt = [](const std::string& ext)
-            {
-                return "." + ext;
-            };
-        std::unique_ptr<Microsoft::glTF::ResourceWriter> resourceWriter;
-
-        // If the file has a '.gltf' extension then create a GLTFResourceWriter
-        if (pathFileExt == MakePathExt(Microsoft::glTF::GLTF_EXTENSION))
-        {
-            resourceWriter = std::make_unique<Microsoft::glTF::GLTFResourceWriter>(std::move(streamWriter));
-        }
-
-        //// If the file has a '.glb' extension then create a GLBResourceWriter. This class derives
-        //// from GLTFResourceWriter and adds support for writing manifests to a GLB container's
-        //// JSON chunk and resource data to the binary chunk.
-        if (pathFileExt == MakePathExt(Microsoft::glTF::GLB_EXTENSION))
-        {
-            resourceWriter = std::make_unique<Microsoft::glTF::GLBResourceWriter>(std::move(streamWriter));
-        }
-
-        if (!resourceWriter)
-        {
-            throw std::runtime_error("Command line argument path filename extension must be .gltf or .glb");
-        }
-
-        // The Document instance represents the glTF JSON manifest
-        Microsoft::glTF::Document document;
-
-        std::string accessorIdIndices;
-        std::string accessorIdPositions;
-
-        // Use the BufferBuilder helper class to simplify the process of
-        // constructing valid glTF Buffer, BufferView and Accessor entities
-        Microsoft::glTF::BufferBuilder bufferBuilder(std::move(resourceWriter));
-
-
-        delete LXBuffer;
-    }
+    
 
     bool LandXMLModel2glTF::PointInPolygon(Microsoft::glTF::Vector3& point, std::vector<Microsoft::glTF::Vector3>& polygonPoints)
     {

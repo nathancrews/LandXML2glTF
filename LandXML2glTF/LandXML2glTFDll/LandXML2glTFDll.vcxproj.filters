@@ -32,6 +32,9 @@
     <Filter Include="Source Files\Writers">
       <UniqueIdentifier>{5e0c9b21-d695-4ade-ae86-a18a2d4d73ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Models">
+      <UniqueIdentifier>{e584521e-9184-491d-9d58-64dfc0d398fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h">
@@ -46,14 +49,17 @@
     <ClInclude Include="Inc\LandXMLModel2glTF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Inc\LandXML.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Inc\Helpers\MathHelper.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Inc\Readers\LXParser.h">
       <Filter>Header Files\Readers</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\Models\LandXML.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\Writers\GLTFWriter.h">
+      <Filter>Header Files\Writers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="source\Readers\LXParser.cpp">
       <Filter>Source Files\Readers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Writers\GLTFWriter.cpp">
+      <Filter>Source Files\Writers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

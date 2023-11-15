@@ -6,6 +6,9 @@
 #include <fstream>
 #include <filesystem>
 #include <GLTF.h>
+#include <Document.h>
+#include <Serialize.h>
+#include <Deserialize.h>
 #include <IStreamWriter.h>
 #include <BufferBuilder.h>
 #include <GLTFResourceWriter.h>

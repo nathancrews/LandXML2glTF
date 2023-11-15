@@ -2,13 +2,8 @@
 
 #include "framework.h"
 #include "Models/LandXML.h"
+#include "Writers/GLTFWriter.h"
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
-#include <cassert>
-#include <cmath>
-#include "GLTF.h"
 #include <IStreamWriter.h>
 #include "tinyxml2.h"
 
@@ -28,18 +23,24 @@ namespace LANDXML2GLTF
     public:
 
         bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
-        void WriteGLTFFile(std::filesystem::path& glTFFilename);
+        bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument);
 
-        // helper function to find LandXML Surface triangle texture materials
-        bool PointInPolygon(Microsoft::glTF::Vector3& point, std::vector<Microsoft::glTF::Vector3>& polygonPoints);
+        void AddGLTFMeshBuffers(Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::string& accessorIdIndices, std::string& accessorIdPositions);
+        void AddGLTFMesh(Microsoft::glTF::Document& document, const std::string& accessorIdIndices, const std::string& accessorIdPositions);
+
+        void WriteGLTFFile(Microsoft::glTF::Document& document, std::filesystem::path& glTFFilename);
 
     private:
 
-        double m_unitConversionToWG84 = 1.0;
+        double m_unitConversionToWG84 = 1.0; // no conversion if LandXML linearUnit is meters
         OGRSpatialReference* m_landXMLSpatialRef = nullptr;
         OGRCoordinateTransformation* m_wgsTrans = nullptr;
         tinyxml2::XMLDocument* m_LXDocument = nullptr;
         LandXMLModel m_landXMLModel;
+
+        std::vector<float> gltfMeshPoints;
+        std::vector<UINT> gltfMeshIndices;
+        std::vector<std::vector<UINT>> gltfSubMeshIndices;
     };
 
 }

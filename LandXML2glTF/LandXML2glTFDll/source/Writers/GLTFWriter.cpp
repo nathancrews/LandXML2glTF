@@ -1,8 +1,27 @@
 #include "Writers/GLTFWriter.h"
 
+using namespace Microsoft::glTF;
 
 void GLTFWriter::WriteGLTFFile(std::filesystem::path& glTFFilename)
 {
+    Document originalDoc;
+    Mesh gltfSurface;
+
+    gltfSurface.primitives[0].mode = MeshMode::MESH_TRIANGLES;
+
+    Scene sc; sc.id = "0";
+    sc.nodes = { "0" };
+    originalDoc.SetDefaultScene(std::move(sc));
+    std::array<float, 16> matrixData; std::fill(matrixData.begin(), matrixData.end(), 1.0f);
+    Matrix4 mat4; mat4.values = matrixData;
+    Node matrixNode; matrixNode.id = "0"; matrixNode.name = "matrixNode";
+    matrixNode.matrix = mat4;
+    originalDoc.nodes.Append(std::move(matrixNode));
+    auto outputString = Serialize(originalDoc);
+    auto twoPassDoc = Deserialize(outputString);
+
+   
+
     Microsoft::glTF::Buffer* LXBuffer = new  Microsoft::glTF::Buffer();
 
     // Pass the absolute path, without the filename, to the stream writer

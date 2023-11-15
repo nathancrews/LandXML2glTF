@@ -26,6 +26,12 @@
       <Project>{9c95ab72-1c12-4d69-9133-52fb8ef85b79}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="data\proj.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="data\DefaultTexture.xml" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "framework.h"
-
+#include <string>
 
 class LANDXML2GLTFDLLAPI LandXMLModel2GLTFDLL
 {

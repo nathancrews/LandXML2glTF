@@ -27,6 +27,12 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 
 struct LANDXML2GLTFDLLAPI LandXMLMaterial
 {
+    LandXMLMaterial() {};
+    ~LandXMLMaterial()
+    {
+
+    };
+
     std::string m_name;
     int m_ID = 0;
     std::string m_description;
@@ -43,7 +49,7 @@ struct LANDXML2GLTFDLLAPI LandXMLMaterial
     double m_symbolYScale = 1.0;
     double m_symbolZScale = 1.0;
     double m_symbolRotation = 0.0;
-    char* m_textureImageHexString = nullptr;
+    std::string m_textureImageHexString;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLMaterialTable

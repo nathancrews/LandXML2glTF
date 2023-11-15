@@ -7,11 +7,13 @@
 
 namespace LANDXML2GLTF
 {
-    void LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
+    bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
     {
+        bool retStat = false;
+
         if (!LXDocument || !LXDocument->RootElement())
         {
-            return;
+            return retStat;
         }
 
         XMLElement* LXRoot = LXDocument->RootElement();
@@ -19,11 +21,32 @@ namespace LANDXML2GLTF
         // Parse Units and coordinate system
         XMLElement* LXUnits = LXRoot->FirstChildElement("Units");
 
-        // The Units element is REQUIRED for any meaningful conversion
+        // The Units element and linearUnit are REQUIRED for any meaningful conversion
         if (!LXUnits)
         {
             std::cout << "error: The LandXML file is missing the required <Units> element.";
-            return;
+            return retStat;
+        }
+
+        XMLElement* LXUnit = LXUnits->FirstChildElement();
+
+        if (LXUnit)
+        {
+            const XMLAttribute* linearUnitAT = LXUnit->FindAttribute("linearUnit");
+
+            if (!linearUnitAT)
+            {
+                std::cout << "error: The LandXML file is missing the required <Units> element attribute \"linearUnit\".";
+                return retStat;
+            }
+
+            outLandXMLMDoc.m_units.m_linearUnitString = linearUnitAT->Value();
+
+            if (outLandXMLMDoc.m_units.m_linearUnitString.empty())
+            {
+                std::cout << "error: The LandXML file is missing a value for the required <Units> element attribute \"linearUnit\".";
+                return retStat;
+            }
         }
 
         XMLElement* LXCoordSystem = LXRoot->FirstChildElement("CoordinateSystem");
@@ -36,37 +59,23 @@ namespace LANDXML2GLTF
                 outLandXMLMDoc.m_wktString = cSAt->Value();
             }
         }
+
+        retStat = true;
+        return retStat;
     }
 
-    void LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
+    bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
     {
+        bool retStat = false;
+
         if (!LXDocument || !LXDocument->RootElement())
         {
-            return;
+            return retStat;
         }
 
         XMLElement* LXRoot = LXDocument->RootElement();
 
-        // Parse Units and coordinate system
-        XMLElement* LXUnits = LXRoot->FirstChildElement("Units");
-
-        // The Units element is REQUIRED for any meaningful conversion
-        if (!LXUnits)
-        {
-            std::cout << "error: The LandXML file is missing the required <Units> element.";
-            return;
-        }
-
-        XMLElement* LXCoordSystem = LXRoot->FirstChildElement("CoordinateSystem");
-
-        if (LXCoordSystem)
-        {
-            const XMLAttribute* cSAt = LXCoordSystem->FindAttribute("ogcWktCode");
-            if (cSAt)
-            {
-                outLandXMLMDoc.m_wktString = cSAt->Value();
-            }
-        }
+        // Units and CorrdinateSystem are parsed in ParseLandXMLHeader()
 
         // Parse Material table
         XMLElement* LXMaterials = LXRoot->FirstChildElement("MaterialTable");
@@ -78,7 +87,7 @@ namespace LANDXML2GLTF
         XMLElement* LXSurfaces = LXRoot->FirstChildElement("Surfaces");
         if (!LXSurfaces)
         {
-            return;
+            return retStat;
         }
 
         XMLElement* LXSurface = LXSurfaces->FirstChildElement("Surface");
@@ -94,10 +103,14 @@ namespace LANDXML2GLTF
             LXSurface = LXSurface->NextSiblingElement("Surface");
         }
 
+        retStat = true;
+        return retStat;
     }
 
-    void LXParser::ParseMaterialTable(XMLNode* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
+    bool LXParser::ParseMaterialTable(XMLNode* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
     {
+        bool retStat = false;
+ 
         if (!LXMaterialsNode)
         {
             // probably a LandXML 1.0 or 1.2 file, so create a single default texture material
@@ -108,8 +121,8 @@ namespace LANDXML2GLTF
             LXMaterialEntry.m_textureName = LXMaterialEntry.m_name;
             LXMaterialEntry.m_textureImageScale = 10.0;
 
-            XMLDocument textureDoc;
-            if (textureDoc.LoadFile("DefaultTexture.xml") == XML_SUCCESS)
+            tinyxml2::XMLDocument textureDoc;
+            if (textureDoc.LoadFile("./data/DefaultTexture.xml") == XML_SUCCESS)
             {
                 XMLElement* textureImageElem = textureDoc.RootElement();
 
@@ -117,19 +130,18 @@ namespace LANDXML2GLTF
                 {
 
                     size_t hexStrLen = strlen(textureImageElem->FirstChild()->Value()) + 1;
-                    LXMaterialEntry.m_textureImageHexString = (char*)malloc(hexStrLen);
-                    strncpy_s(LXMaterialEntry.m_textureImageHexString, hexStrLen, textureImageElem->FirstChild()->Value(), hexStrLen);
+                    LXMaterialEntry.m_textureImageHexString = textureImageElem->FirstChild()->Value();
                 }
             }
 
             outLandXMLMaterials.m_MaterialMap[LXMaterialEntry.m_ID] = LXMaterialEntry;
 
-            return;
+            retStat = true;
+            return retStat;
         }
 
         XMLElement* LXMaterial = LXMaterialsNode->FirstChildElement("Material");
         XMLElement* LXTextureImageTable = LXMaterialsNode->NextSiblingElement("TextureImageTable");
-
 
         while (LXMaterial)
         {
@@ -179,8 +191,7 @@ namespace LANDXML2GLTF
                             if (TextureHexString)
                             {
                                 size_t hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
-                                LXMaterialEntry.m_textureImageHexString = (char*)malloc(hexStrLen);
-                                strncpy_s(LXMaterialEntry.m_textureImageHexString, hexStrLen, TextureHexString->FirstChild()->Value(), hexStrLen);
+                                LXMaterialEntry.m_textureImageHexString = TextureHexString->FirstChild()->Value();
                             }
 
                             break;
@@ -199,7 +210,6 @@ namespace LANDXML2GLTF
                 LXMaterialEntry.m_textureImageScale = std::atof(textureImageScaleAt->Value());
             }
 
-
             // only add if material ID is non-zero
             if (LXMaterialEntry.m_ID > 0)
             {
@@ -209,13 +219,17 @@ namespace LANDXML2GLTF
             LXMaterial = LXMaterial->NextSiblingElement("Material");
         }
 
+        retStat = true;
+        return retStat;
     }
 
-    void LXParser::ParseSurface(XMLNode* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface)
+    bool LXParser::ParseSurface(XMLNode* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface)
     {
+        bool retStat = true;
+
         ParseSurfaceBoundaries(LXSurfaceNode, outLandXMLSurface);
 
-        // prepare a seperate surface mesh for each texture boundary material
+        // prepare a separate surface mesh for each texture boundary material
 
         for (LandXMLPolyline LXbp : outLandXMLSurface.m_textureBoundaries)
         {
@@ -248,8 +262,8 @@ namespace LANDXML2GLTF
 
 
         // LandXML surface ids start at 1, so add a dummy point so vertex faces ids match point array
-        LandXMLPoint3D dummyZeroSurfPnt;
-        outLandXMLSurface.m_surfacePoints.push_back(dummyZeroSurfPnt);
+        //LandXMLPoint3D dummyZeroSurfPnt;
+        //outLandXMLSurface.m_surfacePoints.push_back(dummyZeroSurfPnt);
 
         XMLElement* LXSurfaceDef = LXSurfaceNode->FirstChildElement("Definition");
 
@@ -275,19 +289,19 @@ namespace LANDXML2GLTF
             XMLElement* LXSurfaceFace = LXSurfaceFaces->FirstChildElement("F");
             while (LXSurfaceFace)
             {
-                LandXMLPoint3D surfPnt;
+                LandXMLSurfaceFace surfFace;
 
-                if (ParsePoint3D(LXSurfaceFace, surfPnt))
+                if (ParseFace(LXSurfaceFace, surfFace))
                 {
-                    LandXMLSurfaceFace surfFace;
+                    // LandXML surface ids start at 1, reduce point IDs by 1 to make vertex face point ids match zero based surface TIN point array
 
-                    surfFace.m_pointIndices.push_back((int)surfPnt.y);
-                    surfFace.m_pointIndices.push_back((int)surfPnt.x);
-                    surfFace.m_pointIndices.push_back((int)surfPnt.z);
+                    UINT facedPointId1 = surfFace.m_pointIndices[0] - 1;
+                    UINT facedPointId2 = surfFace.m_pointIndices[1] - 1;
+                    UINT facedPointId3 = surfFace.m_pointIndices[2] - 1;
 
-                    LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[surfFace.m_pointIndices[0]];
-                    LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[surfFace.m_pointIndices[1]];
-                    LandXMLPoint3D p3 = outLandXMLSurface.m_surfacePoints[surfFace.m_pointIndices[2]];
+                    LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
+                    LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];
+                    LandXMLPoint3D p3 = outLandXMLSurface.m_surfacePoints[facedPointId3];
 
                     LandXMLPoint3D faceCenterPnt(((p1.x + p2.x + p3.x) / 3), ((p1.y + p2.y + p3.y) / 3), ((p1.z + p2.z + p3.z) / 3));
 
@@ -311,20 +325,25 @@ namespace LANDXML2GLTF
 
         }
 
+
+        retStat = true;
+        return retStat;
     }
 
-    void LXParser::ParseSurfaceBoundaries(XMLNode* LXSurfaceNode, LandXMLSurface& outLandXMLSurface)
+    bool LXParser::ParseSurfaceBoundaries(XMLNode* LXSurfaceNode, LandXMLSurface& outLandXMLSurface)
     {
+        bool retStat = false;
+ 
         XMLElement* LXSurfaceData = LXSurfaceNode->FirstChildElement("SourceData");
         if (!LXSurfaceData)
         {
-            return;
+            return retStat;
         }
 
         XMLElement* LXSurfaceBoundaries = LXSurfaceData->FirstChildElement("Boundaries");
         if (!LXSurfaceBoundaries)
         {
-            return;
+            return retStat;
         }
 
         XMLElement* LXSurfaceBndry = LXSurfaceBoundaries->FirstChildElement("Boundary");
@@ -367,6 +386,8 @@ namespace LANDXML2GLTF
         // sort polylines by size
         outLandXMLSurface.m_textureBoundaries.sort(sort);
 
+        retStat = true;
+        return retStat;
     }
 
     // Parse a single point element
@@ -374,7 +395,7 @@ namespace LANDXML2GLTF
     {
         std::vector<std::string> pointYXZArray;
 
-        SplitPointCData(LXPointList, pointYXZArray);
+        SplitCData(LXPointList, pointYXZArray);
 
         if (pointYXZArray.size() >= 3)
         {
@@ -390,7 +411,7 @@ namespace LANDXML2GLTF
     bool LXParser::ParsePointList3D(XMLNode* LXPointList, std::vector<LandXMLPoint3D>& outReturnPointList)
     {
         std::vector<std::string> pointYXZArray;
-        SplitPointCData(LXPointList, pointYXZArray);
+        SplitCData(LXPointList, pointYXZArray);
 
         for (int j = 0; j < (pointYXZArray.size() - 3); j += 3)
         {
@@ -407,7 +428,23 @@ namespace LANDXML2GLTF
         return (outReturnPointList.size() > 0);
     }
 
-    void LXParser::SplitPointCData(XMLNode* LXPointList, std::vector<std::string>& outPointYXZArray)
+    bool LXParser::ParseFace(XMLNode* LXFaceList, LandXMLSurfaceFace& outReturnFace)
+    {
+        std::vector<std::string> pointYXZArray;
+
+        SplitCData(LXFaceList, pointYXZArray);
+
+        if (pointYXZArray.size() >= 3)
+        {
+            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[0].c_str()));
+            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[1].c_str()));
+            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[2].c_str()));
+        }
+
+        return (outReturnFace.m_pointIndices.size() >= 3);
+    }
+
+    void LXParser::SplitCData(XMLNode* LXPointList, std::vector<std::string>& outPointYXZArray)
     {
         std::string pointList = LXPointList->FirstChild()->Value();
 

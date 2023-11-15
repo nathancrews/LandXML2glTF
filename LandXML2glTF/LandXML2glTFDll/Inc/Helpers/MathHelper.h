@@ -27,14 +27,32 @@ class OGRCoordinateTransformation;
 namespace LANDXML2GLTF
 {
 
-    class LANDXML2GLTFDLLAPI MathHelper
-    {
-    public:
+class LANDXML2GLTFDLLAPI MathHelper
+{
+public:
 
-        static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
-        static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
-        static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
-    };
+    static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
+    static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
+    static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
+
+    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, std::vector<float>& glTFPnt)
+    {
+        if (glTFPnt.size() > 2)
+        {
+            glTFPnt[0] = LXPnt.x; glTFPnt[1] = LXPnt.y; glTFPnt[2] = LXPnt.z;
+        }
+    }
+
+    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, float& glTFPnt1, float& glTFPnt2, float& glTFPnt3)
+    {
+        glTFPnt1 = LXPnt.x; glTFPnt2 = LXPnt.y; glTFPnt3 = LXPnt.z;
+    }
+
+    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, Microsoft::glTF::Vector3& glTFPnt)
+    {
+        glTFPnt.x = LXPnt.x; glTFPnt.y = LXPnt.y; glTFPnt.z = LXPnt.z;
+    }
+};
 
 }
 

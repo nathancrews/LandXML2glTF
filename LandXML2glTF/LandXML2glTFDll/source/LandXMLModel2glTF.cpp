@@ -55,25 +55,53 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
 
     Microsoft::glTF::Document glTFDoc;
- 
-    CreateGLTFModel(m_landXMLModel, glTFDoc);
+    std::vector<GLTFSurfaceModel*> gltfSurfModels;
 
-    WriteGLTFFile(glTFDoc, std::filesystem::path(glTFFilename));
+    glTFDoc.asset.generator = "LandXML2glTF Converter 1.0";
+
+    CreateGLTFModel(m_landXMLModel, glTFDoc, gltfSurfModels);
+
+    WriteGLTFFile(glTFDoc, gltfSurfModels, std::filesystem::path(glTFFilename));
 
 
     // cleanup memory
     delete m_LXDocument;
 
+    for (GLTFSurfaceModel* gltfModel : gltfSurfModels)
+    {
+        delete gltfModel;
+    }
+
+
     return retval;
 }
 
-bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument)
+bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, std::vector<GLTFSurfaceModel*>& gltfSurfaceModels)
 {
     bool retVal = false;
     int success = 0;
+    double sceneOriginOffsetX = 0.0;
+    double sceneOriginOffsetY = 0.0;
+    double sceneOriginOffsetZ = 0.0;
+
+    if (landXMLModel.m_landxmlSurfaces.front())
+    {
+        sceneOriginOffsetX = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.x;
+        sceneOriginOffsetY = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.y;
+        sceneOriginOffsetZ = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.z;
+    }
 
     for (LandXMLSurface* LXSurf : landXMLModel.m_landxmlSurfaces)
     {
+        GLTFSurfaceModel* gltfModel = new GLTFSurfaceModel();
+
+        if (!gltfModel)
+        {
+            return false;
+        }
+
+        gltfModel->name = LXSurf->m_name;
+
         for (LandXMLPoint3D lxPnt : LXSurf->m_surfacePoints)
         {
             std::vector<float> glpnt1(3U);
@@ -84,9 +112,9 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
             //    lxPnt.z = lxPnt.z * m_unitConversionToWG84;
             //}
 
-            lxPnt.x -= LXSurf->m_minSurfPoint.x;
-            lxPnt.y -= LXSurf->m_minSurfPoint.y;
-            lxPnt.z -= LXSurf->m_minSurfPoint.z;
+            lxPnt.x -= sceneOriginOffsetX;
+            lxPnt.y -= sceneOriginOffsetY;
+            lxPnt.z -= sceneOriginOffsetZ;
 
             lxPnt.x = lxPnt.x * m_unitConversionToWG84;
             lxPnt.y = lxPnt.y * m_unitConversionToWG84;
@@ -96,13 +124,12 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
             if (glpnt1.size() > 2)
             {
-                gltfMeshPoints.push_back(glpnt1[0]);
-                gltfMeshPoints.push_back(glpnt1[1]);
-                gltfMeshPoints.push_back(glpnt1[2]);
+                gltfModel->gltfMeshPoints.push_back(glpnt1[0]);
+                gltfModel->gltfMeshPoints.push_back(glpnt1[1]);
+                gltfModel->gltfMeshPoints.push_back(glpnt1[2]);
             }
 
         }
-
 
         int m = 0;
         std::vector<UINT> minValues(3U, UINT_MAX);
@@ -117,9 +144,9 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
             maxValues[j] = std::max<UINT>(LXSurf->m_surfaceMeshes[m]->m_surfaceFaces[i].m_pointIndices[j], maxValues[j]);
         }
 
-//        for (int m = 1; m < LXSurf->m_surfaceMeshes.size(); m++)
+        //        for (int m = 1; m < LXSurf->m_surfaceMeshes.size(); m++)
         {
-            
+
             if (LXSurf->m_surfaceMeshes[m])
             {
                 for (LandXMLSurfaceFace lxFace : LXSurf->m_surfaceMeshes[m]->m_surfaceFaces)
@@ -128,118 +155,120 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
                     UINT b = lxFace.m_pointIndices[1];
                     UINT c = lxFace.m_pointIndices[2];
 
-                    gltfMeshIndices.push_back(a - 1);
-                    gltfMeshIndices.push_back(b - 1);
-                    gltfMeshIndices.push_back(c - 1);
+                    gltfModel->gltfMeshIndices.push_back(a - 1);
+                    gltfModel->gltfMeshIndices.push_back(b - 1);
+                    gltfModel->gltfMeshIndices.push_back(c - 1);
                 }
 
-                gltfSubMeshIndices.push_back(gltfMeshIndices);
+                gltfModel->gltfSubMeshIndices.push_back(gltfModel->gltfMeshIndices);
             }
         }
 
+        gltfSurfaceModels.push_back(gltfModel);
     }
 
     return retVal;
 }
 
-void LandXMLModel2glTF::AddGLTFMeshBuffers(Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::string& accessorIdIndices, std::string& accessorIdPositions)
+void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::vector<std::string>& accessorIdIndices, std::vector<std::string>& accessorIdPositions)
 {
-    // Create all the resource data (e.g. triangle indices and
-    // vertex positions) that will be written to the binary buffer
-    const char* bufferId = nullptr;
 
-    // Specify the 'special' GLB buffer ID. This informs the GLBResourceWriter that it should use
-    // the GLB container's binary chunk (usually the desired buffer location when creating GLBs)
-    if (dynamic_cast<const Microsoft::glTF::GLBResourceWriter*>(&bufferBuilder.GetResourceWriter()))
+    for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
     {
-        bufferId = Microsoft::glTF::GLB_BUFFER_ID;
+        // Create all the resource data (e.g. triangle indices and
+        // vertex positions) that will be written to the binary buffer
+        const char* bufferId = nullptr;
+
+        // Specify the 'special' GLB buffer ID. This informs the GLBResourceWriter that it should use
+        // the GLB container's binary chunk (usually the desired buffer location when creating GLBs)
+        if (dynamic_cast<const Microsoft::glTF::GLBResourceWriter*>(&bufferBuilder.GetResourceWriter()))
+        {
+            bufferId = Microsoft::glTF::GLB_BUFFER_ID;
+        }
+
+        // Create a Buffer - it will be the 'current' Buffer that all the BufferViews
+        // created by this BufferBuilder will automatically reference
+        bufferBuilder.AddBuffer(bufferId);
+
+        // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
+        // data) - it will be the 'current' BufferView that all the Accessors created by this
+        // BufferBuilder will automatically reference
+        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
+
+        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
+        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+
+        // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
+        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
+
+        std::vector<float> minValues(3U, FLT_MAX);
+        std::vector<float> maxValues(3U, FLT_MIN);
+
+        const size_t positionCount = gltfModel->gltfMeshPoints.size();
+
+        // Accessor min/max properties must be set for vertex position data so calculate them here
+        for (size_t i = 0U, j = 0U; i < positionCount; ++i, j = (i % 3U))
+        {
+            minValues[j] = std::min<float>(gltfModel->gltfMeshPoints[i], minValues[j]);
+            maxValues[j] = std::max<float>(gltfModel->gltfMeshPoints[i], maxValues[j]);
+        }
+
+        accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
     }
-
-    // Create a Buffer - it will be the 'current' Buffer that all the BufferViews
-    // created by this BufferBuilder will automatically reference
-    bufferBuilder.AddBuffer(bufferId);
-
-    // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
-    // data) - it will be the 'current' BufferView that all the Accessors created by this
-    // BufferBuilder will automatically reference
-    bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
-
-    // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
-    accessorIdIndices = bufferBuilder.AddAccessor(gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id;
-
-    // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
-    bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
-
-    std::vector<float> minValues(3U, FLT_MAX);
-    std::vector<float> maxValues(3U, FLT_MIN);
-
-    const size_t positionCount = gltfMeshPoints.size();
-
-    // Accessor min/max properties must be set for vertex position data so calculate them here
-    for (size_t i = 0U, j = 0U; i < positionCount; ++i, j = (i % 3U))
-    {
-        minValues[j] = std::min<float>(gltfMeshPoints[i], minValues[j]);
-        maxValues[j] = std::max<float>(gltfMeshPoints[i], maxValues[j]);
-    }
-
-    accessorIdPositions = bufferBuilder.AddAccessor(gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id;
 
     // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to
     // the Document. Note that after this point, no further calls should be made to BufferBuilder
     bufferBuilder.Output(document);
 }
 
-void LandXMLModel2glTF::AddGLTFMesh(Microsoft::glTF::Document& document, const std::string& accessorIdIndices, const std::string& accessorIdPositions)
+void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, const std::vector<std::string>& accessorIdIndices, const std::vector<std::string>& accessorIdPositions)
 {
-    // Create a very simple glTF Document with the following hierarchy:
-    //  Scene
-    //     Node
-    //       Mesh (Triangle)
-    //         MeshPrimitive
-    //           Material (Blue)
-    // 
-    // A Document can be constructed top-down or bottom up. However, if constructed top-down
-    // then the IDs of child entities must be known in advance, which prevents using the glTF
-    // SDK's automatic ID generation functionality.
-
-    // Construct a Material
-    Microsoft::glTF::Material material;
-    material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
-    material.metallicRoughness.metallicFactor = 0.2f;
-    material.metallicRoughness.roughnessFactor = 0.4f;
-    material.doubleSided = true;
-
-    // Add it to the Document and store the generated ID
-    auto materialId = document.materials.Append(std::move(material), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
-
-    // Construct a MeshPrimitive. Unlike most types in glTF, MeshPrimitives are direct children
-    // of their parent Mesh entity rather than being children of the Document. This is why they
-    // don't have an ID member.
-    Microsoft::glTF::MeshPrimitive meshPrimitive;
-    meshPrimitive.materialId = materialId;
-    meshPrimitive.indicesAccessorId = accessorIdIndices;
-    meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions;
-
-    // Construct a Mesh and add the MeshPrimitive as a child
-    Microsoft::glTF::Mesh mesh;
-    mesh.primitives.push_back(std::move(meshPrimitive));
-    // Add it to the Document and store the generated ID
-    auto meshId = document.meshes.Append(std::move(mesh), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
-
-    // Construct a Node adding a reference to the Mesh
-    Microsoft::glTF::Node node;
-    node.meshId = meshId;
-    // Add it to the Document and store the generated ID
-    auto nodeId = document.nodes.Append(std::move(node), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
-
-    // Construct a Scene
     Microsoft::glTF::Scene scene;
-    scene.nodes.push_back(nodeId);
+    int accessorCount = 0;
+
+    for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
+    {
+        // Construct a Material
+        Microsoft::glTF::Material material;
+        material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
+        material.metallicRoughness.metallicFactor = 0.2f;
+        material.metallicRoughness.roughnessFactor = 0.4f;
+        material.doubleSided = true;
+
+        // Add it to the Document and store the generated ID
+        auto materialId = document.materials.Append(std::move(material), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        Microsoft::glTF::MeshPrimitive meshPrimitive;
+        meshPrimitive.materialId = materialId;
+        meshPrimitive.indicesAccessorId = accessorIdIndices[accessorCount];
+        meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions[accessorCount];
+
+        // Construct a Mesh and add the MeshPrimitive as a child
+        Microsoft::glTF::Mesh mesh;
+
+        mesh.name = gltfModel->name;
+
+        mesh.primitives.push_back(std::move(meshPrimitive));
+        // Add it to the Document and store the generated ID
+        auto meshId = document.meshes.Append(std::move(mesh), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        // Construct a Node adding a reference to the Mesh
+        Microsoft::glTF::Node node;
+        node.meshId = meshId;
+        node.name = "LandXML Surface";
+
+        // Add it to the Document and store the generated ID
+        auto nodeId = document.nodes.Append(std::move(node), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        scene.nodes.push_back(nodeId);
+        accessorCount++;
+    }
+
     // Add it to the Document, using a utility method that also sets the Scene as the Document's default
     document.SetDefaultScene(std::move(scene), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty);
 }
 
-void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::filesystem::path& glTFFilename)
+void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, std::filesystem::path& glTFFilename)
 {
     // Pass the absolute path, without the filename, to the stream writer
     auto streamWriter = std::make_unique<StreamWriter>(glTFFilename.parent_path());
@@ -274,11 +303,11 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::
     }
 
     Microsoft::glTF::BufferBuilder bufferBuilder(std::move(resourceWriter));
-    std::string accessorIdIndices, accessorIdPositions;
+    std::vector<std::string> accessorIdIndices, accessorIdPositions;
 
-    AddGLTFMeshBuffers(document, bufferBuilder, accessorIdIndices, accessorIdPositions);
+    AddGLTFMeshBuffers(gltfSurfaceModels, document, bufferBuilder, accessorIdIndices, accessorIdPositions);
 
-    AddGLTFMesh(document, accessorIdIndices, accessorIdPositions);
+    AddGLTFMesh(gltfSurfaceModels, document, accessorIdIndices, accessorIdPositions);
 
     std::string manifest;
 
@@ -305,7 +334,7 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::
     }
     else
     {
-    gltfResourceWriter.WriteExternal(pathFile.u8string(), manifest); // Binary resources have already been written, just need to write the manifest
+        gltfResourceWriter.WriteExternal(pathFile.u8string(), manifest); // Binary resources have already been written, just need to write the manifest
     }
 }
 }

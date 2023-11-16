@@ -107,7 +107,7 @@ namespace LANDXML2GLTF
         return retStat;
     }
 
-    bool LXParser::ParseMaterialTable(XMLNode* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
+    bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
     {
         bool retStat = false;
  
@@ -223,7 +223,7 @@ namespace LANDXML2GLTF
         return retStat;
     }
 
-    bool LXParser::ParseSurface(XMLNode* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface)
+    bool LXParser::ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface)
     {
         bool retStat = true;
 
@@ -261,9 +261,12 @@ namespace LANDXML2GLTF
         LandXMLSurfaceMesh* addToMesh = outLandXMLSurface.m_surfaceMeshes.begin()->second;
 
 
-        // LandXML surface ids start at 1, so add a dummy point so vertex faces ids match point array
-        //LandXMLPoint3D dummyZeroSurfPnt;
-        //outLandXMLSurface.m_surfacePoints.push_back(dummyZeroSurfPnt);
+ 
+        const XMLAttribute* surfaceName = LXSurfaceNode->FindAttribute("name");
+        if (surfaceName)
+        {
+            outLandXMLSurface.m_name = surfaceName->Value();
+        }
 
         XMLElement* LXSurfaceDef = LXSurfaceNode->FirstChildElement("Definition");
 
@@ -362,7 +365,7 @@ namespace LANDXML2GLTF
         return retStat;
     }
 
-    bool LXParser::ParseSurfaceBoundaries(XMLNode* LXSurfaceNode, LandXMLSurface& outLandXMLSurface)
+    bool LXParser::ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface& outLandXMLSurface)
     {
         bool retStat = false;
  

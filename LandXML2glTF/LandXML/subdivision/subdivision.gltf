@@ -1,0 +1,161 @@
+{
+    "asset": {
+        "generator": "LandXML2glTF Converter 1.0",
+        "version": "2.0"
+    },
+    "accessors": [
+        {
+            "bufferView": 0,
+            "componentType": 5125,
+            "count": 3852,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 713,
+            "type": "VEC3",
+            "max": [
+                1539.2889404296875,
+                1081.123291015625,
+                18.288036346435547
+            ],
+            "min": [
+                0.0,
+                0.0,
+                0.0
+            ]
+        },
+        {
+            "bufferView": 2,
+            "componentType": 5125,
+            "count": 15723,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5126,
+            "count": 2716,
+            "type": "VEC3",
+            "max": [
+                1303.576416015625,
+                894.497314453125,
+                357.7036437988281
+            ],
+            "min": [
+                339.93096923828125,
+                153.08676147460938,
+                280.41656494140625
+            ]
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 15408,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 15408,
+            "byteLength": 8556,
+            "target": 34962
+        },
+        {
+            "buffer": 1,
+            "byteOffset": 0,
+            "byteLength": 62892,
+            "target": 34963
+        },
+        {
+            "buffer": 1,
+            "byteOffset": 62892,
+            "byteLength": 32592,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 23964,
+            "uri": "0.bin"
+        },
+        {
+            "byteLength": 95484,
+            "uri": "1.bin"
+        }
+    ],
+    "materials": [
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0,
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0,
+                    1.0,
+                    0.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "doubleSided": true
+        }
+    ],
+    "meshes": [
+        {
+            "name": "EG",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 1
+                    },
+                    "indices": 0,
+                    "material": 0
+                }
+            ]
+        },
+        {
+            "name": "FG",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 3
+                    },
+                    "indices": 2,
+                    "material": 1
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0,
+            "name": "LandXML Surface"
+        },
+        {
+            "mesh": 1,
+            "name": "LandXML Surface"
+        }
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "scene": 0
+}

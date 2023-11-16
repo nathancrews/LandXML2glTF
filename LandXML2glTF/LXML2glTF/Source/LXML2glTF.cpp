@@ -6,11 +6,11 @@ int main(int argc, char* argv[])
 {
     // LandXML-2.0 testing with surface texture materials
     std::filesystem::path LandXMLFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\KYRoad.xml";
-    std::filesystem::path glTFFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\KYRoad.gltf";
+    std::filesystem::path glTFFilename;
 
     // LandXML-1.0 testing without surface texture materials
     //std::filesystem::path LandXMLFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision.xml";
-    //std::filesystem::path glTFFilename = "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision.gltf";
+    //std::filesystem::path glTFFilename;
 
     std::filesystem::path gdalDataPath;
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     if (glTFFilename.empty())
     {
         glTFFilename = LandXMLFilename;
-        glTFFilename.replace_extension("glTF");
+        glTFFilename.replace_extension("gltf");
     }
 
     if (std::filesystem::exists(LandXMLFilename))

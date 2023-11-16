@@ -18,31 +18,41 @@ class OGRSpatialReference;
 
 namespace LANDXML2GLTF
 {
+struct GLTFSurfaceModel
+{
+    std::string name;
 
-    class LANDXML2GLTFDLLAPI LandXMLModel2glTF
-    {
-    public:
+    std::vector<std::string> accessorIdIndices;
+    std::vector<std::string> accessorIdPositions;
 
-        bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
-        bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument);
+    std::vector<float> gltfMeshPoints;
+    std::vector<UINT> gltfMeshIndices;
+    std::vector<std::vector<UINT>> gltfSubMeshIndices;
+};
 
-        void AddGLTFMeshBuffers(Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::string& accessorIdIndices, std::string& accessorIdPositions);
-        void AddGLTFMesh(Microsoft::glTF::Document& document, const std::string& accessorIdIndices, const std::string& accessorIdPositions);
 
-        void WriteGLTFFile(Microsoft::glTF::Document& document, std::filesystem::path& glTFFilename);
+class LANDXML2GLTFDLLAPI LandXMLModel2glTF
+{
+public:
 
-    private:
+    bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
+    bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, std::vector<GLTFSurfaceModel*>& gltfModels);
 
-        double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
-        OGRSpatialReference* m_landXMLSpatialRef = nullptr;
-        OGRCoordinateTransformation* m_wgsTrans = nullptr;
-        tinyxml2::XMLDocument* m_LXDocument = nullptr;
-        LandXMLModel m_landXMLModel;
+    void AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::vector<std::string>& accessorIdIndices, std::vector<std::string>& accessorIdPositions);
+    void AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, const std::vector<std::string>& accessorIdIndices, const std::vector<std::string>& accessorIdPositions);
 
-        std::vector<float> gltfMeshPoints;
-        std::vector<UINT> gltfMeshIndices;
-        std::vector<std::vector<UINT>> gltfSubMeshIndices;
-    };
+    void WriteGLTFFile(Microsoft::glTF::Document& document, std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, std::filesystem::path& glTFFilename);
+
+private:
+
+    double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
+    OGRSpatialReference* m_landXMLSpatialRef = nullptr;
+    OGRCoordinateTransformation* m_wgsTrans = nullptr;
+    tinyxml2::XMLDocument* m_LXDocument = nullptr;
+    LandXMLModel m_landXMLModel;
+
+    std::vector<GLTFSurfaceModel> gltfSurfaceModels;
+};
 
 }
 

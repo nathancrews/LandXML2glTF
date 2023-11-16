@@ -231,31 +231,31 @@ namespace LANDXML2GLTF
 
         // prepare a separate surface mesh for each texture boundary material
 
-        for (LandXMLPolyline LXbp : outLandXMLSurface.m_textureBoundaries)
-        {
-            std::unordered_map<int, LandXMLMaterial>::const_iterator findMatID = inLandXMLMaterials.m_MaterialMap.find(LXbp.m_materialID);
+        //for (LandXMLPolyline LXbp : outLandXMLSurface.m_textureBoundaries)
+        //{
+        //    std::unordered_map<int, LandXMLMaterial>::const_iterator findMatID = inLandXMLMaterials.m_MaterialMap.find(LXbp.m_materialID);
 
-            if (findMatID != inLandXMLMaterials.m_MaterialMap.end())
-            {
-                std::unordered_map<int, LandXMLSurfaceMesh*>::const_iterator findIt = outLandXMLSurface.m_surfaceMeshes.find(LXbp.m_materialID);
+        //    if (findMatID != inLandXMLMaterials.m_MaterialMap.end())
+        //    {
+        //        std::unordered_map<int, LandXMLSurfaceMesh*>::const_iterator findIt = outLandXMLSurface.m_surfaceMeshes.find(LXbp.m_materialID);
 
-                // not found, create a new surface mesh
-                if (findIt == outLandXMLSurface.m_surfaceMeshes.end())
-                {
-                    outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID] = new LandXMLSurfaceMesh();
-                    outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID]->m_materialID = LXbp.m_materialID;
-                    outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID]->m_materialName = inLandXMLMaterials.m_MaterialMap[LXbp.m_materialID].m_name;
-                }
-            }
-        }
+        //        // not found, create a new surface mesh
+        //        if (findIt == outLandXMLSurface.m_surfaceMeshes.end())
+        //        {
+        //            outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID] = new LandXMLSurfaceMesh();
+        //            outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID]->m_materialID = LXbp.m_materialID;
+        //            outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID]->m_materialName = inLandXMLMaterials.m_MaterialMap[LXbp.m_materialID].m_name;
+        //        }
+        //    }
+        //}
 
         // Create a single surface mesh for LandXML-1.0 files
         if (true == outLandXMLSurface.m_surfaceMeshes.empty())
         {
             int matID = inLandXMLMaterials.m_MaterialMap.begin()->first;
-            outLandXMLSurface.m_surfaceMeshes[matID] = new LandXMLSurfaceMesh();
-            outLandXMLSurface.m_surfaceMeshes[matID]->m_materialID = inLandXMLMaterials.m_MaterialMap.begin()->second.m_ID;
-            outLandXMLSurface.m_surfaceMeshes[matID]->m_materialName = inLandXMLMaterials.m_MaterialMap.begin()->second.m_name;
+            outLandXMLSurface.m_surfaceMeshes[0] = new LandXMLSurfaceMesh();
+            outLandXMLSurface.m_surfaceMeshes[0]->m_materialID = inLandXMLMaterials.m_MaterialMap.begin()->second.m_ID;
+            outLandXMLSurface.m_surfaceMeshes[0]->m_materialName = inLandXMLMaterials.m_MaterialMap.begin()->second.m_name;
         }
 
         LandXMLSurfaceMesh* addToMesh = outLandXMLSurface.m_surfaceMeshes.begin()->second;
@@ -281,6 +281,38 @@ namespace LANDXML2GLTF
                 if (ParsePoint3D(LXSurfacePnt, surfPnt))
                 {
                     outLandXMLSurface.m_surfacePoints.push_back(surfPnt);
+
+                    // find min surf coords
+                    if (surfPnt.x < outLandXMLSurface.m_minSurfPoint.x)
+                    {
+                        outLandXMLSurface.m_minSurfPoint.x = surfPnt.x;
+                    }
+
+                    if (surfPnt.y < outLandXMLSurface.m_minSurfPoint.y)
+                    {
+                        outLandXMLSurface.m_minSurfPoint.y = surfPnt.y;
+                    }
+
+                    if (surfPnt.z < outLandXMLSurface.m_minSurfPoint.z)
+                    {
+                        outLandXMLSurface.m_minSurfPoint.z = surfPnt.z;
+                    }
+
+                    // find max surf coords
+                    if (surfPnt.x > outLandXMLSurface.m_maxSurfPoint.x)
+                    {
+                        outLandXMLSurface.m_maxSurfPoint.x = surfPnt.x;
+                    }
+
+                    if (surfPnt.y > outLandXMLSurface.m_maxSurfPoint.y)
+                    {
+                        outLandXMLSurface.m_maxSurfPoint.y = surfPnt.y;
+                    }
+
+                    if (surfPnt.z > outLandXMLSurface.m_maxSurfPoint.z)
+                    {
+                        outLandXMLSurface.m_maxSurfPoint.z = surfPnt.z;
+                    }
                 }
 
                 LXSurfacePnt = LXSurfacePnt->NextSiblingElement("P");
@@ -295,24 +327,24 @@ namespace LANDXML2GLTF
                 {
                     // LandXML surface ids start at 1, reduce point IDs by 1 to make vertex face point ids match zero based surface TIN point array
 
-                    UINT facedPointId1 = surfFace.m_pointIndices[0] - 1;
-                    UINT facedPointId2 = surfFace.m_pointIndices[1] - 1;
-                    UINT facedPointId3 = surfFace.m_pointIndices[2] - 1;
+                    //UINT facedPointId1 = surfFace.m_pointIndices[0] - 1;
+                    //UINT facedPointId2 = surfFace.m_pointIndices[1] - 1;
+                    //UINT facedPointId3 = surfFace.m_pointIndices[2] - 1;
 
-                    LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
-                    LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];
-                    LandXMLPoint3D p3 = outLandXMLSurface.m_surfacePoints[facedPointId3];
+                    //LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
+                    //LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];
+                    //LandXMLPoint3D p3 = outLandXMLSurface.m_surfacePoints[facedPointId3];
 
-                    LandXMLPoint3D faceCenterPnt(((p1.x + p2.x + p3.x) / 3), ((p1.y + p2.y + p3.y) / 3), ((p1.z + p2.z + p3.z) / 3));
+                    //LandXMLPoint3D faceCenterPnt(((p1.x + p2.x + p3.x) / 3), ((p1.y + p2.y + p3.y) / 3), ((p1.z + p2.z + p3.z) / 3));
 
-                    for (LandXMLPolyline LXbp : outLandXMLSurface.m_textureBoundaries)
-                    {
-                        if (MathHelper::PointInPolygon(faceCenterPnt, LXbp.m_polylinePoints))
-                        {
-                            addToMesh = outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID];
-                            break;
-                        }
-                    }
+                    //for (LandXMLPolyline LXbp : outLandXMLSurface.m_textureBoundaries)
+                    //{
+                    //    if (MathHelper::PointInPolygon(faceCenterPnt, LXbp.m_polylinePoints))
+                    //    {
+                    //        addToMesh = outLandXMLSurface.m_surfaceMeshes[LXbp.m_materialID];
+                    //        break;
+                    //    }
+                    //}
 
                     if (addToMesh)
                     {
@@ -436,9 +468,9 @@ namespace LANDXML2GLTF
 
         if (pointYXZArray.size() >= 3)
         {
-            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[0].c_str()));
-            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[1].c_str()));
-            outReturnFace.m_pointIndices.push_back(std::atof(pointYXZArray[2].c_str()));
+            outReturnFace.m_pointIndices.push_back(std::atoi(pointYXZArray[0].c_str()));
+            outReturnFace.m_pointIndices.push_back(std::atoi(pointYXZArray[1].c_str()));
+            outReturnFace.m_pointIndices.push_back(std::atoi(pointYXZArray[2].c_str()));
         }
 
         return (outReturnFace.m_pointIndices.size() >= 3);

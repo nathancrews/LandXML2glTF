@@ -68,7 +68,7 @@ struct LANDXML2GLTFDLLAPI LandXMLPolyline
 
 struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
 {
-    std::vector<unsigned int> m_pointIndices;
+    std::vector<UINT> m_pointIndices;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
@@ -81,6 +81,18 @@ struct LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
 
 struct LANDXML2GLTFDLLAPI LandXMLSurface
 {
+    LandXMLSurface()
+    {
+        m_minSurfPoint.x = DBL_MAX;
+        m_minSurfPoint.y = DBL_MAX;
+        m_minSurfPoint.z = DBL_MAX;
+
+        m_maxSurfPoint.x = DBL_MIN;
+        m_maxSurfPoint.y = DBL_MIN;
+        m_maxSurfPoint.z = DBL_MIN;
+
+    }
+
     ~LandXMLSurface()
     {
         for (int j = 0; j < m_surfaceMeshes.size(); j++)
@@ -91,6 +103,9 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
 
     std::string m_name;
     std::string m_description;
+
+    LandXMLPoint3D m_minSurfPoint;
+    LandXMLPoint3D m_maxSurfPoint;
 
     std::vector<LandXMLPoint3D> m_surfacePoints;
     std::list<LandXMLPolyline> m_textureBoundaries;

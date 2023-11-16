@@ -78,11 +78,19 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
         {
             std::vector<float> glpnt1(3U);
 
-            if (m_wgsTrans)
-            {
-                m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
-                lxPnt.z = lxPnt.z * m_unitConversionToWG84;
-            }
+            //if (m_wgsTrans)
+            //{
+            //    m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
+            //    lxPnt.z = lxPnt.z * m_unitConversionToWG84;
+            //}
+
+            lxPnt.x -= LXSurf->m_minSurfPoint.x;
+            lxPnt.y -= LXSurf->m_minSurfPoint.y;
+            lxPnt.z -= LXSurf->m_minSurfPoint.z;
+
+            lxPnt.x = lxPnt.x * m_unitConversionToWG84;
+            lxPnt.y = lxPnt.y * m_unitConversionToWG84;
+            lxPnt.z = lxPnt.z * m_unitConversionToWG84;
 
             MathHelper::CopyLXTOGLTFPoint(lxPnt, glpnt1);
 
@@ -95,15 +103,34 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
         }
 
-        for (int m = 0; m < LXSurf->m_surfaceMeshes.size(); m++)
+
+        int m = 0;
+        std::vector<UINT> minValues(3U, UINT_MAX);
+        std::vector<UINT> maxValues(3U, 0U);
+
+        const size_t faceCount = LXSurf->m_surfaceMeshes[m]->m_surfaceFaces.size();
+
+        // Accessor min/max properties must be set for vertex position data so calculate them here
+        for (size_t i = 0U, j = 0U; i < faceCount; ++i, j = (i % 3U))
         {
+            minValues[j] = std::min<UINT>(LXSurf->m_surfaceMeshes[m]->m_surfaceFaces[i].m_pointIndices[j], minValues[j]);
+            maxValues[j] = std::max<UINT>(LXSurf->m_surfaceMeshes[m]->m_surfaceFaces[i].m_pointIndices[j], maxValues[j]);
+        }
+
+//        for (int m = 1; m < LXSurf->m_surfaceMeshes.size(); m++)
+        {
+            
             if (LXSurf->m_surfaceMeshes[m])
             {
                 for (LandXMLSurfaceFace lxFace : LXSurf->m_surfaceMeshes[m]->m_surfaceFaces)
                 {
-                    gltfMeshIndices.push_back(lxFace.m_pointIndices[0]);
-                    gltfMeshIndices.push_back(lxFace.m_pointIndices[1]);
-                    gltfMeshIndices.push_back(lxFace.m_pointIndices[2]);
+                    UINT a = lxFace.m_pointIndices[0];
+                    UINT b = lxFace.m_pointIndices[1];
+                    UINT c = lxFace.m_pointIndices[2];
+
+                    gltfMeshIndices.push_back(a - 1);
+                    gltfMeshIndices.push_back(b - 1);
+                    gltfMeshIndices.push_back(c - 1);
                 }
 
                 gltfSubMeshIndices.push_back(gltfMeshIndices);
@@ -137,23 +164,11 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(Microsoft::glTF::Document& document, 
     // BufferBuilder will automatically reference
     bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
 
-    // Add an Accessor for the indices
-    //std::vector<uint16_t> indices = {
-    //    0U, 1U, 2U
-    //};
-
     // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
     accessorIdIndices = bufferBuilder.AddAccessor(gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id;
 
     // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
     bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
-
-    // Add an Accessor for the positions
-    //std::vector<float> positions = {
-    //    0.0f, 0.0f, 0.0f, // Vertex 0
-    //    1.0f, 0.0f, 0.0f, // Vertex 1
-    //    0.0f, 1.0f, 0.0f  // Vertex 2
-    //};
 
     std::vector<float> minValues(3U, FLT_MAX);
     std::vector<float> maxValues(3U, FLT_MIN);
@@ -189,7 +204,7 @@ void LandXMLModel2glTF::AddGLTFMesh(Microsoft::glTF::Document& document, const s
 
     // Construct a Material
     Microsoft::glTF::Material material;
-    material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 0.0f, 1.0f, 1.0f);
+    material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
     material.metallicRoughness.metallicFactor = 0.2f;
     material.metallicRoughness.roughnessFactor = 0.4f;
     material.doubleSided = true;
@@ -284,14 +299,14 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::
 
     auto& gltfResourceWriter = bufferBuilder.GetResourceWriter();
 
-    //if (auto glbResourceWriter = dynamic_cast<Microsoft::glTF::GLBResourceWriter*>(&gltfResourceWriter))
-    //{
-    //    glbResourceWriter->Flush(manifest, pathFile.u8string()); // A GLB container isn't created until the GLBResourceWriter::Flush member function is called
-    //}
-    //else
-    //{
+    if (auto glbResourceWriter = dynamic_cast<Microsoft::glTF::GLBResourceWriter*>(&gltfResourceWriter))
+    {
+        glbResourceWriter->Flush(manifest, pathFile.u8string()); // A GLB container isn't created until the GLBResourceWriter::Flush member function is called
+    }
+    else
+    {
     gltfResourceWriter.WriteExternal(pathFile.u8string(), manifest); // Binary resources have already been written, just need to write the manifest
-    //}
+    }
 }
 }
 

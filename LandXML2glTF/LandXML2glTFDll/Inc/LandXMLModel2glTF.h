@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "Models/LandXML.h"
 #include "Writers/GLTFWriter.h"
+#include "Helpers/MathHelper.h"
 #include <iostream>
 #include <IStreamWriter.h>
 #include "tinyxml2.h"
@@ -32,7 +33,7 @@ namespace LANDXML2GLTF
 
     private:
 
-        double m_unitConversionToWG84 = 1.0; // no conversion if LandXML linearUnit is meters
+        double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
         OGRSpatialReference* m_landXMLSpatialRef = nullptr;
         OGRCoordinateTransformation* m_wgsTrans = nullptr;
         tinyxml2::XMLDocument* m_LXDocument = nullptr;

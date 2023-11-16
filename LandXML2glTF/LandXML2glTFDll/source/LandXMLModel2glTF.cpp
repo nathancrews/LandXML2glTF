@@ -57,7 +57,8 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     Microsoft::glTF::Document glTFDoc;
     std::vector<GLTFSurfaceModel*> gltfSurfModels;
 
-    glTFDoc.asset.generator = "LandXML2glTF Converter 1.0";
+    glTFDoc.asset.generator = "LandXML to glTF 2.0 Converter, version 1.0";
+    glTFDoc.asset.copyright = "Nathan Crews";
 
     CreateGLTFModel(m_landXMLModel, glTFDoc, gltfSurfModels);
 
@@ -128,40 +129,43 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
                 gltfModel->gltfMeshPoints.push_back(glpnt1[1]);
                 gltfModel->gltfMeshPoints.push_back(glpnt1[2]);
             }
-
         }
 
         int m = 0;
         std::vector<UINT> minValues(3U, UINT_MAX);
         std::vector<UINT> maxValues(3U, 0U);
 
-        const size_t faceCount = LXSurf->m_surfaceMeshes[m]->m_surfaceFaces.size();
+        const size_t faceCount = LXSurf->m_textureBoundaries.front().m_surfaceFaces.size();
 
         // Accessor min/max properties must be set for vertex position data so calculate them here
         for (size_t i = 0U, j = 0U; i < faceCount; ++i, j = (i % 3U))
         {
-            minValues[j] = std::min<UINT>(LXSurf->m_surfaceMeshes[m]->m_surfaceFaces[i].m_pointIndices[j], minValues[j]);
-            maxValues[j] = std::max<UINT>(LXSurf->m_surfaceMeshes[m]->m_surfaceFaces[i].m_pointIndices[j], maxValues[j]);
+            minValues[j] = std::min<UINT>(LXSurf->m_textureBoundaries.front().m_surfaceFaces[i].m_pointIndices[j], minValues[j]);
+            maxValues[j] = std::max<UINT>(LXSurf->m_textureBoundaries.front().m_surfaceFaces[i].m_pointIndices[j], maxValues[j]);
         }
 
-        //        for (int m = 1; m < LXSurf->m_surfaceMeshes.size(); m++)
+        int txCount = 0;
+        for (auto txb = LXSurf->m_textureBoundaries.begin(); txb != LXSurf->m_textureBoundaries.end(); txb++)
         {
+            std::vector<UINT> localgltfMeshIndices;
 
-            if (LXSurf->m_surfaceMeshes[m])
+            for (LandXMLSurfaceFace lxFace : txb->m_surfaceFaces)
             {
-                for (LandXMLSurfaceFace lxFace : LXSurf->m_surfaceMeshes[m]->m_surfaceFaces)
-                {
-                    UINT a = lxFace.m_pointIndices[0];
-                    UINT b = lxFace.m_pointIndices[1];
-                    UINT c = lxFace.m_pointIndices[2];
+                UINT a = lxFace.m_pointIndices[0] - 1;
+                UINT b = lxFace.m_pointIndices[1] - 1;
+                UINT c = lxFace.m_pointIndices[2] - 1;
 
-                    gltfModel->gltfMeshIndices.push_back(a - 1);
-                    gltfModel->gltfMeshIndices.push_back(b - 1);
-                    gltfModel->gltfMeshIndices.push_back(c - 1);
-                }
+                localgltfMeshIndices.push_back(a);
+                localgltfMeshIndices.push_back(b);
+                localgltfMeshIndices.push_back(c);
 
-                gltfModel->gltfSubMeshIndices.push_back(gltfModel->gltfMeshIndices);
+                gltfModel->gltfMeshIndices.push_back(a);
+                gltfModel->gltfMeshIndices.push_back(b);
+                gltfModel->gltfMeshIndices.push_back(c);
             }
+
+            gltfModel->gltfSubMeshIndices[txCount] = localgltfMeshIndices;
+            txCount++;
         }
 
         gltfSurfaceModels.push_back(gltfModel);
@@ -190,14 +194,8 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
         // created by this BufferBuilder will automatically reference
         bufferBuilder.AddBuffer(bufferId);
 
-        // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
-        // data) - it will be the 'current' BufferView that all the Accessors created by this
-        // BufferBuilder will automatically reference
-        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
 
-        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
-        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
-
+        // ******* Surface Points ***************************************************************
         // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
@@ -214,6 +212,23 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
         }
 
         accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
+        // ***************************************************************************************
+
+
+        // ******* Sub Surface Mesh Indices*******************************************************
+        // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
+        // data) - it will be the 'current' BufferView that all the Accessors created by this
+        // BufferBuilder will automatically reference
+        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
+
+        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
+        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+
+
+//        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfSubMeshIndices[9], {Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT}).id);
+
+        // ***************************************************************************************
+    
     }
 
     // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to

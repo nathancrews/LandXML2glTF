@@ -79,6 +79,11 @@ struct LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
     std::vector<LandXMLSurfaceFace> m_surfaceFaces;
 };
 
+struct LANDXML2GLTFDLLAPI LandXMLTextureBoundary : public LandXMLPolyline
+{
+    std::vector<LandXMLSurfaceFace> m_surfaceFaces;;
+};
+
 struct LANDXML2GLTFDLLAPI LandXMLSurface
 {
     LandXMLSurface()
@@ -90,16 +95,9 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
         m_maxSurfPoint.x = DBL_MIN;
         m_maxSurfPoint.y = DBL_MIN;
         m_maxSurfPoint.z = DBL_MIN;
-
     }
 
-    ~LandXMLSurface()
-    {
-        for (int j = 0; j < m_surfaceMeshes.size(); j++)
-        {
-            delete m_surfaceMeshes[j];
-        }
-    }
+    ~LandXMLSurface(){}
 
     std::string m_name;
     std::string m_description;
@@ -108,8 +106,8 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
     LandXMLPoint3D m_maxSurfPoint;
 
     std::vector<LandXMLPoint3D> m_surfacePoints;
-    std::list<LandXMLPolyline> m_textureBoundaries;
-    std::unordered_map<int,LandXMLSurfaceMesh*> m_surfaceMeshes;
+    std::list<LandXMLTextureBoundary> m_textureBoundaries;
+//    std::unordered_map<int,LandXMLSurfaceMesh*> m_surfaceMeshes;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLUnits

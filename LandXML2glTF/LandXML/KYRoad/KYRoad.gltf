@@ -1,17 +1,12 @@
 {
     "asset": {
-        "generator": "LandXML2glTF Converter 1.0",
+        "copyright": "Nathan Crews",
+        "generator": "LandXML to glTF 2.0 Converter, version 1.0",
         "version": "2.0"
     },
     "accessors": [
         {
             "bufferView": 0,
-            "componentType": 5125,
-            "count": 210753,
-            "type": "SCALAR"
-        },
-        {
-            "bufferView": 1,
             "componentType": 5126,
             "count": 35367,
             "type": "VEC3",
@@ -25,25 +20,31 @@
                 0.0,
                 0.0
             ]
+        },
+        {
+            "bufferView": 1,
+            "componentType": 5125,
+            "count": 200121,
+            "type": "SCALAR"
         }
     ],
     "bufferViews": [
         {
             "buffer": 0,
             "byteOffset": 0,
-            "byteLength": 843012,
-            "target": 34963
+            "byteLength": 424404,
+            "target": 34962
         },
         {
             "buffer": 0,
-            "byteOffset": 843012,
-            "byteLength": 424404,
-            "target": 34962
+            "byteOffset": 424404,
+            "byteLength": 800484,
+            "target": 34963
         }
     ],
     "buffers": [
         {
-            "byteLength": 1267416,
+            "byteLength": 1224888,
             "uri": "0.bin"
         }
     ],
@@ -68,9 +69,9 @@
             "primitives": [
                 {
                     "attributes": {
-                        "POSITION": 1
+                        "POSITION": 0
                     },
-                    "indices": 0,
+                    "indices": 1,
                     "material": 0
                 }
             ]

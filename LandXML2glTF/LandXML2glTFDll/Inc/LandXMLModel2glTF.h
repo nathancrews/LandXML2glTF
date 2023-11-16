@@ -27,7 +27,7 @@ struct GLTFSurfaceModel
 
     std::vector<float> gltfMeshPoints;
     std::vector<UINT> gltfMeshIndices;
-    std::vector<std::vector<UINT>> gltfSubMeshIndices;
+    std::unordered_map<UINT, std::vector<UINT>> gltfSubMeshIndices;
 };
 
 

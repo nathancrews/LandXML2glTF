@@ -36,7 +36,7 @@ struct LANDXML2GLTFDLLAPI LandXMLMaterial
     std::string m_name;
     int m_ID = 0;
     std::string m_description;
-    std::string m_RGBColorStr;
+    std::string m_RGBColorStr = "0,255,0";
     std::string m_layerName;
     std::string m_textureName;
     std::string m_lineType;
@@ -107,7 +107,6 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
 
     std::vector<LandXMLPoint3D> m_surfacePoints;
     std::list<LandXMLTextureBoundary> m_textureBoundaries;
-//    std::unordered_map<int,LandXMLSurfaceMesh*> m_surfaceMeshes;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLUnits

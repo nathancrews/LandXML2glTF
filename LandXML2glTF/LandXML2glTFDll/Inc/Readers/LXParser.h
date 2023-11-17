@@ -18,6 +18,9 @@ namespace LANDXML2GLTF
         bool ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc);
         bool ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc);
 
+        // converts an LandXML RGB color string to RGB float values
+        static void LXColor2RGB(const std::string& colorValueStr, float& R, float& G, float& B);
+
     private:
 
         bool ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials);

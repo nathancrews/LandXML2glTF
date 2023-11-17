@@ -85,6 +85,7 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
     double sceneOriginOffsetY = 0.0;
     double sceneOriginOffsetZ = 0.0;
 
+    // Set the scene origin offset value
     if (landXMLModel.m_landxmlSurfaces.front())
     {
         sceneOriginOffsetX = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.x;
@@ -103,6 +104,32 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
         gltfModel->name = LXSurf->m_name;
 
+        // build the GLTF material table
+        for (auto LXMat = landXMLModel.m_landXMLMaterials.m_MaterialMap.begin(); LXMat != landXMLModel.m_landXMLMaterials.m_MaterialMap.end(); LXMat++)
+        {
+            GLTFSurfaceMaterial matToAdd;// = new GLTFSurfaceMaterial();
+            unsigned int idToUse = 0;
+
+            if (LXMat->second.m_ID > 0)
+            {
+                idToUse = LXMat->second.m_ID - 1;
+            }
+
+            char idAsChar[4] = { 0,0,0,0 };
+            sprintf(idAsChar, "%d", idToUse);
+
+            matToAdd.m_material.id = idAsChar;
+            matToAdd.m_material.name = LXMat->second.m_name;
+
+            LXParser::LXColor2RGB(LXMat->second.m_RGBColorStr, matToAdd.m_color.r, matToAdd.m_color.g, matToAdd.m_color.b);
+            matToAdd.m_color.a = 1.0f;
+
+            matToAdd.m_material.metallicRoughness.baseColorFactor = matToAdd.m_color;
+
+            gltfModel->gltfSubMeshMaterials.push_back(matToAdd);
+        }
+
+        // build the surface meshes
         for (LandXMLPoint3D lxPnt : LXSurf->m_surfacePoints)
         {
             std::vector<float> glpnt1(3U);
@@ -158,13 +185,11 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
                 localgltfMeshIndices.push_back(a);
                 localgltfMeshIndices.push_back(b);
                 localgltfMeshIndices.push_back(c);
-
-                gltfModel->gltfMeshIndices.push_back(a);
-                gltfModel->gltfMeshIndices.push_back(b);
-                gltfModel->gltfMeshIndices.push_back(c);
             }
 
-            gltfModel->gltfSubMeshIndices[txCount] = localgltfMeshIndices;
+            gltfModel->gltfSubMeshIndexIDs[txCount] = localgltfMeshIndices;
+            gltfModel->gltfSubMeshIndicesMaterialMap[txCount] = (txb->m_materialID - 1);
+
             txCount++;
         }
 
@@ -194,7 +219,6 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
         // created by this BufferBuilder will automatically reference
         bufferBuilder.AddBuffer(bufferId);
 
-
         // ******* Surface Points ***************************************************************
         // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
@@ -214,21 +238,25 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
         accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
         // ***************************************************************************************
 
+        // single buffer 
+        // bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
+        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
+        // accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
 
         // ******* Sub Surface Mesh Indices*******************************************************
-        // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
-        // data) - it will be the 'current' BufferView that all the Accessors created by this
-        // BufferBuilder will automatically reference
-        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
+        for (unsigned int acc = 0; acc < gltfModel->gltfSubMeshIndexIDs.size(); acc++)
+        {
+            // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
+            // data) - it will be the 'current' BufferView that all the Accessors created by this
+            // BufferBuilder will automatically reference
 
-        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
-        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+            bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
 
-
-//        accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfSubMeshIndices[9], {Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT}).id);
-
+            // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
+            accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfSubMeshIndexIDs[acc], { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+        }
         // ***************************************************************************************
-    
+
     }
 
     // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to
@@ -239,33 +267,48 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
 void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, const std::vector<std::string>& accessorIdIndices, const std::vector<std::string>& accessorIdPositions)
 {
     Microsoft::glTF::Scene scene;
-    int accessorCount = 0;
+    unsigned int surfaceCount = 0;
+    static bool doneOnce = false;
 
     for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
     {
-        // Construct a Material
-        Microsoft::glTF::Material material;
-        material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
-        material.metallicRoughness.metallicFactor = 0.2f;
-        material.metallicRoughness.roughnessFactor = 0.4f;
-        material.doubleSided = true;
+        std::vector<Microsoft::glTF::MeshPrimitive> surfaceSubMeshes;
 
-        // Add it to the Document and store the generated ID
-        auto materialId = document.materials.Append(std::move(material), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+        for (unsigned int acc = 0; acc < gltfModel->gltfSubMeshIndexIDs.size(); acc++)
+        {
+            Microsoft::glTF::MeshPrimitive meshPrimitive;
 
-        Microsoft::glTF::MeshPrimitive meshPrimitive;
-        meshPrimitive.materialId = materialId;
-        meshPrimitive.indicesAccessorId = accessorIdIndices[accessorCount];
-        meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions[accessorCount];
+            meshPrimitive.materialId = gltfModel->gltfSubMeshMaterials[gltfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
+            meshPrimitive.indicesAccessorId = accessorIdIndices[acc];
+            meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions[surfaceCount];
+
+            surfaceSubMeshes.push_back(meshPrimitive);
+        }
 
         // Construct a Mesh and add the MeshPrimitive as a child
         Microsoft::glTF::Mesh mesh;
-
         mesh.name = gltfModel->name;
 
-        mesh.primitives.push_back(std::move(meshPrimitive));
+        for (Microsoft::glTF::MeshPrimitive& surfaceSubMesh : surfaceSubMeshes)
+        {
+            mesh.primitives.push_back(std::move(surfaceSubMesh));
+        }
+
         // Add it to the Document and store the generated ID
         auto meshId = document.meshes.Append(std::move(mesh), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        // Add Materials from LandXML material table ONCE
+        if (!doneOnce)
+        {
+            for (auto gltfMat = gltfModel->gltfSubMeshMaterials.begin(); gltfMat != gltfModel->gltfSubMeshMaterials.end(); gltfMat++)
+            {
+                // Add to the Document and store the generated ID
+                document.materials.Append(std::move(gltfMat->m_material), Microsoft::glTF::AppendIdPolicy::ThrowOnEmpty);
+            }
+
+            doneOnce = true;
+        }
+
 
         // Construct a Node adding a reference to the Mesh
         Microsoft::glTF::Node node;
@@ -276,7 +319,8 @@ void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceM
         auto nodeId = document.nodes.Append(std::move(node), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
 
         scene.nodes.push_back(nodeId);
-        accessorCount++;
+
+        surfaceCount++;
     }
 
     // Add it to the Document, using a utility method that also sets the Scene as the Document's default

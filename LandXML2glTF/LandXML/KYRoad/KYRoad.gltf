@@ -24,6 +24,60 @@
         {
             "bufferView": 1,
             "componentType": 5125,
+            "count": 6,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 2,
+            "componentType": 5125,
+            "count": 123,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5125,
+            "count": 378,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 4,
+            "componentType": 5125,
+            "count": 414,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 5,
+            "componentType": 5125,
+            "count": 816,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 6,
+            "componentType": 5125,
+            "count": 132,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 7,
+            "componentType": 5125,
+            "count": 954,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 8,
+            "componentType": 5125,
+            "count": 2121,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 9,
+            "componentType": 5125,
+            "count": 5688,
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 10,
+            "componentType": 5125,
             "count": 200121,
             "type": "SCALAR"
         }
@@ -38,13 +92,67 @@
         {
             "buffer": 0,
             "byteOffset": 424404,
+            "byteLength": 24,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 424428,
+            "byteLength": 492,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 424920,
+            "byteLength": 1512,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 426432,
+            "byteLength": 1656,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 428088,
+            "byteLength": 3264,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 431352,
+            "byteLength": 528,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 431880,
+            "byteLength": 3816,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 435696,
+            "byteLength": 8484,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 444180,
+            "byteLength": 22752,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 466932,
             "byteLength": 800484,
             "target": 34963
         }
     ],
     "buffers": [
         {
-            "byteLength": 1224888,
+            "byteLength": 1267416,
             "uri": "0.bin"
         }
     ],
@@ -60,6 +168,63 @@
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
+            "name": "just add bison",
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "name": "ashphalt_1",
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.49803921580314636,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "name": "concrete_bare_2155_2631_small",
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0,
+                    0.6470588445663452,
+                    0.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "name": "grass_1",
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "name": "rock10",
             "doubleSided": true
         }
     ],
@@ -72,6 +237,69 @@
                         "POSITION": 0
                     },
                     "indices": 1,
+                    "material": 2
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 2,
+                    "material": 3
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 3,
+                    "material": 3
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 4,
+                    "material": 3
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 5,
+                    "material": 4
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 6,
+                    "material": 3
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 7,
+                    "material": 4
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 8,
+                    "material": 3
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 9,
+                    "material": 1
+                },
+                {
+                    "attributes": {
+                        "POSITION": 0
+                    },
+                    "indices": 10,
                     "material": 0
                 }
             ]

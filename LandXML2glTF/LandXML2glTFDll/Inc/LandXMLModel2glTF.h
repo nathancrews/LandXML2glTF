@@ -18,6 +18,22 @@ class OGRSpatialReference;
 
 namespace LANDXML2GLTF
 {
+
+struct GLTFSurfaceMaterial
+{
+    GLTFSurfaceMaterial() 
+    {
+        m_material.id = "0";
+        m_material.metallicRoughness.baseColorFactor = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
+        m_material.metallicRoughness.metallicFactor = 0.2f;
+        m_material.metallicRoughness.roughnessFactor = 0.4f;
+        m_material.doubleSided = true;
+    }
+
+    Microsoft::glTF::Color4 m_color = Microsoft::glTF::Color4(0.0f, 1.0f, 0.0f, 1.0f);
+    Microsoft::glTF::Material m_material;
+};
+
 struct GLTFSurfaceModel
 {
     std::string name;
@@ -26,8 +42,9 @@ struct GLTFSurfaceModel
     std::vector<std::string> accessorIdPositions;
 
     std::vector<float> gltfMeshPoints;
-    std::vector<UINT> gltfMeshIndices;
-    std::unordered_map<UINT, std::vector<UINT>> gltfSubMeshIndices;
+    std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
+    std::unordered_map<unsigned int, unsigned int> gltfSubMeshIndicesMaterialMap;
+    std::unordered_map<unsigned int, std::vector<unsigned int>> gltfSubMeshIndexIDs;
 };
 
 

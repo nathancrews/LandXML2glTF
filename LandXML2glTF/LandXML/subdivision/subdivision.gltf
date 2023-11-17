@@ -7,12 +7,6 @@
     "accessors": [
         {
             "bufferView": 0,
-            "componentType": 5125,
-            "count": 3852,
-            "type": "SCALAR"
-        },
-        {
-            "bufferView": 1,
             "componentType": 5126,
             "count": 713,
             "type": "VEC3",
@@ -28,13 +22,13 @@
             ]
         },
         {
-            "bufferView": 2,
+            "bufferView": 1,
             "componentType": 5125,
-            "count": 15723,
+            "count": 3852,
             "type": "SCALAR"
         },
         {
-            "bufferView": 3,
+            "bufferView": 2,
             "componentType": 5126,
             "count": 2716,
             "type": "VEC3",
@@ -48,32 +42,38 @@
                 153.08676147460938,
                 280.41656494140625
             ]
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5125,
+            "count": 15723,
+            "type": "SCALAR"
         }
     ],
     "bufferViews": [
         {
             "buffer": 0,
             "byteOffset": 0,
-            "byteLength": 15408,
-            "target": 34963
-        },
-        {
-            "buffer": 0,
-            "byteOffset": 15408,
             "byteLength": 8556,
             "target": 34962
         },
         {
-            "buffer": 1,
-            "byteOffset": 0,
-            "byteLength": 62892,
+            "buffer": 0,
+            "byteOffset": 8556,
+            "byteLength": 15408,
             "target": 34963
         },
         {
             "buffer": 1,
-            "byteOffset": 62892,
+            "byteOffset": 0,
             "byteLength": 32592,
             "target": 34962
+        },
+        {
+            "buffer": 1,
+            "byteOffset": 32592,
+            "byteLength": 62892,
+            "target": 34963
         }
     ],
     "buffers": [
@@ -98,19 +98,7 @@
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
-            "doubleSided": true
-        },
-        {
-            "pbrMetallicRoughness": {
-                "baseColorFactor": [
-                    0.0,
-                    1.0,
-                    0.0,
-                    1.0
-                ],
-                "metallicFactor": 0.20000000298023224,
-                "roughnessFactor": 0.4000000059604645
-            },
+            "name": "grass_1",
             "doubleSided": true
         }
     ],
@@ -120,9 +108,9 @@
             "primitives": [
                 {
                     "attributes": {
-                        "POSITION": 1
+                        "POSITION": 0
                     },
-                    "indices": 0,
+                    "indices": 1,
                     "material": 0
                 }
             ]
@@ -132,10 +120,10 @@
             "primitives": [
                 {
                     "attributes": {
-                        "POSITION": 3
+                        "POSITION": 2
                     },
-                    "indices": 2,
-                    "material": 1
+                    "indices": 3,
+                    "material": 0
                 }
             ]
         }

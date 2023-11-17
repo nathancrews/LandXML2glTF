@@ -526,5 +526,32 @@ void LXParser::SplitCData(XMLNode* LXPointList, std::vector<std::string>& outPoi
     outPointYXZArray = pointYXZArray;
 }
 
+void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G, float& B)
+{
+    char tokBuffer[MAX_PATH] = { 0 };
+    strcpy(tokBuffer, colorValueStr.c_str());
+
+    char* nextNum = nullptr;
+    float r = 0.0, g = 0.0, b = 0.0;
+
+    if (strlen(tokBuffer) > 1)
+    {
+        nextNum = strtok(tokBuffer, ",");
+        if (nextNum)
+            r = atof(nextNum);
+
+        nextNum = strtok(NULL, ",");
+        if (nextNum)
+            g = atof(nextNum);
+
+        nextNum = strtok(NULL, ",");
+        if (nextNum)
+            b = atof(nextNum);
+    }
+
+    R = (r / 255.0);
+    G = (g / 255.0);
+    B = (b / 255.0);
+}
 
 }

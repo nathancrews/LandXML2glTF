@@ -38,9 +38,6 @@ struct GLTFSurfaceModel
 {
     std::string name;
 
-    std::vector<std::string> accessorIdIndices;
-    std::vector<std::string> accessorIdPositions;
-
     std::vector<float> gltfMeshPoints;
     std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
     std::unordered_map<unsigned int, unsigned int> gltfSubMeshIndicesMaterialMap;

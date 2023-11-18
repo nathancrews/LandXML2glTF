@@ -201,6 +201,7 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
 void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::vector<std::string>& accessorIdIndices, std::vector<std::string>& accessorIdPositions)
 {
+    unsigned int surfaceCount = 0;
 
     for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
     {
@@ -279,7 +280,7 @@ void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceM
             Microsoft::glTF::MeshPrimitive meshPrimitive;
 
             meshPrimitive.materialId = gltfModel->gltfSubMeshMaterials[gltfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
-            meshPrimitive.indicesAccessorId = accessorIdIndices[acc];
+            meshPrimitive.indicesAccessorId = accessorIdIndices[acc + surfaceCount];
             meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions[surfaceCount];
 
             surfaceSubMeshes.push_back(meshPrimitive);

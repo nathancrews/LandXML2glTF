@@ -4,7 +4,6 @@
 #include "Models/LandXML.h"
 #include "Writers/GLTFWriter.h"
 #include "Helpers/MathHelper.h"
-#include <iostream>
 #include <IStreamWriter.h>
 #include "tinyxml2.h"
 
@@ -40,6 +39,9 @@ struct GLTFSurfaceModel
 
     std::vector<float> gltfMeshPoints;
     std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
+    std::vector<std::string> accessorIdPositions;
+    std::vector<std::string> accessorIdIndices;
+
     std::unordered_map<unsigned int, unsigned int> gltfSubMeshIndicesMaterialMap;
     std::unordered_map<unsigned int, std::vector<unsigned int>> gltfSubMeshIndexIDs;
 };
@@ -52,8 +54,9 @@ public:
     bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
     bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, std::vector<GLTFSurfaceModel*>& gltfModels);
 
-    void AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::vector<std::string>& accessorIdIndices, std::vector<std::string>& accessorIdPositions);
-    void AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, const std::vector<std::string>& accessorIdIndices, const std::vector<std::string>& accessorIdPositions);
+    void AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+
+    void AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document);
 
     void WriteGLTFFile(Microsoft::glTF::Document& document, std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, std::filesystem::path& glTFFilename);
 

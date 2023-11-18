@@ -27,28 +27,22 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 
 struct LANDXML2GLTFDLLAPI LandXMLMaterial
 {
-    LandXMLMaterial() {};
-    ~LandXMLMaterial()
-    {
-
-    };
-
-    std::string m_name;
     int m_ID = 0;
+    double m_textureImageScale = 1.0;
+    double m_symbolXScale = 1.0;
+    double m_symbolYScale = 1.0;
+    double m_symbolZScale = 1.0;
+    double m_symbolRotation = 0.0;
+    std::string m_name;
     std::string m_description;
     std::string m_RGBColorStr = "0,255,0";
     std::string m_layerName;
     std::string m_textureName;
     std::string m_lineType;
     std::string m_textureImageRef;
-    double m_textureImageScale = 1.0;
     std::string m_textureImageWorldFile;
     std::string m_textureImageWKT;
     std::string m_symbolReferenceStr;
-    double m_symbolXScale = 1.0;
-    double m_symbolYScale = 1.0;
-    double m_symbolZScale = 1.0;
-    double m_symbolRotation = 0.0;
     std::string m_textureImageHexString;
 };
 
@@ -59,11 +53,12 @@ struct LANDXML2GLTFDLLAPI LandXMLMaterialTable
 
 struct LANDXML2GLTFDLLAPI LandXMLPolyline
 {
-    std::string m_name;
     int m_materialID = 0;
+    double m_area = 0.0;
+
+    std::string m_name;
     std::string m_description;
     std::vector<LandXMLPoint3D> m_polylinePoints;
-    double m_area = 0.0;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
@@ -71,17 +66,9 @@ struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
     std::vector<UINT> m_pointIndices;
 };
 
-struct LANDXML2GLTFDLLAPI LandXMLSurfaceMesh
-{
-    int m_materialID = 0;
-    std::string m_materialName;
-
-    std::vector<LandXMLSurfaceFace> m_surfaceFaces;
-};
-
 struct LANDXML2GLTFDLLAPI LandXMLTextureBoundary : public LandXMLPolyline
 {
-    std::vector<LandXMLSurfaceFace> m_surfaceFaces;;
+    std::vector<LandXMLSurfaceFace> m_surfaceFaces;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLSurface

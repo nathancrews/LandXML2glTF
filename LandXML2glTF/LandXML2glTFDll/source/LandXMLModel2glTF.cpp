@@ -34,7 +34,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     {
         m_unitConversionToWG84 = USFT2M;
     }
-    else if (m_landXMLModel.m_units.m_linearUnitString.compare("feet"))
+    else if (m_landXMLModel.m_units.m_linearUnitString.compare("foot"))
     {
         m_unitConversionToWG84 = IFT2M;
     }
@@ -199,10 +199,8 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
     return retVal;
 }
 
-void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder, std::vector<std::string>& accessorIdIndices, std::vector<std::string>& accessorIdPositions)
+void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
-    unsigned int surfaceCount = 0;
-
     for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
     {
         // Create all the resource data (e.g. triangle indices and
@@ -236,15 +234,11 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
             maxValues[j] = std::max<float>(gltfModel->gltfMeshPoints[i], maxValues[j]);
         }
 
-        accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
+        gltfModel->accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
         // ***************************************************************************************
 
-        // single buffer 
-        // bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
-        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
-        // accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfMeshIndices, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
 
-        // ******* Sub Surface Mesh Indices*******************************************************
+        // ******* Sub Surface Mesh Indices *******************************************************
         for (unsigned int acc = 0; acc < gltfModel->gltfSubMeshIndexIDs.size(); acc++)
         {
             // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
@@ -254,7 +248,7 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
             bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
 
             // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
-            accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfSubMeshIndexIDs[acc], { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+            gltfModel->accessorIdIndices.push_back(bufferBuilder.AddAccessor(gltfModel->gltfSubMeshIndexIDs[acc], { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
         }
         // ***************************************************************************************
 
@@ -265,10 +259,9 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfS
     bufferBuilder.Output(document);
 }
 
-void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, const std::vector<std::string>& accessorIdIndices, const std::vector<std::string>& accessorIdPositions)
+void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document)
 {
     Microsoft::glTF::Scene scene;
-    unsigned int surfaceCount = 0;
     static bool doneOnce = false;
 
     for (GLTFSurfaceModel* gltfModel : gltfSurfaceModels)
@@ -280,8 +273,8 @@ void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceM
             Microsoft::glTF::MeshPrimitive meshPrimitive;
 
             meshPrimitive.materialId = gltfModel->gltfSubMeshMaterials[gltfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
-            meshPrimitive.indicesAccessorId = accessorIdIndices[acc + surfaceCount];
-            meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = accessorIdPositions[surfaceCount];
+            meshPrimitive.indicesAccessorId = gltfModel->accessorIdIndices[acc];
+            meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = gltfModel->accessorIdPositions[0];
 
             surfaceSubMeshes.push_back(meshPrimitive);
         }
@@ -310,18 +303,15 @@ void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceM
             doneOnce = true;
         }
 
-
         // Construct a Node adding a reference to the Mesh
         Microsoft::glTF::Node node;
         node.meshId = meshId;
-        node.name = "LandXML Surface";
+        node.name = "LandXML Surface :" + gltfModel->name;
 
         // Add it to the Document and store the generated ID
         auto nodeId = document.nodes.Append(std::move(node), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
 
         scene.nodes.push_back(nodeId);
-
-        surfaceCount++;
     }
 
     // Add it to the Document, using a utility method that also sets the Scene as the Document's default
@@ -363,11 +353,9 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, std::
     }
 
     Microsoft::glTF::BufferBuilder bufferBuilder(std::move(resourceWriter));
-    std::vector<std::string> accessorIdIndices, accessorIdPositions;
 
-    AddGLTFMeshBuffers(gltfSurfaceModels, document, bufferBuilder, accessorIdIndices, accessorIdPositions);
-
-    AddGLTFMesh(gltfSurfaceModels, document, accessorIdIndices, accessorIdPositions);
+    AddGLTFMeshBuffers(gltfSurfaceModels, document, bufferBuilder);
+    AddGLTFMesh(gltfSurfaceModels, document);
 
     std::string manifest;
 

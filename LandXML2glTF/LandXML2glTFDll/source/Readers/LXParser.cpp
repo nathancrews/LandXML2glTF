@@ -118,6 +118,7 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
 
         LXMaterialEntry.m_ID = 1;
         LXMaterialEntry.m_name = "grass_1";
+        LXMaterialEntry.m_RGBColorStr = "0,255,0";
         LXMaterialEntry.m_textureName = LXMaterialEntry.m_name;
         LXMaterialEntry.m_textureImageScale = 10.0;
 

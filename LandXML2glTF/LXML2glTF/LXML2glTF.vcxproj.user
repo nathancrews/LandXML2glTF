@@ -3,11 +3,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>D:\GitHub\LandXML2glTF\LandXML\subdivision\subdivision.xml</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>D:\GitHub\LandXML2glTF\LandXML\kyroad\kyroad.xml</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> D:\GitHub\LandXML2glTF\LandXML\kyroad\kyroad.xml</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> D:\GitHub\LandXML2glTF\LandXML\subdivision-2.0\subdivision-2.0.xml</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

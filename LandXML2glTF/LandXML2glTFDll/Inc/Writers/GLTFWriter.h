@@ -27,17 +27,9 @@ public:
         assert(m_pathBase.has_root_path());
     }
 
-    // Resolves the relative URIs of any external resources declared in the glTF manifest
+
     std::shared_ptr<std::ostream> GetOutputStream(const std::string& filename) const
     {
-        // In order to construct a valid stream:
-        // 1. The filename argument will be encoded as UTF-8 so use filesystem::u8path to
-        //    correctly construct a path instance.
-        // 2. Generate an absolute path by concatenating m_pathBase with the specified filename
-        //    path. The filesystem::operator/ uses the platform's preferred directory separator
-        //    if appropriate.
-        // 3. Always open the file stream in binary mode. The glTF SDK will handle any text
-        //    encoding issues for us.
         auto streamPath = m_pathBase / std::filesystem::u8path(filename);
         auto stream = std::make_shared<std::ofstream>(streamPath, std::ios_base::binary);
 
@@ -59,9 +51,6 @@ class LANDXML2GLTFDLLAPI GLTFWriter
 public:
 
     void WriteGLTFFile(std::filesystem::path& glTFFilename);
-
-
-
 };
 
 #ifdef _MSC_VER

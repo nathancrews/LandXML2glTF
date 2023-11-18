@@ -25,22 +25,30 @@ int main(int argc, char* argv[])
     if (argc > 2)
     {
         glTFFilename = argv[2];
+        glTFFilename = std::filesystem::absolute(glTFFilename);
     }
+
+    std::filesystem::path LandXMLFilenameABS = std::filesystem::absolute(LandXMLFilename);
 
     if (glTFFilename.empty())
     {
-        glTFFilename = LandXMLFilename;
+        glTFFilename = LandXMLFilenameABS;
         glTFFilename.replace_extension("gltf");
     }
 
-    if (std::filesystem::exists(LandXMLFilename))
+    if (std::filesystem::exists(LandXMLFilenameABS))
     {
         std::cout << "Converting " << LandXMLFilename << " to " << glTFFilename << "\n";
 
         LandXMLModel2GLTFDLL LandXML2glTFConverter;
 
-        LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string(), gdalDataPath.string());
+        LandXML2glTFConverter.ConvertFile(LandXMLFilenameABS.string(), glTFFilename.string(), gdalDataPath.string());
     }
+    else
+    {
+        std::cout << "Error opening: " << LandXMLFilename << "\n" << "Conversion failed!";
+    }
+
 }
 
 

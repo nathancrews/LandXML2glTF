@@ -51,6 +51,8 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     }
 
+    std::cout << "Parsing and building LandXML model...\n";
+
     LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLModel);
 
 
@@ -60,10 +62,12 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     glTFDoc.asset.generator = "LandXML to glTF 2.0 Converter, version 1.0";
     glTFDoc.asset.copyright = "Nathan Crews";
 
+
+    std::cout << "Building glTF model...\n";
     CreateGLTFModel(m_landXMLModel, glTFDoc, gltfSurfModels);
 
+    std::cout << "Writing glTF file: " << glTFFilename << "\n";
     WriteGLTFFile(glTFDoc, gltfSurfModels, std::filesystem::path(glTFFilename));
-
 
     // cleanup memory
     delete m_LXDocument;
@@ -72,7 +76,6 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     {
         delete gltfModel;
     }
-
 
     return retval;
 }

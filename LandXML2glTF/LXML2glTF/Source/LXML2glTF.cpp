@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     if (std::filesystem::exists(LandXMLFilename))
     {
-        std::cout << "Converting " << LandXMLFilename << " to " << glTFFilename;
+        std::cout << "Converting " << LandXMLFilename << " to " << glTFFilename << "\n";
 
         LandXMLModel2GLTFDLL LandXML2glTFConverter;
 

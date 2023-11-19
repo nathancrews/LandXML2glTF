@@ -22,6 +22,7 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 
     std::string m_name;
     std::string m_description;
+    std::string m_code;
     int m_materialID = 0;
 
     double x = 0.0;
@@ -135,6 +136,7 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
     std::vector<LandXMLPolyline> m_landxmlPlanFeatures;
     std::vector<LandXMLAlignment> m_landxmlAlignments;
     std::vector<LandXMLParcel> m_landxmlParcels;
+    std::vector <LandXMLPoint3D> m_landxmlPoints;
 };
 
 

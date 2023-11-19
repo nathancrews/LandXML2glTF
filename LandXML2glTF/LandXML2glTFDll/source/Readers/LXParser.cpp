@@ -109,6 +109,43 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
         LXSurface = LXSurface->NextSiblingElement("Surface");
     }
 
+
+    // Parse polyline data types
+    XMLElement* LXAlignments = LXRoot->FirstChildElement("Alignments");
+    while (LXAlignments)
+    {
+        ParseAlignments(LXAlignments, outLandXMLMDoc);
+
+        LXAlignments = LXAlignments->NextSiblingElement("Alignments");
+    }
+
+
+    XMLElement* LXParcels = LXRoot->FirstChildElement("Parcels");
+    while (LXParcels)
+    {
+        ParseParcels(LXParcels, outLandXMLMDoc);
+
+        LXParcels = LXParcels->NextSiblingElement("Parcels");
+    }
+
+
+    XMLElement* LXPlanFeatures = LXRoot->FirstChildElement("PlandFeatures");
+    while (LXPlanFeatures)
+    {
+        ParsePlanFeatures(LXPlanFeatures, outLandXMLMDoc);
+
+        LXPlanFeatures = LXPlanFeatures->NextSiblingElement("Parcels");
+    }
+
+
+    XMLElement* LXCgPoints = LXRoot->FirstChildElement("CgPoints");
+    while (LXCgPoints)
+    {
+        ParseCgPoints(LXCgPoints, outLandXMLMDoc);
+
+        LXCgPoints = LXCgPoints->NextSiblingElement("CgPoints");
+    }
+
     retStat = true;
     return retStat;
 }
@@ -291,7 +328,7 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
     {
         LandXMLPoint3D surfPnt;
 
-        if (ParsePoint3D(LXSurfacePnt, surfPnt))
+        if (ParsePoint(LXSurfacePnt, surfPnt))
         {
             outLandXMLSurface.m_surfacePoints.push_back(surfPnt);
 
@@ -462,21 +499,223 @@ bool LXParser::ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface&
     return retStat;
 }
 
+
+bool LXParser::ParseAlignments(XMLElement* LXAlignments, LandXMLModel& outLandXMLMDoc)
+{
+    bool retStat = false;
+
+    if (!LXAlignments)
+    {
+        return retStat;
+    }
+
+    XMLElement* LXAlignment = LXAlignments->FirstChildElement("Alignment");
+
+    while (LXAlignment)
+    {
+        LandXMLAlignment toAdd;
+
+        if (ParsePolyline(LXAlignment, &toAdd))
+        {
+            outLandXMLMDoc.m_landxmlAlignments.push_back(toAdd);
+            retStat = true;
+        }
+
+        LXAlignment = LXAlignment->NextSiblingElement("Alignment");
+    }
+
+    return retStat;
+}
+
+bool LXParser::ParseParcels(XMLElement* LXParcels, LandXMLModel& outLandXMLMDoc)
+{
+    bool retStat = false;
+
+    XMLElement* LXParcel = LXParcels->FirstChildElement("Parcel");
+
+    while (LXParcel)
+    {
+        LandXMLParcel toAdd;
+
+        if (ParsePolyline(LXParcel, &toAdd))
+        {
+            outLandXMLMDoc.m_landxmlParcels.push_back(toAdd);
+            retStat = true;
+        }
+
+        LXParcel = LXParcel->NextSiblingElement("Parcel");
+    }
+
+    return retStat;
+}
+
+bool LXParser::ParsePlanFeatures(XMLElement* LXPlanFeatures, LandXMLModel& outLandXMLMDoc)
+{
+    bool retStat = false;
+
+    XMLElement* LXPlanFeature = LXPlanFeatures->FirstChildElement("PlanFeature");
+
+    while (LXPlanFeature)
+    {
+        LandXMLPolyline toAdd;
+
+        if (ParsePolyline(LXPlanFeature, &toAdd))
+        {
+            outLandXMLMDoc.m_landxmlPlanFeatures.push_back(toAdd);
+            retStat = true;
+        }
+
+        LXPlanFeature = LXPlanFeature->NextSiblingElement("PlanFeature");
+    }
+
+    return retStat;
+}
+
+bool LXParser::ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDoc)
+{
+    bool retStat = false;
+
+    XMLElement* LXCgPoint = LXCgPoints->FirstChildElement("CgPoint");
+
+    while (LXCgPoint)
+    {
+        LandXMLPoint3D toAdd;
+
+        const XMLAttribute* nameAt = LXCgPoint->FindAttribute("name");
+        if (nameAt)
+        {
+            toAdd.m_name = nameAt->Value();
+        }
+
+        const XMLAttribute* descAt = LXCgPoint->FindAttribute("desc");
+        if (descAt)
+        {
+            toAdd.m_description = descAt->Value();
+        }
+
+        const XMLAttribute* codeAt = LXCgPoint->FindAttribute("code");
+        if (codeAt)
+        {
+            toAdd.m_code = codeAt->Value();
+        }
+
+        const XMLAttribute* materialAt = LXCgPoint->FindAttribute("m");
+        if (materialAt)
+        {
+            toAdd.m_materialID = std::atoi(materialAt->Value());
+        }
+
+        if (ParsePoint(LXCgPoint, toAdd))
+        {
+            outLandXMLMDoc.m_landxmlPoints.push_back(toAdd);
+            retStat = true;
+        }
+
+        LXCgPoint = LXCgPoint->NextSiblingElement("CgPoint");
+    }
+
+    return retStat;
+}
+
+bool LXParser::ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly)
+{
+    bool retStat = false;
+
+    if (!LXPolyline || !LXPoly)
+    {
+        return retStat;
+    }
+
+    const XMLAttribute* nameAt = LXPolyline->FindAttribute("name");
+    if (nameAt)
+    {
+        LXPoly->m_name = nameAt->Value();
+    }
+
+    const XMLAttribute* descAt = LXPolyline->FindAttribute("desc");
+    if (descAt)
+    {
+        LXPoly->m_description = descAt->Value();
+    }
+
+    const XMLAttribute* materialAt = LXPolyline->FindAttribute("m");
+    if (materialAt)
+    {
+        LXPoly->m_materialID = std::atoi(materialAt->Value());
+    }
+
+    XMLElement* LXCoordGeom = LXPolyline->FirstChildElement("CoordGeom");
+
+    if (LXCoordGeom)
+    {
+        retStat = ParseCoordGeom(LXCoordGeom, LXPoly->m_polylinePoints);
+    }
+
+    return retStat;
+}
+
+bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList)
+{
+    bool retStat = false;
+
+    if (LXCoordGeom)
+    {
+        XMLElement* LXLine = LXCoordGeom->FirstChildElement("Line");
+
+        while (LXLine)
+        {
+            LandXMLPoint3D startPnt, endPnt;
+
+            XMLElement* LXStart = LXLine->FirstChildElement("Start");
+            if (LXStart)
+            {
+                if (ParsePoint(LXStart, startPnt))
+                {
+                    OutReturnPointList.push_back(startPnt);
+                }
+            
+            }
+
+            XMLElement* LXEnd = LXLine->FirstChildElement("End");
+            if (LXEnd)
+            {
+                if (ParsePoint(LXEnd, endPnt))
+                {
+                    OutReturnPointList.push_back(endPnt);
+                }
+            }
+
+            LXLine = LXLine->NextSiblingElement("Line");
+
+            retStat = true;
+        }
+    }
+
+    return retStat;
+}
+
+
 // Parse a single point element
-bool LXParser::ParsePoint3D(XMLNode* LXPointList, LandXMLPoint3D& outReturnPoint3D)
+bool LXParser::ParsePoint(XMLNode* LXPointList, LandXMLPoint3D& outReturnPoint3D)
 {
     std::vector<std::string> pointYXZArray;
 
+    outReturnPoint3D.z = 0.0;
+
     SplitCData(LXPointList, pointYXZArray);
 
-    if (pointYXZArray.size() >= 3)
+    if (pointYXZArray.size() >= 2)
     {
         outReturnPoint3D.y = std::atof(pointYXZArray[0].c_str());
         outReturnPoint3D.x = std::atof(pointYXZArray[1].c_str());
+    }
+
+    if (pointYXZArray.size() >= 3)
+    {
         outReturnPoint3D.z = std::atof(pointYXZArray[2].c_str());
     }
 
-    return (pointYXZArray.size() >= 3);
+    return (pointYXZArray.size() >= 2);
 }
 
 // Parse a point list element

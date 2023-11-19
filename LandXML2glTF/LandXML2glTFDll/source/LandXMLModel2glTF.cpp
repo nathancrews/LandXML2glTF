@@ -188,6 +188,7 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
             for (LandXMLSurfaceFace lxFace : txb->m_surfaceFaces)
             {
+                // LandXML uses 1 based index values, glTF uses zero based indices.
                 UINT a = lxFace.m_pointIndices[0] - 1;
                 UINT b = lxFace.m_pointIndices[1] - 1;
                 UINT c = lxFace.m_pointIndices[2] - 1;
@@ -282,6 +283,7 @@ void LandXMLModel2glTF::AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceM
         {
             Microsoft::glTF::MeshPrimitive meshPrimitive;
 
+            meshPrimitive.mode = Microsoft::glTF::MESH_TRIANGLES;
             meshPrimitive.materialId = gltfModel->gltfSubMeshMaterials[gltfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
             meshPrimitive.indicesAccessorId = gltfModel->accessorIdIndices[acc];
             meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = gltfModel->accessorIdPositions[0];

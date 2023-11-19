@@ -29,8 +29,15 @@ namespace LANDXML2GLTF
         bool ParseSurfaceFaces(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface);
         bool ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface& outLandXMLSurface);
 
-        bool ParsePoint3D(XMLNode* LXPointList, LandXMLPoint3D& OutReturnPoint3D);
+        bool ParseAlignments(XMLElement* LXAlignments, LandXMLModel& outLandXMLMDoc);
+        bool ParseParcels(XMLElement* LXParcels, LandXMLModel& outLandXMLMDoc);
+        bool ParsePlanFeatures(XMLElement* LXPlanFeatures, LandXMLModel& outLandXMLMDoc);
+        bool ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDoc);
+
+        bool ParsePoint(XMLNode* LXPointList, LandXMLPoint3D& OutReturnPoint3D);
         bool ParsePointList3D(XMLNode* LXPointList, std::vector<LandXMLPoint3D>& OutReturnPointList);
+        bool ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly);
+        bool ParseCoordGeom(XMLElement* LXCordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList);
         bool ParseFace(XMLNode* LXFaceList, LandXMLSurfaceFace& outReturnFace);
         void SplitCData(XMLNode* LXPointList, std::vector<std::string>& OutPointYXZArray);
     };

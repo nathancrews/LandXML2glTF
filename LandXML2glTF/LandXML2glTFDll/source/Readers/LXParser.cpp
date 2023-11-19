@@ -3,6 +3,7 @@
 #include <functional>
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 
 
 namespace LANDXML2GLTF
@@ -154,13 +155,18 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
 {
     bool retStat = false;
     tinyxml2::XMLDocument defaultMatDoc;
+    std::filesystem::path defaultMatDocPath = "./data/DefaultTexture.xml"; 
+    std::filesystem::path defaultMatDocPathABS = std::filesystem::absolute(defaultMatDocPath);
+   
+    std::string defaultMatDocFullPath = defaultMatDocPathABS.string().c_str();
+
     XMLElement* defaultMatRootElem = nullptr;
     XMLElement* LXMaterialTableToUse = nullptr;
 
     // probably a LandXML 1.0 or 1.2 file, so load the default texture material from data file
     if (!LXMaterialsNode)
     {
-        if (defaultMatDoc.LoadFile("./data/DefaultTexture.xml") == XML_SUCCESS)
+        if (defaultMatDoc.LoadFile((defaultMatDocFullPath.c_str())) == XML_SUCCESS)
         {
             defaultMatRootElem = defaultMatDoc.RootElement();
 

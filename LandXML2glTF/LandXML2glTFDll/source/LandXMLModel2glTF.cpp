@@ -14,6 +14,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     if (false == std::filesystem::exists(InLandXMLFilename))
     {
+        std::cout << "Error: failed to find file: " << InLandXMLFilename << "\n";
         return retval;
     }
 
@@ -21,6 +22,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     if (!m_LXDocument)
     {
+        std::cout << "Error: failed to load file: " << InLandXMLFilename << "\n";
         return retval;
     }
 
@@ -28,7 +30,11 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     LXParser LXHelper;
 
-    LXHelper.ParseLandXMLHeader(m_LXDocument, m_landXMLModel);
+    if (!LXHelper.ParseLandXMLHeader(m_LXDocument, m_landXMLModel))
+    {
+        std::cout << "Error: failed to parse <Units> element from file: " << InLandXMLFilename << "\n";
+        return retval;
+    }
 
     if (m_landXMLModel.m_units.m_linearUnitString.compare("USSurveyFoot"))
     {
@@ -48,13 +54,15 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         m_wgsTrans = MathHelper::GetWGS84CoordTransform(*m_landXMLSpatialRef);
         char* units = nullptr;
         m_unitConversionToWG84 = m_landXMLSpatialRef->GetLinearUnits(&units);
-
     }
 
     std::cout << "Parsing and building LandXML model...\n";
 
-    LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLModel);
-
+    if (!LXHelper.ParseLandXMLFile(m_LXDocument, m_landXMLModel))
+    {
+        std::cout << "Error: failed to load and parse valid LandXML data from file: " << InLandXMLFilename << "\n";
+        return retval;
+    }
 
     Microsoft::glTF::Document glTFDoc;
     std::vector<GLTFSurfaceModel*> gltfSurfModels;
@@ -62,9 +70,8 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     glTFDoc.asset.generator = "LandXML to glTF 2.0 Converter, version 1.0";
     glTFDoc.asset.copyright = "Nathan Crews";
 
-
     std::cout << "Building glTF model...\n";
-    CreateGLTFModel(m_landXMLModel, glTFDoc, gltfSurfModels);
+    retval = CreateGLTFModel(m_landXMLModel, glTFDoc, gltfSurfModels);
 
     std::cout << "Writing glTF file: " << glTFFilename << "\n";
     WriteGLTFFile(glTFDoc, gltfSurfModels, std::filesystem::path(glTFFilename));

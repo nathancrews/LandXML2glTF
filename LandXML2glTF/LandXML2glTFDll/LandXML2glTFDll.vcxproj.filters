@@ -78,8 +78,5 @@
     <ClCompile Include="source\Readers\LXParser.cpp">
       <Filter>Source Files\Readers</Filter>
     </ClCompile>
-    <ClCompile Include="source\Writers\GLTFWriter.cpp">
-      <Filter>Source Files\Writers</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

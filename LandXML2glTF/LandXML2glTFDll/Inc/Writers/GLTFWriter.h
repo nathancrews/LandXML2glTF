@@ -46,13 +46,6 @@ private:
     std::filesystem::path m_pathBase;
 };
 
-class LANDXML2GLTFDLLAPI GLTFWriter
-{
-public:
-
-    void WriteGLTFFile(std::filesystem::path& glTFFilename);
-};
-
 #ifdef _MSC_VER
 #   pragma warning(pop)
 #endif

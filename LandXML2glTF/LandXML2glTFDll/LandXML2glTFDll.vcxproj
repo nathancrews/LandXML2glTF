@@ -29,7 +29,6 @@
     <ClCompile Include="source\LandXML2glTFDll.cpp" />
     <ClCompile Include="source\LandXMLModel2glTF.cpp" />
     <ClCompile Include="source\Readers\LXParser.cpp" />
-    <ClCompile Include="source\Writers\GLTFWriter.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

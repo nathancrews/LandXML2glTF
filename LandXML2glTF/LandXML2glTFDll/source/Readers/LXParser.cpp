@@ -81,7 +81,13 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
     XMLElement* LXMaterials = LXRoot->FirstChildElement("MaterialTable");
 
     // Not all LandXML files contain materials, so create a single texture material table to use
-    ParseMaterialTable(LXMaterials, outLandXMLMDoc.m_landXMLMaterials);
+    // if no materials are loaded, then fail
+
+    if (!ParseMaterialTable(LXMaterials, outLandXMLMDoc.m_landXMLMaterials))
+    {
+        std::cout << "error: Unable to find LandXML <MaterialTable> element in ./data/DefaultTexture.xml";
+        return retStat;
+    }
 
     // Parse Surfaces
     XMLElement* LXSurfaces = LXRoot->FirstChildElement("Surfaces");
@@ -110,39 +116,35 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
 bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
 {
     bool retStat = false;
+    tinyxml2::XMLDocument defaultMatDoc;
+    XMLElement* defaultMatRootElem = nullptr;
+    XMLElement* LXMaterialTableToUse = nullptr;
 
+    // probably a LandXML 1.0 or 1.2 file, so load the default texture material from data file
     if (!LXMaterialsNode)
     {
-        // probably a LandXML 1.0 or 1.2 file, so create a single default texture material
-        LandXMLMaterial LXMaterialEntry;
-
-        LXMaterialEntry.m_ID = 1;
-        LXMaterialEntry.m_name = "grass_1";
-        LXMaterialEntry.m_RGBColorStr = "0,255,0";
-        LXMaterialEntry.m_textureName = LXMaterialEntry.m_name;
-        LXMaterialEntry.m_textureImageScale = 10.0;
-
-        tinyxml2::XMLDocument textureDoc;
-        if (textureDoc.LoadFile("./data/DefaultTexture.xml") == XML_SUCCESS)
+        if (defaultMatDoc.LoadFile("./data/DefaultTexture.xml") == XML_SUCCESS)
         {
-            XMLElement* textureImageElem = textureDoc.RootElement();
+            defaultMatRootElem = defaultMatDoc.RootElement();
 
-            if (textureImageElem && textureImageElem->FirstChild())
+            if (defaultMatRootElem)
             {
-
-                size_t hexStrLen = strlen(textureImageElem->FirstChild()->Value()) + 1;
-                LXMaterialEntry.m_textureImageHexString = textureImageElem->FirstChild()->Value();
+                LXMaterialTableToUse = defaultMatRootElem->FirstChildElement("MaterialTable");
             }
         }
+    }
+    else
+    {
+        LXMaterialTableToUse = LXMaterialsNode;
+    }
 
-        outLandXMLMaterials.m_MaterialMap[LXMaterialEntry.m_ID] = LXMaterialEntry;
-
-        retStat = true;
+    if (!LXMaterialTableToUse)
+    {
         return retStat;
     }
 
-    XMLElement* LXMaterial = LXMaterialsNode->FirstChildElement("Material");
-    XMLElement* LXTextureImageTable = LXMaterialsNode->NextSiblingElement("TextureImageTable");
+    XMLElement* LXMaterial = LXMaterialTableToUse->FirstChildElement("Material");
+    XMLElement* LXTextureImageTable = LXMaterialTableToUse->NextSiblingElement("TextureImageTable");
 
     while (LXMaterial)
     {

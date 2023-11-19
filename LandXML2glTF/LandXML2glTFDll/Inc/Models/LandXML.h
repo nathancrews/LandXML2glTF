@@ -19,7 +19,11 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
     };
 
     inline void operator=(const LandXMLPoint3D& vec) { x = vec.x; y = vec.y; z = vec.z; };
- 
+
+    std::string m_name;
+    std::string m_description;
+    int m_materialID = 0;
+
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
@@ -59,6 +63,16 @@ struct LANDXML2GLTFDLLAPI LandXMLPolyline
     std::string m_name;
     std::string m_description;
     std::vector<LandXMLPoint3D> m_polylinePoints;
+};
+
+struct LANDXML2GLTFDLLAPI LandXMLAlignment : public LandXMLPolyline
+{
+
+};
+
+struct LANDXML2GLTFDLLAPI LandXMLParcel : public LandXMLPolyline
+{
+
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
@@ -117,6 +131,10 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
     LandXMLUnits m_units;
     LandXMLMaterialTable m_landXMLMaterials;
     std::vector<LandXMLSurface*> m_landxmlSurfaces;
+
+    std::vector<LandXMLPolyline> m_landxmlPlanFeatures;
+    std::vector<LandXMLAlignment> m_landxmlAlignments;
+    std::vector<LandXMLParcel> m_landxmlParcels;
 };
 
 

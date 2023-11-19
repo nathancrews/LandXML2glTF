@@ -12,7 +12,7 @@ Building with Visual Studio for x64:
 Open the LandXML2glTF\LXML2glTF\LandXML2glTF.sln solution file and build release or debug x64 targets.
 (CMake config for MacOS and Linux to follow)
 
-Example Usage:
+Example Usage 1:
 
 LXML2glTF.exe "..\..\..\..\LandXML\KYRoad.xml"
 
@@ -22,3 +22,12 @@ Parsing and building LandXML model...
 Building glTF model...
 Writing glTF file: D:\GitHub\LandXML2glTF\LandXML\KYROAD\kyroad.gltf
 
+Example Usage 2:
+
+LXML2glTF.exe "..\..\..\..\LandXML\subdivision\subdivision.xml" "..\..\..\..\LandXML\subdivision\subdivision.glb"
+
+Output:
+Converting "..\\..\\..\\..\\LandXML\\subdivision\\subdivision.xml" to "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision\\subdivision.glb"
+Parsing and building LandXML model...
+Building glTF model...
+Writing glTF file: D:\GitHub\LandXML2glTF\LandXML\subdivision\subdivision.glb

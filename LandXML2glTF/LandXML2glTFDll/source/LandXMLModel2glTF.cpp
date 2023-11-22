@@ -73,12 +73,18 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     glTFDoc.asset.generator = "LandXML to glTF 2.0 Converter, version 1.0";
     glTFDoc.asset.copyright = "Nathan Crews";
-
     std::cout << "Building glTF model...\n";
-    retval = CreateGLTFModel(landXMLModel, glTFDoc, gltfModel);
 
-    std::cout << "Writing glTF file: " << glTFFilename << "\n";
-    WriteGLTFFile(glTFDoc, gltfModel, std::filesystem::path(glTFFilename));
+    try {
+        retval = CreateGLTFModel(landXMLModel, glTFDoc, gltfModel);
+
+        std::cout << "Writing glTF file: " << glTFFilename << "\n";
+        WriteGLTFFile(glTFDoc, gltfModel, std::filesystem::path(glTFFilename));
+    }
+    catch (...)
+    {
+
+    }
 
     // cleanup memory
     delete LXDocument;
@@ -145,8 +151,10 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
         gltfSurfModel->name = LXSurf->m_name;
 
         // build the surface meshes
-        for (LandXMLPoint3D lxPnt : LXSurf->m_surfacePoints)
+        for (unsigned int pid = 1; pid <= LXSurf->m_surfacePointCount; pid++)
         {
+            LandXMLPoint3D lxPnt = LXSurf->m_surfacePoints[pid];
+
             std::vector<float> glpnt1(3U);
 
             //if (m_wgsTrans)

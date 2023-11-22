@@ -19,7 +19,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
     XMLElement* LXRoot = LXDocument->RootElement();
 
-    if (!LXRoot || (stricmp(LXRoot->Name(), "LandXML") != 0) )
+    if (!LXRoot || (stricmp(LXRoot->Name(), "LandXML") != 0))
     {
         std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName;
         return retStat;
@@ -161,9 +161,9 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
 {
     bool retStat = false;
     tinyxml2::XMLDocument defaultMatDoc;
-    std::filesystem::path defaultMatDocPath = "./data/DefaultTexture.xml"; 
+    std::filesystem::path defaultMatDocPath = "./data/DefaultTexture.xml";
     std::filesystem::path defaultMatDocPathABS = std::filesystem::absolute(defaultMatDocPath);
-   
+
     std::string defaultMatDocFullPath = defaultMatDocPathABS.string().c_str();
 
     XMLElement* defaultMatRootElem = nullptr;
@@ -240,7 +240,7 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
                     {
                         XMLNode* TextureHexString = textureImage->FirstChildElement("TextureHexString");
 
-                        if (TextureHexString)
+                        if (TextureHexString && TextureHexString->FirstChild())
                         {
                             size_t hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
                             LXMaterialEntry.m_textureImageHexString = TextureHexString->FirstChild()->Value();
@@ -335,14 +335,28 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
 
     XMLElement* LXSurfacePnt = LXSurfacePnts->FirstChildElement("P");
 
+    outLandXMLSurface.m_surfacePointCount = 0;
     // Parse the surface points
     while (LXSurfacePnt)
     {
         LandXMLPoint3D surfPnt;
 
+        unsigned int pointID = 1, pointIDFix = 0;
+
+        const XMLAttribute* pIDAtt = LXSurfacePnt->FindAttribute("id");
+        if (pIDAtt)
+        {
+            pointID = std::atoi(pIDAtt->Value());
+
+            if (outLandXMLSurface.m_surfacePointCount == 0)
+            {
+                pointIDFix = pointID - 1;
+            }
+        }
+
         if (ParsePoint(LXSurfacePnt, surfPnt))
         {
-            outLandXMLSurface.m_surfacePoints.push_back(surfPnt);
+            outLandXMLSurface.m_surfacePoints[pointID] = surfPnt;
 
             // find min surf coords
             if (surfPnt.x < outLandXMLSurface.m_minSurfPoint.x)
@@ -378,9 +392,10 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
         }
 
         LXSurfacePnt = LXSurfacePnt->NextSiblingElement("P");
+        outLandXMLSurface.m_surfacePointCount++;
     }
 
-    if (outLandXMLSurface.m_surfacePoints.size() > 2)
+    if (outLandXMLSurface.m_surfacePointCount > 2)
     {
         retval = true;
     }
@@ -413,9 +428,9 @@ bool LXParser::ParseSurfaceFaces(XMLElement* LXSurfaceDefNode, LandXMLSurface& o
         {
             // LandXML surface ids start at 1, reduce point IDs by 1 to make vertex face point ids match zero based surface TIN point array
 
-            UINT facedPointId1 = surfFace.m_pointIndices[0] - 1;
-            UINT facedPointId2 = surfFace.m_pointIndices[1] - 1;
-            UINT facedPointId3 = surfFace.m_pointIndices[2] - 1;
+            UINT facedPointId1 = surfFace.m_pointIndices[0];// -1;
+            UINT facedPointId2 = surfFace.m_pointIndices[1];// -1;
+            UINT facedPointId3 = surfFace.m_pointIndices[2];// -1;
 
             LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
             LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];
@@ -483,16 +498,20 @@ bool LXParser::ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface&
                 bndryPoly.m_description = typeAt->Value();
             }
 
-            const XMLAttribute* materialAt = LXSurfaceBndry->FindAttribute("m");
-            if (materialAt)
+            if (!_stricmp(bndryPoly.m_description.c_str(), "texture"))
             {
-                bndryPoly.m_materialID = std::atoi(materialAt->Value());
+
+                const XMLAttribute* materialAt = LXSurfaceBndry->FindAttribute("m");
+                if (materialAt)
+                {
+                    bndryPoly.m_materialID = std::atoi(materialAt->Value());
+                }
+
+                ParsePointList3D(LXPntList, bndryPoly.m_polylinePoints);
+                bndryPoly.m_area = MathHelper::PolygonArea(bndryPoly.m_polylinePoints);
+
+                outLandXMLSurface.m_textureBoundaries.push_back(bndryPoly);
             }
-
-            ParsePointList3D(LXPntList, bndryPoly.m_polylinePoints);
-            bndryPoly.m_area = MathHelper::PolygonArea(bndryPoly.m_polylinePoints);
-
-            outLandXMLSurface.m_textureBoundaries.push_back(bndryPoly);
         }
 
         LXSurfaceBndry = LXSurfaceBndry->NextSiblingElement("Boundary");
@@ -599,28 +618,39 @@ bool LXParser::ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDo
             toAdd.m_name = nameAt->Value();
         }
 
-        const XMLAttribute* descAt = LXCgPoint->FindAttribute("desc");
-        if (descAt)
+        const XMLAttribute* pntRefAt = LXCgPoint->FindAttribute("pntRef");
+        if (!pntRefAt)
         {
-            toAdd.m_description = descAt->Value();
-        }
+            const XMLAttribute* descAt = LXCgPoint->FindAttribute("desc");
+            if (descAt)
+            {
+                toAdd.m_description = descAt->Value();
+            }
 
-        const XMLAttribute* codeAt = LXCgPoint->FindAttribute("code");
-        if (codeAt)
-        {
-            toAdd.m_code = codeAt->Value();
-        }
+            const XMLAttribute* codeAt = LXCgPoint->FindAttribute("code");
+            if (codeAt)
+            {
+                toAdd.m_code = codeAt->Value();
+            }
 
-        const XMLAttribute* materialAt = LXCgPoint->FindAttribute("m");
-        if (materialAt)
-        {
-            toAdd.m_materialID = std::atoi(materialAt->Value());
-        }
+            const XMLAttribute* materialAt = LXCgPoint->FindAttribute("m");
+            if (materialAt)
+            {
+                toAdd.m_materialID = std::atoi(materialAt->Value());
+            }
 
-        if (ParsePoint(LXCgPoint, toAdd))
+            if (ParsePoint(LXCgPoint, toAdd))
+            {
+                outLandXMLMDoc.m_landxmlPoints[toAdd.m_name] = toAdd;
+                retStat = true;
+            }
+        }
+        else
         {
-            outLandXMLMDoc.m_landxmlPoints.push_back(toAdd);
-            retStat = true;
+            if (pntRefAt->Value())
+            {
+                outLandXMLMDoc.m_landxmlPoints[toAdd.m_name] = outLandXMLMDoc.m_landxmlPoints[pntRefAt->Value()];
+            }
         }
 
         LXCgPoint = LXCgPoint->NextSiblingElement("CgPoint");
@@ -685,7 +715,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
                 {
                     OutReturnPointList.push_back(startPnt);
                 }
-            
+
             }
 
             XMLElement* LXEnd = LXLine->FirstChildElement("End");

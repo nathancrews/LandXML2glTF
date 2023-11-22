@@ -3,11 +3,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>..\..\..\..\LandXML\* /s /b</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"D:\GitHub\LandXML2glTF\LandXML\*" /s</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>..\..\..\..\LandXML\subdivision-2.0\* /b</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>"D:\GitHub\LandXML2glTF\LandXML\*"</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include "framework.h"
 #include "GLTF.h"
+#include <map>
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -107,7 +108,8 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
     LandXMLPoint3D m_minSurfPoint;
     LandXMLPoint3D m_maxSurfPoint;
 
-    std::vector<LandXMLPoint3D> m_surfacePoints;
+    unsigned int m_surfacePointCount = 0;
+    std::map<unsigned int, LandXMLPoint3D> m_surfacePoints;
     std::list<LandXMLTextureBoundary> m_textureBoundaries;
 };
 
@@ -136,7 +138,7 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
     std::vector<LandXMLPolyline> m_landxmlPlanFeatures;
     std::vector<LandXMLAlignment> m_landxmlAlignments;
     std::vector<LandXMLParcel> m_landxmlParcels;
-    std::vector<LandXMLPoint3D> m_landxmlPoints;
+    std::map<std::string, LandXMLPoint3D> m_landxmlPoints;
 };
 
 

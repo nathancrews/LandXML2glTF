@@ -79,11 +79,11 @@
     "buffers": [
         {
             "byteLength": 23964,
-            "uri": "0.bin"
+            "uri": "subdivision_0.bin"
         },
         {
             "byteLength": 95484,
-            "uri": "1.bin"
+            "uri": "subdivision_1.bin"
         }
     ],
     "materials": [

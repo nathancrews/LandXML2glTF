@@ -88,3 +88,6 @@
 /LandXML2glTF/XCopyFiles/x64/Debug
 /LandXML2glTF/XCopyFiles/x64/Release
 gdal/
+/LandXML2glTF/LandXML/NewSubdivision
+*.ilk
+*.enc

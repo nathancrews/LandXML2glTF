@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;LANDXML2GLTFDLLAPI_EXPORT;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./inc;..\3rdparty;..\3rdparty\gltfsdk\inc;..\3rdparty\TinyXML\Inc;..\3rdparty\gdal\gcore;..\3rdparty\gdal\ogr;..\3rdparty\gdal\port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <Optimization>Full</Optimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

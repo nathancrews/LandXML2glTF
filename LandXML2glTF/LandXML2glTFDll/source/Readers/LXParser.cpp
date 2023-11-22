@@ -19,6 +19,12 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
     XMLElement* LXRoot = LXDocument->RootElement();
 
+    if (!LXRoot || (stricmp(LXRoot->Name(), "LandXML") != 0) )
+    {
+        std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName;
+        return retStat;
+    }
+
     // Parse Units and coordinate system
     XMLElement* LXUnits = LXRoot->FirstChildElement("Units");
 

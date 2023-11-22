@@ -136,7 +136,7 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
     std::vector<LandXMLPolyline> m_landxmlPlanFeatures;
     std::vector<LandXMLAlignment> m_landxmlAlignments;
     std::vector<LandXMLParcel> m_landxmlParcels;
-    std::vector <LandXMLPoint3D> m_landxmlPoints;
+    std::vector<LandXMLPoint3D> m_landxmlPoints;
 };
 
 

@@ -38,12 +38,19 @@ struct GLTFSurfaceModel
     std::string name;
 
     std::vector<float> gltfMeshPoints;
-    std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
     std::vector<std::string> accessorIdPositions;
     std::vector<std::string> accessorIdIndices;
 
     std::unordered_map<unsigned int, unsigned int> gltfSubMeshIndicesMaterialMap;
     std::unordered_map<unsigned int, std::vector<unsigned int>> gltfSubMeshIndexIDs;
+};
+
+struct GLTFModel
+{
+    std::string name;
+
+    std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
+    std::vector<GLTFSurfaceModel*> gltfSurfaceModels;
 };
 
 
@@ -52,23 +59,16 @@ class LANDXML2GLTFDLLAPI LandXMLModel2glTF
 public:
 
     bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
-    bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, std::vector<GLTFSurfaceModel*>& gltfModels);
+    bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, GLTFModel& gltfModel);
 
-    void AddGLTFMeshBuffers(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+    void AddGLTFMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
 
-    void AddGLTFMesh(std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, Microsoft::glTF::Document& document);
+    void AddGLTFMesh(GLTFModel& gltfModel, Microsoft::glTF::Document& document);
 
-    void WriteGLTFFile(Microsoft::glTF::Document& document, std::vector<GLTFSurfaceModel*>& gltfSurfaceModels, std::filesystem::path& glTFFilename);
+    void WriteGLTFFile(Microsoft::glTF::Document& document, GLTFModel& gltfModel, std::filesystem::path& glTFFilename);
 
 private:
-
     double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
-    OGRSpatialReference* m_landXMLSpatialRef = nullptr;
-    OGRCoordinateTransformation* m_wgsTrans = nullptr;
-    tinyxml2::XMLDocument* m_LXDocument = nullptr;
-    LandXMLModel m_landXMLModel;
-
-    std::vector<GLTFSurfaceModel> gltfSurfaceModels;
 };
 
 }

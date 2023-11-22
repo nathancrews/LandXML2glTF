@@ -24,7 +24,7 @@ Writing glTF file: D:\GitHub\LandXML2glTF\LandXML\KYROAD\kyroad.gltf
 
 Example Usage 2:
 
-LXML2glTF.exe "..\..\..\..\LandXML\subdivision\subdivision.xml" "..\..\..\..\LandXML\subdivision\subdivision.glb"
+LXML2glTF.exe "..\\..\\..\\..\\LandXML\subdivision\subdivision.xml" "..\\..\\..\\..\\LandXML\subdivision\subdivision.glb"
 
 Output:
 Converting "..\\..\\..\\..\\LandXML\\subdivision\\subdivision.xml" to "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision\\subdivision.glb"

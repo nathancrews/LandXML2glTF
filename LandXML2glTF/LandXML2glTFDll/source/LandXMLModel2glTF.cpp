@@ -337,13 +337,30 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
 
     gltfPolyModel->name = LXPoly.m_name;
 
+    bool isDraped = false;
+    double aveElev = 0.0;
+
+    for (unsigned int pid = 0; pid < 3; pid++)
+    {
+        aveElev += LXPoly.m_polylinePoints[pid].z;
+    }
+    
+    aveElev /= 3;
+    if (!MathHelper::IsFuzzyEqual(aveElev, 0.0))
+    {
+        isDraped = true;
+    }
+
     // build the polyline mesh
     for (unsigned int pid = 0; pid < LXPoly.m_polylinePoints.size(); pid++)
     {
         LandXMLPoint3D lxPnt = LXPoly.m_polylinePoints[pid];
 
-        // set polyline planar elevation about highest surface
-        lxPnt.z = planeElev;
+        // set polyline planar elevation about highest surface, if not draped
+        if (!isDraped)
+        {
+            lxPnt.z = planeElev;
+        }
 
         std::vector<float> glpnt1(3U);
 

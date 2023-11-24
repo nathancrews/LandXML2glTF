@@ -35,19 +35,15 @@ D:\github\landxml2gltf>.\LXML2glTF\bin\x64\Release\LXML2glTF.exe ".\LandXML\\*" 
 
 Output:
 
-<<This tests an invalid LandXML file>> Converting [1 of 4] "D:\\github\\landxml2gltf\\LandXML\\DefaultTexture.xml" to "D:\\github\\landxml2gltf\\LandXML\\DefaultTexture.gltf"
+{This tests an invalid LandXML file} Converting [1 of 3] "D:\\github\\landxml2gltf\\LandXML\\DefaultTexture.xml" to "D:\\github\\landxml2gltf\\LandXML\\DefaultTexture.gltf"
 error: The LandXML file is missing the required <Units> element.Error: failed to parse LandXML data from file: D:\github\landxml2gltf\LandXML\DefaultTexture.xml
 
-Converting [2 of 4] "D:\\github\\landxml2gltf\\LandXML\\KYRoad\\KYRoad.xml" to "D:\\github\\landxml2gltf\\LandXML\\KYRoad\\KYRoad.gltf"
+Converting [2 of 3] "D:\\github\\landxml2gltf\\LandXML\\KYRoad\\KYRoad.xml" to "D:\\github\\landxml2gltf\\LandXML\\KYRoad\\KYRoad.gltf"
 Parsing and building LandXML model...
 Building glTF model...
 Writing glTF file: D:\github\landxml2gltf\LandXML\KYRoad\KYRoad.gltf
 
-Converting [3 of 4] "D:\\github\\landxml2gltf\\LandXML\\subdivision\\subdivision.xml" to "D:\\github\\landxml2gltf\\LandXML\\subdivision\\subdivision.gltf"
-Parsing and building LandXML model...
-error: Unable to find LandXML <MaterialTable> element in ./data/DefaultTexture.xmlError: failed to load and parse valid LandXML data from file: D:\github\landxml2gltf\LandXML\subdivision\subdivision.xml
-
-Converting [4 of 4] "D:\\github\\landxml2gltf\\LandXML\\subdivision-2.0\\subdivision-2.0.xml" to "D:\\github\\landxml2gltf\\LandXML\\subdivision-2.0\\subdivision-2.0.gltf"
+Converting [3 of 3] "D:\\github\\landxml2gltf\\LandXML\\subdivision-2.0\\subdivision-2.0.xml" to "D:\\github\\landxml2gltf\\LandXML\\subdivision-2.0\\subdivision-2.0.gltf"
 Parsing and building LandXML model...
 Building glTF model...
 Writing glTF file: D:\github\landxml2gltf\LandXML\subdivision-2.0\subdivision-2.0.gltf

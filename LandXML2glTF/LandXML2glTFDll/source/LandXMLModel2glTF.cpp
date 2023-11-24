@@ -49,16 +49,17 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         m_unitConversionToWG84 = IFT2M;
     }
 
-    landXMLSpatialRef = new OGRSpatialReference();
+    // NOT in use yet
+    //landXMLSpatialRef = new OGRSpatialReference();
 
-    OGRErr tStat = landXMLSpatialRef->importFromWkt(landXMLModel.m_wktString.c_str());
+    //OGRErr tStat = landXMLSpatialRef->importFromWkt(landXMLModel.m_wktString.c_str());
 
-    if (tStat == OGRERR_NONE)
-    {
-        wgsTrans = MathHelper::GetWGS84CoordTransform(*landXMLSpatialRef);
-        char* units = nullptr;
-        m_unitConversionToWG84 = landXMLSpatialRef->GetLinearUnits(&units);
-    }
+    //if (tStat == OGRERR_NONE)
+    //{
+    //    wgsTrans = MathHelper::GetWGS84CoordTransform(*landXMLSpatialRef);
+    //    char* units = nullptr;
+    //    m_unitConversionToWG84 = landXMLSpatialRef->GetLinearUnits(&units);
+    //}
 
     std::cout << "Parsing and building LandXML model...\n";
 
@@ -75,44 +76,88 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     glTFDoc.asset.copyright = "Nathan Crews";
     std::cout << "Building glTF model...\n";
 
-    try {
-        retval = CreateGLTFModel(landXMLModel, glTFDoc, gltfModel);
+    //   try {
+    retval = CreateGLTFModel(landXMLModel, gltfModel);
 
+    if (gltfModel.gltfSurfaceModels.size() > 0 || gltfModel.gltfPolylineModels.size() > 0)
+    {
         std::cout << "Writing glTF file: " << glTFFilename << "\n";
         WriteGLTFFile(glTFDoc, gltfModel, std::filesystem::path(glTFFilename));
     }
-    catch (...)
+    else
     {
-
+        std::cout << "Error: No surfaces or polyline data found in " << InLandXMLFilename << "\n";
     }
+    //   }
+    //   catch (...)
+     //  {
 
-    // cleanup memory
+     //  }
+
+       // cleanup memory
     delete LXDocument;
-
-    for (GLTFSurfaceModel* gltfSurfModel : gltfModel.gltfSurfaceModels)
-    {
-        delete gltfSurfModel;
-    }
 
     return retval;
 }
 
-bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, GLTFModel& gltfModel)
+bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, GLTFModel& gltfModel)
 {
     bool retVal = false;
     int success = 0;
-    double sceneOriginOffsetX = 0.0;
-    double sceneOriginOffsetY = 0.0;
-    double sceneOriginOffsetZ = 0.0;
 
+    SetGLTFModelSceneOffset(landXMLModel);
+    BuildGLTFMaterialTable(landXMLModel, gltfModel);
+    BuildGLTFSurfaceModels(landXMLModel, gltfModel);
+    BuildGLTFPolylineModels(landXMLModel, gltfModel);
+
+    return retVal;
+}
+
+void LandXMLModel2glTF::SetGLTFModelSceneOffset(const LandXMLModel& landXMLModel)
+{
     // Set the scene origin offset value
-    if (landXMLModel.m_landxmlSurfaces.front())
+    if (landXMLModel.m_landxmlSurfaces.size() > 0)
     {
-        sceneOriginOffsetX = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.x;
-        sceneOriginOffsetY = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.y;
-        sceneOriginOffsetZ = landXMLModel.m_landxmlSurfaces.front()->m_minSurfPoint.z;
+        m_sceneOriginOffsetX = landXMLModel.m_landxmlSurfaces[0]->m_minSurfPoint.x;
+        m_sceneOriginOffsetY = landXMLModel.m_landxmlSurfaces[0]->m_minSurfPoint.y;
+        m_sceneOriginOffsetZ = landXMLModel.m_landxmlSurfaces[0]->m_minSurfPoint.z;
     }
 
+    // fall back to other point data to find a decent scene offset value
+    if (MathHelper::IsFuzzyEqual(m_sceneOriginOffsetX, 0.0) &&
+        MathHelper::IsFuzzyEqual(m_sceneOriginOffsetY, 0.0))
+    {
+        if (landXMLModel.m_landxmlPoints.size() > 0)
+        {
+            auto cgIter = landXMLModel.m_landxmlPoints.begin();
+
+            m_sceneOriginOffsetX = cgIter->second.x;
+            m_sceneOriginOffsetY = cgIter->second.y;
+            m_sceneOriginOffsetZ = cgIter->second.z;
+        }
+        else if (landXMLModel.m_landxmlPlanFeatures.size() > 0 && landXMLModel.m_landxmlPlanFeatures[0].m_polylinePoints.size() > 0)
+        {
+            m_sceneOriginOffsetX = landXMLModel.m_landxmlPlanFeatures[0].m_polylinePoints[0].x;
+            m_sceneOriginOffsetY = landXMLModel.m_landxmlPlanFeatures[0].m_polylinePoints[0].y;
+            m_sceneOriginOffsetZ = landXMLModel.m_landxmlPlanFeatures[0].m_polylinePoints[0].z;
+        }
+        else if (landXMLModel.m_landxmlAlignments.size() > 0 && landXMLModel.m_landxmlAlignments[0].m_polylinePoints.size() > 0)
+        {
+            m_sceneOriginOffsetX = landXMLModel.m_landxmlAlignments[0].m_polylinePoints[0].x;
+            m_sceneOriginOffsetY = landXMLModel.m_landxmlAlignments[0].m_polylinePoints[0].y;
+            m_sceneOriginOffsetZ = landXMLModel.m_landxmlAlignments[0].m_polylinePoints[0].z;
+        }
+        else if (landXMLModel.m_landxmlParcels.size() > 0 && landXMLModel.m_landxmlParcels[0].m_polylinePoints.size() > 0)
+        {
+            m_sceneOriginOffsetX = landXMLModel.m_landxmlParcels[0].m_polylinePoints[0].x;
+            m_sceneOriginOffsetY = landXMLModel.m_landxmlParcels[0].m_polylinePoints[0].y;
+            m_sceneOriginOffsetZ = landXMLModel.m_landxmlParcels[0].m_polylinePoints[0].z;
+        }
+    }
+}
+
+void LandXMLModel2glTF::BuildGLTFMaterialTable(const LandXMLModel& landXMLModel, GLTFModel& gltfModel)
+{
     // build the GLTF material table
     for (auto LXMat = landXMLModel.m_landXMLMaterials.m_MaterialMap.begin(); LXMat != landXMLModel.m_landXMLMaterials.m_MaterialMap.end(); LXMat++)
     {
@@ -135,8 +180,13 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
 
         matToAdd.m_material.metallicRoughness.baseColorFactor = matToAdd.m_color;
 
-        gltfModel.gltfSubMeshMaterials.push_back(matToAdd);
+        gltfModel.gltfMeshMaterials.push_back(matToAdd);
     }
+}
+
+bool LandXMLModel2glTF::BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel)
+{
+    bool retVal = false;
 
     // build the GLTF Surface Meshes
     for (LandXMLSurface* LXSurf : landXMLModel.m_landxmlSurfaces)
@@ -154,7 +204,6 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
         for (unsigned int pid = 1; pid <= LXSurf->m_surfacePointCount; pid++)
         {
             LandXMLPoint3D lxPnt = LXSurf->m_surfacePoints[pid];
-
             std::vector<float> glpnt1(3U);
 
             //if (m_wgsTrans)
@@ -163,9 +212,9 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
             //    lxPnt.z = lxPnt.z * m_unitConversionToWG84;
             //}
 
-            lxPnt.x -= sceneOriginOffsetX;
-            lxPnt.y -= sceneOriginOffsetY;
-            lxPnt.z -= sceneOriginOffsetZ;
+            lxPnt.x -= m_sceneOriginOffsetX;
+            lxPnt.y -= m_sceneOriginOffsetY;
+            lxPnt.z -= m_sceneOriginOffsetZ;
 
             lxPnt.x = lxPnt.x * m_unitConversionToWG84;
             lxPnt.y = lxPnt.y * m_unitConversionToWG84;
@@ -179,19 +228,6 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
                 gltfSurfModel->gltfMeshPoints.push_back(glpnt1[1]);
                 gltfSurfModel->gltfMeshPoints.push_back(glpnt1[2]);
             }
-        }
-
-        int m = 0;
-        std::vector<UINT> minValues(3U, UINT_MAX);
-        std::vector<UINT> maxValues(3U, 0U);
-
-        const size_t faceCount = LXSurf->m_textureBoundaries.front().m_surfaceFaces.size();
-
-        // Accessor min/max properties must be set for vertex position data so calculate them here
-        for (size_t i = 0U, j = 0U; i < faceCount; ++i, j = (i % 3U))
-        {
-            minValues[j] = std::min<UINT>(LXSurf->m_textureBoundaries.front().m_surfaceFaces[i].m_pointIndices[j], minValues[j]);
-            maxValues[j] = std::max<UINT>(LXSurf->m_textureBoundaries.front().m_surfaceFaces[i].m_pointIndices[j], maxValues[j]);
         }
 
         int txCount = 0;
@@ -218,12 +254,113 @@ bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, Micros
         }
 
         gltfModel.gltfSurfaceModels.push_back(gltfSurfModel);
+        retVal = true;
     }
 
     return retVal;
 }
 
-void LandXMLModel2glTF::AddGLTFMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
+bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel)
+{
+    bool retVal = false;
+
+    // build the GLTF Polyline Meshes
+    for (LandXMLPolyline LXPlan : landXMLModel.m_landxmlPlanFeatures)
+    {
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXPlan);
+
+        if (newPoly)
+        {
+            gltfModel.gltfPolylineModels.push_back(newPoly);
+        }
+    }
+
+    for (LandXMLPolyline LXAlign : landXMLModel.m_landxmlAlignments)
+    {
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXAlign);
+
+        if (newPoly)
+        {
+            gltfModel.gltfPolylineModels.push_back(newPoly);
+        }
+    }
+
+    for (LandXMLPolyline LXParcel : landXMLModel.m_landxmlParcels)
+    {
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXParcel);
+
+        if (newPoly)
+        {
+            gltfModel.gltfPolylineModels.push_back(newPoly);
+        }
+    }
+
+    return retVal;
+}
+
+GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly)
+{
+    GLTFPolylineModel* gltfPolyModel = new GLTFPolylineModel();
+
+    if (!gltfPolyModel)
+    {
+        return nullptr;
+    }
+
+    gltfPolyModel->name = LXPoly.m_name;
+
+    // build the polyline mesh
+    for (unsigned int pid = 0; pid < LXPoly.m_polylinePoints.size(); pid++)
+    {
+        LandXMLPoint3D lxPnt = LXPoly.m_polylinePoints[pid];
+
+        std::vector<float> glpnt1(3U);
+
+        //if (m_wgsTrans)
+        //{
+        //    m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
+        //    lxPnt.z = lxPnt.z * m_unitConversionToWG84;
+        //}
+
+        lxPnt.x -= m_sceneOriginOffsetX;
+        lxPnt.y -= m_sceneOriginOffsetY;
+        lxPnt.z -= m_sceneOriginOffsetZ;
+
+        lxPnt.x = lxPnt.x * m_unitConversionToWG84;
+        lxPnt.y = lxPnt.y * m_unitConversionToWG84;
+        lxPnt.z = lxPnt.z * m_unitConversionToWG84;
+
+        MathHelper::CopyLXTOGLTFPoint(lxPnt, glpnt1);
+
+        if (glpnt1.size() > 2)
+        {
+            gltfPolyModel->gltfPolylinePoints.push_back(glpnt1[0]);
+            gltfPolyModel->gltfPolylinePoints.push_back(glpnt1[1]);
+            gltfPolyModel->gltfPolylinePoints.push_back(glpnt1[2]);
+        }
+    }
+
+    size_t pointCount = gltfPolyModel->gltfPolylinePoints.size();
+    std::vector<unsigned int> localgltfMeshIndices;
+
+    pointCount /= 3U;
+
+    for (size_t i = 0U; i < (pointCount - 1); ++i)
+    {
+        unsigned int a = i;
+        unsigned int b = i + 1;
+
+        localgltfMeshIndices.push_back(a);
+        localgltfMeshIndices.push_back(b);
+    }
+
+    gltfPolyModel->gltfPolylineIndexIDs = localgltfMeshIndices;
+    gltfPolyModel->m_materialId = LXPoly.m_materialID;
+
+    return gltfPolyModel;
+}
+
+void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
     for (GLTFSurfaceModel* gltfSurfModel : gltfModel.gltfSurfaceModels)
     {
@@ -247,15 +384,20 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
         std::vector<float> minValues(3U, FLT_MAX);
-        std::vector<float> maxValues(3U, FLT_MIN);
+        std::vector<float> maxValues(3U, -FLT_MAX);
 
         const size_t positionCount = gltfSurfModel->gltfMeshPoints.size();
 
         // Accessor min/max properties must be set for vertex position data so calculate them here
-        for (size_t i = 0U, j = 0U; i < positionCount; ++i, j = (i % 3U))
+        for (size_t i = 0U, j = 0U; (i + j) < positionCount; i += 3, j = (i % 3U))
         {
-            minValues[j] = std::min<float>(gltfSurfModel->gltfMeshPoints[i], minValues[j]);
-            maxValues[j] = std::max<float>(gltfSurfModel->gltfMeshPoints[i], maxValues[j]);
+            minValues[0] = std::min<float>(gltfSurfModel->gltfMeshPoints[i], minValues[0]);
+            minValues[1] = std::min<float>(gltfSurfModel->gltfMeshPoints[i + 1], minValues[1]);
+            minValues[2] = std::min<float>(gltfSurfModel->gltfMeshPoints[i + 2], minValues[2]);
+
+            maxValues[0] = std::max<float>(gltfSurfModel->gltfMeshPoints[i], maxValues[0]);
+            maxValues[1] = std::max<float>(gltfSurfModel->gltfMeshPoints[i + 1], maxValues[1]);
+            maxValues[2] = std::max<float>(gltfSurfModel->gltfMeshPoints[i + 2], maxValues[2]);
         }
 
         gltfSurfModel->accessorIdPositions.push_back(bufferBuilder.AddAccessor(gltfSurfModel->gltfMeshPoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
@@ -280,14 +422,11 @@ void LandXMLModel2glTF::AddGLTFMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF
 
     // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to
     // the Document. Note that after this point, no further calls should be made to BufferBuilder
-    bufferBuilder.Output(document);
+    //bufferBuilder.Output(document);
 }
 
-void LandXMLModel2glTF::AddGLTFMesh(GLTFModel& gltfModel, Microsoft::glTF::Document& document)
+void LandXMLModel2glTF::AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene)
 {
-    Microsoft::glTF::Scene scene;
-    static bool doneOnce = false;
-
     for (GLTFSurfaceModel* gltfSurfModel : gltfModel.gltfSurfaceModels)
     {
         std::vector<Microsoft::glTF::MeshPrimitive> surfaceSubMeshes;
@@ -297,7 +436,7 @@ void LandXMLModel2glTF::AddGLTFMesh(GLTFModel& gltfModel, Microsoft::glTF::Docum
             Microsoft::glTF::MeshPrimitive meshPrimitive;
 
             meshPrimitive.mode = Microsoft::glTF::MESH_TRIANGLES;
-            meshPrimitive.materialId = gltfModel.gltfSubMeshMaterials[gltfSurfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
+            meshPrimitive.materialId = gltfModel.gltfMeshMaterials[gltfSurfModel->gltfSubMeshIndicesMaterialMap[acc]].m_material.id;
             meshPrimitive.indicesAccessorId = gltfSurfModel->accessorIdIndices[acc];
             meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = gltfSurfModel->accessorIdPositions[0];
 
@@ -327,15 +466,116 @@ void LandXMLModel2glTF::AddGLTFMesh(GLTFModel& gltfModel, Microsoft::glTF::Docum
         scene.nodes.push_back(nodeId);
     }
 
-    // Add Materials from LandXML material table ONCE
-    for (auto gltfMat = gltfModel.gltfSubMeshMaterials.begin(); gltfMat != gltfModel.gltfSubMeshMaterials.end(); gltfMat++)
+    // Add Materials from LandXML material table
+    for (auto gltfMat = gltfModel.gltfMeshMaterials.begin(); gltfMat != gltfModel.gltfMeshMaterials.end(); gltfMat++)
     {
         // Add to the Document and store the generated ID
         document.materials.Append(std::move(gltfMat->m_material), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty);
     }
+}
 
-    // Add it to the Document, using a utility method that also sets the Scene as the Document's default
-    document.SetDefaultScene(std::move(scene), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty);
+void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
+{
+    for (GLTFPolylineModel* gltfPolylineModel : gltfModel.gltfPolylineModels)
+    {
+        // Create all the resource data (e.g. triangle indices and
+        // vertex positions) that will be written to the binary buffer
+        const char* bufferId = nullptr;
+
+        // Specify the 'special' GLB buffer ID. This informs the GLBResourceWriter that it should use
+        // the GLB container's binary chunk (usually the desired buffer location when creating GLBs)
+        if (dynamic_cast<const Microsoft::glTF::GLBResourceWriter*>(&bufferBuilder.GetResourceWriter()))
+        {
+            bufferId = Microsoft::glTF::GLB_BUFFER_ID;
+        }
+
+        // Create a Buffer - it will be the 'current' Buffer that all the BufferViews
+        // created by this BufferBuilder will automatically reference
+        bufferBuilder.AddBuffer(bufferId);
+
+        // ******* Polyline Points ***************************************************************
+        // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
+        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
+
+        std::vector<float> maxValues(3U, -FLT_MAX);
+        std::vector<float> minValues(3U, FLT_MAX);
+ 
+        const size_t positionCount = gltfPolylineModel->gltfPolylinePoints.size();
+
+        // Accessor min/max properties must be set for vertex position data so calculate them here
+        for (size_t i = 0U, j = 0U; (i + j) < positionCount; i += 3, j = (i % 3U))
+        {
+            minValues[0] = std::min<float>(gltfPolylineModel->gltfPolylinePoints[i], minValues[0]);
+            minValues[1] = std::min<float>(gltfPolylineModel->gltfPolylinePoints[i + 1], minValues[1]);
+            minValues[2] = std::min<float>(gltfPolylineModel->gltfPolylinePoints[i + 2], minValues[2]);
+
+            maxValues[0] = std::max<float>(gltfPolylineModel->gltfPolylinePoints[i], maxValues[0]);
+            maxValues[1] = std::max<float>(gltfPolylineModel->gltfPolylinePoints[i + 1], maxValues[1]);
+            maxValues[2] = std::max<float>(gltfPolylineModel->gltfPolylinePoints[i + 2], maxValues[2]);
+        }
+
+        gltfPolylineModel->accessorIdPolylinePositions.push_back(bufferBuilder.AddAccessor(gltfPolylineModel->gltfPolylinePoints, { Microsoft::glTF::TYPE_VEC3, Microsoft::glTF::COMPONENT_FLOAT, false, std::move(minValues), std::move(maxValues) }).id);
+        // ***************************************************************************************
+
+
+        // ******* Polyline Mesh Indices *******************************************************
+        // Create a BufferView with a target of ELEMENT_ARRAY_BUFFER (as it will reference index
+        // data) - it will be the 'current' BufferView that all the Accessors created by this
+        // BufferBuilder will automatically reference
+
+        bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ELEMENT_ARRAY_BUFFER);
+
+        // Copy the Accessor's id - subsequent calls to AddAccessor may invalidate the returned reference
+        gltfPolylineModel->accessorIdPolylineIndices.push_back(bufferBuilder.AddAccessor(gltfPolylineModel->gltfPolylineIndexIDs, { Microsoft::glTF::TYPE_SCALAR, Microsoft::glTF::COMPONENT_UNSIGNED_INT }).id);
+        // ***************************************************************************************
+
+    }
+}
+
+void LandXMLModel2glTF::AddGLTFPolylineMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene)
+{
+    for (GLTFPolylineModel* gltfPolylineModel : gltfModel.gltfPolylineModels)
+    {
+        std::vector<Microsoft::glTF::MeshPrimitive> polylineMeshes;
+
+        Microsoft::glTF::MeshPrimitive meshPrimitive;
+
+        unsigned int matID = gltfPolylineModel->m_materialId;
+
+        if (matID > 0)
+        {
+            matID -= 1;
+        }
+
+        meshPrimitive.mode = Microsoft::glTF::MESH_LINES;
+        meshPrimitive.materialId = gltfModel.gltfMeshMaterials[matID].m_material.id;
+        meshPrimitive.indicesAccessorId = gltfPolylineModel->accessorIdPolylineIndices[0];
+        meshPrimitive.attributes[Microsoft::glTF::ACCESSOR_POSITION] = gltfPolylineModel->accessorIdPolylinePositions[0];
+
+        polylineMeshes.push_back(meshPrimitive);
+
+        // Construct a Mesh and add the MeshPrimitive as a child
+        Microsoft::glTF::Mesh mesh;
+        mesh.name = gltfPolylineModel->name;
+
+        for (Microsoft::glTF::MeshPrimitive& polylineMesh : polylineMeshes)
+        {
+            mesh.primitives.push_back(std::move(polylineMesh));
+        }
+
+        // Add it to the Document and store the generated ID
+        auto meshId = document.meshes.Append(std::move(mesh), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        // Construct a Node adding a reference to the Mesh
+        Microsoft::glTF::Node node;
+        node.meshId = meshId;
+        node.name = "LandXML Polyline :" + gltfPolylineModel->name;
+
+        // Add it to the Document and store the generated ID
+        auto nodeId = document.nodes.Append(std::move(node), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty).id;
+
+        scene.nodes.push_back(nodeId);
+    }
 }
 
 void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFModel& gltfModel, std::filesystem::path& glTFFilename)
@@ -362,7 +602,7 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFM
 
         if (localGLTFWriter)
         {
-            std::string bufferURI = glTFFilename.filename().replace_extension("").string() + "_";
+            std::string bufferURI = glTFFilename.filename().replace_extension("").string() + "_Surf_";
             localGLTFWriter->SetUriPrefix(bufferURI);
         }
 
@@ -381,12 +621,29 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFM
         throw std::runtime_error("Command line argument path filename extension must be .gltf or .glb");
     }
 
+    Microsoft::glTF::Scene gltfScene;
     Microsoft::glTF::BufferBuilder bufferBuilder(std::move(resourceWriter));
-
-    AddGLTFMeshBuffers(gltfModel, document, bufferBuilder);
-    AddGLTFMesh(gltfModel, document);
-
     std::string manifest;
+
+    AddGLTFSurfaceMeshBuffers(gltfModel, document, bufferBuilder);
+    AddGLTFSurfaceMeshes(gltfModel, document, gltfScene);
+
+    Microsoft::glTF::ResourceWriter& localGLTFResourceWriter = bufferBuilder.GetResourceWriter();
+    Microsoft::glTF::GLTFResourceWriter* localGLTFWriter = dynamic_cast<Microsoft::glTF::GLTFResourceWriter*>(&localGLTFResourceWriter);
+    if (localGLTFWriter)
+    {
+        std::string bufferURI = glTFFilename.filename().replace_extension("").string() + "_Poly_";
+        localGLTFWriter->SetUriPrefix(bufferURI);
+    }
+
+    AddGLTFPolylineMeshBuffers(gltfModel, document, bufferBuilder);
+    AddGLTFPolylineMeshes(gltfModel, document, gltfScene);
+
+    document.SetDefaultScene(std::move(gltfScene), Microsoft::glTF::AppendIdPolicy::GenerateOnEmpty);
+
+    // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to
+    // the Document. Note that after this point, no further calls should be made to BufferBuilder
+    bufferBuilder.Output(document);
 
     try
     {

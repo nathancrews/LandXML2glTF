@@ -35,6 +35,24 @@ public:
     static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
     static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
 
+    static bool IsFuzzyEqual(double lhs, double rhs, double tol = 0.001)
+    {
+        if (std::abs(lhs - rhs) < tol)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    static bool IsFuzzyEqual(float lhs, float rhs, float tol = 0.001)
+    {
+        if (std::abs(lhs - rhs) < tol)
+        {
+            return true;
+        }
+        return false;
+    }
+
     static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, std::vector<float>& glTFPnt)
     {
         if (glTFPnt.size() > 2)

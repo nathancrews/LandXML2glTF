@@ -45,12 +45,37 @@ struct GLTFSurfaceModel
     std::unordered_map<unsigned int, std::vector<unsigned int>> gltfSubMeshIndexIDs;
 };
 
-struct GLTFModel
+struct GLTFPolylineModel
 {
     std::string name;
+    unsigned int m_materialId;
 
-    std::vector<GLTFSurfaceMaterial> gltfSubMeshMaterials;
+    std::vector<float> gltfPolylinePoints;
+    std::vector<std::string> accessorIdPolylinePositions;
+    std::vector<std::string> accessorIdPolylineIndices;
+    std::vector<unsigned int> gltfPolylineIndexIDs;
+};
+
+struct GLTFModel
+{
+    ~GLTFModel()
+    {
+        for (GLTFSurfaceModel* gltfSurfModel : gltfSurfaceModels)
+        {
+            delete gltfSurfModel;
+        }
+
+        for (GLTFPolylineModel* gltfPolyModel : gltfPolylineModels)
+        {
+            delete gltfPolyModel;
+        }
+    }
+
+    std::string name;
+
+    std::vector<GLTFSurfaceMaterial> gltfMeshMaterials;
     std::vector<GLTFSurfaceModel*> gltfSurfaceModels;
+    std::vector<GLTFPolylineModel*> gltfPolylineModels;
 };
 
 
@@ -59,16 +84,28 @@ class LANDXML2GLTFDLLAPI LandXMLModel2glTF
 public:
 
     bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
-    bool CreateGLTFModel(const LandXMLModel& landXMLModel, Microsoft::glTF::Document& glTFDocument, GLTFModel& gltfModel);
-
-    void AddGLTFMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
-
-    void AddGLTFMesh(GLTFModel& gltfModel, Microsoft::glTF::Document& document);
+    bool CreateGLTFModel(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
 
     void WriteGLTFFile(Microsoft::glTF::Document& document, GLTFModel& gltfModel, std::filesystem::path& glTFFilename);
 
 private:
+    
+    void SetGLTFModelSceneOffset(const LandXMLModel& landXMLModel);
+    void BuildGLTFMaterialTable(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
+    bool BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
+    bool BuildGLTFPolylineModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
+    GLTFPolylineModel* BuildGLTFPolyline(LandXMLPolyline& LXPoly);
+
+    void AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+    void AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene);
+
+    void AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+    void AddGLTFPolylineMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene);
+
     double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
+    double m_sceneOriginOffsetX = 0.0;
+    double m_sceneOriginOffsetY = 0.0;
+    double m_sceneOriginOffsetZ = 0.0;
 };
 
 }

@@ -21,7 +21,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
     if (!LXRoot || (stricmp(LXRoot->Name(), "LandXML") != 0))
     {
-        std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName;
+        std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName << "\n";
         return retStat;
     }
 
@@ -31,7 +31,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
     // The Units element and linearUnit are REQUIRED for any meaningful conversion
     if (!LXUnits)
     {
-        std::cout << "error: The LandXML file is missing the required <Units> element.";
+        std::cout << "error: The LandXML file is missing the required <Units> element.\n";
         return retStat;
     }
 
@@ -43,7 +43,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
         if (!linearUnitAT)
         {
-            std::cout << "error: The LandXML file is missing the required <Units> element attribute \"linearUnit\".";
+            std::cout << "error: The LandXML file is missing the required <Units> element attribute \"linearUnit\".\n";
             return retStat;
         }
 
@@ -51,7 +51,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
         if (outLandXMLMDoc.m_units.m_linearUnitString.empty())
         {
-            std::cout << "error: The LandXML file is missing a value for the required <Units> element attribute \"linearUnit\".";
+            std::cout << "error: The LandXML file is missing a value for the required <Units> element attribute \"linearUnit\".\n";
             return retStat;
         }
     }
@@ -92,28 +92,34 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
 
     if (!ParseMaterialTable(LXMaterials, outLandXMLMDoc.m_landXMLMaterials))
     {
-        std::cout << "error: Unable to find LandXML <MaterialTable> element in ./data/DefaultTexture.xml";
+        std::cout << "error: Unable to find LandXML <MaterialTable> element in ./data/DefaultTexture.xml\n";
         return retStat;
+    }
+
+    XMLElement* LXCgPoints = LXRoot->FirstChildElement("CgPoints");
+    while (LXCgPoints)
+    {
+        ParseCgPoints(LXCgPoints, outLandXMLMDoc);
+
+        LXCgPoints = LXCgPoints->NextSiblingElement("CgPoints");
     }
 
     // Parse Surfaces
     XMLElement* LXSurfaces = LXRoot->FirstChildElement("Surfaces");
-    if (!LXSurfaces)
+    if (LXSurfaces)
     {
-        return retStat;
-    }
+        XMLElement* LXSurface = LXSurfaces->FirstChildElement("Surface");
 
-    XMLElement* LXSurface = LXSurfaces->FirstChildElement("Surface");
+        while (LXSurface)
+        {
+            LandXMLSurface* LXSurfaceModel = new LandXMLSurface();
 
-    while (LXSurface)
-    {
-        LandXMLSurface* LXSurfaceModel = new LandXMLSurface();
+            ParseSurface(LXSurface, outLandXMLMDoc.m_landXMLMaterials, *LXSurfaceModel, outLandXMLMDoc.m_landxmlPoints);
 
-        ParseSurface(LXSurface, outLandXMLMDoc.m_landXMLMaterials, *LXSurfaceModel);
+            outLandXMLMDoc.m_landxmlSurfaces.push_back(LXSurfaceModel);
 
-        outLandXMLMDoc.m_landxmlSurfaces.push_back(LXSurfaceModel);
-
-        LXSurface = LXSurface->NextSiblingElement("Surface");
+            LXSurface = LXSurface->NextSiblingElement("Surface");
+        }
     }
 
 
@@ -136,21 +142,12 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
     }
 
 
-    XMLElement* LXPlanFeatures = LXRoot->FirstChildElement("PlandFeatures");
+    XMLElement* LXPlanFeatures = LXRoot->FirstChildElement("PlanFeatures");
     while (LXPlanFeatures)
     {
         ParsePlanFeatures(LXPlanFeatures, outLandXMLMDoc);
 
-        LXPlanFeatures = LXPlanFeatures->NextSiblingElement("Parcels");
-    }
-
-
-    XMLElement* LXCgPoints = LXRoot->FirstChildElement("CgPoints");
-    while (LXCgPoints)
-    {
-        ParseCgPoints(LXCgPoints, outLandXMLMDoc);
-
-        LXCgPoints = LXCgPoints->NextSiblingElement("CgPoints");
+        LXPlanFeatures = LXPlanFeatures->NextSiblingElement("PlanFeatures");
     }
 
     retStat = true;
@@ -275,7 +272,7 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
     return retStat;
 }
 
-bool LXParser::ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface)
+bool LXParser::ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
     bool retStat = true;
 
@@ -309,7 +306,7 @@ bool LXParser::ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inL
 
     if (LXSurfaceDef)
     {
-        ParseSurfacePoints(LXSurfaceDef, outLandXMLSurface);
+        ParseSurfacePoints(LXSurfaceDef, outLandXMLSurface, landxmlCGPoints);
         ParseSurfaceFaces(LXSurfaceDef, outLandXMLSurface);
     }
 
@@ -317,7 +314,7 @@ bool LXParser::ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inL
     return retStat;
 }
 
-bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface)
+bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
     bool retval = false;
 
@@ -354,7 +351,7 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
             }
         }
 
-        if (ParsePoint(LXSurfacePnt, surfPnt))
+        if (ParsePoint(LXSurfacePnt, surfPnt, landxmlCGPoints))
         {
             outLandXMLSurface.m_surfacePoints[pointID] = surfPnt;
 
@@ -546,7 +543,7 @@ bool LXParser::ParseAlignments(XMLElement* LXAlignments, LandXMLModel& outLandXM
     {
         LandXMLAlignment toAdd;
 
-        if (ParsePolyline(LXAlignment, &toAdd))
+        if (ParsePolyline(LXAlignment, &toAdd, outLandXMLMDoc.m_landxmlPoints))
         {
             outLandXMLMDoc.m_landxmlAlignments.push_back(toAdd);
             retStat = true;
@@ -568,7 +565,7 @@ bool LXParser::ParseParcels(XMLElement* LXParcels, LandXMLModel& outLandXMLMDoc)
     {
         LandXMLParcel toAdd;
 
-        if (ParsePolyline(LXParcel, &toAdd))
+        if (ParsePolyline(LXParcel, &toAdd, outLandXMLMDoc.m_landxmlPoints))
         {
             outLandXMLMDoc.m_landxmlParcels.push_back(toAdd);
             retStat = true;
@@ -590,7 +587,7 @@ bool LXParser::ParsePlanFeatures(XMLElement* LXPlanFeatures, LandXMLModel& outLa
     {
         LandXMLPolyline toAdd;
 
-        if (ParsePolyline(LXPlanFeature, &toAdd))
+        if (ParsePolyline(LXPlanFeature, &toAdd, outLandXMLMDoc.m_landxmlPoints))
         {
             outLandXMLMDoc.m_landxmlPlanFeatures.push_back(toAdd);
             retStat = true;
@@ -618,8 +615,7 @@ bool LXParser::ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDo
             toAdd.m_name = nameAt->Value();
         }
 
-        const XMLAttribute* pntRefAt = LXCgPoint->FindAttribute("pntRef");
-        if (!pntRefAt)
+        if (ParsePoint(LXCgPoint, toAdd, outLandXMLMDoc.m_landxmlPoints))
         {
             const XMLAttribute* descAt = LXCgPoint->FindAttribute("desc");
             if (descAt)
@@ -639,18 +635,8 @@ bool LXParser::ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDo
                 toAdd.m_materialID = std::atoi(materialAt->Value());
             }
 
-            if (ParsePoint(LXCgPoint, toAdd))
-            {
-                outLandXMLMDoc.m_landxmlPoints[toAdd.m_name] = toAdd;
-                retStat = true;
-            }
-        }
-        else
-        {
-            if (pntRefAt->Value())
-            {
-                outLandXMLMDoc.m_landxmlPoints[toAdd.m_name] = outLandXMLMDoc.m_landxmlPoints[pntRefAt->Value()];
-            }
+            outLandXMLMDoc.m_landxmlPoints[toAdd.m_name] = toAdd;
+            retStat = true;
         }
 
         LXCgPoint = LXCgPoint->NextSiblingElement("CgPoint");
@@ -659,7 +645,7 @@ bool LXParser::ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDo
     return retStat;
 }
 
-bool LXParser::ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly)
+bool LXParser::ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
     bool retStat = false;
 
@@ -690,13 +676,13 @@ bool LXParser::ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly)
 
     if (LXCoordGeom)
     {
-        retStat = ParseCoordGeom(LXCoordGeom, LXPoly->m_polylinePoints);
+        retStat = ParseCoordGeom(LXCoordGeom, LXPoly->m_polylinePoints, landxmlCGPoints);
     }
 
     return retStat;
 }
 
-bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList)
+bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
     bool retStat = false;
 
@@ -711,7 +697,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
             XMLElement* LXStart = LXLine->FirstChildElement("Start");
             if (LXStart)
             {
-                if (ParsePoint(LXStart, startPnt))
+                if (ParsePoint(LXStart, startPnt, landxmlCGPoints))
                 {
                     OutReturnPointList.push_back(startPnt);
                 }
@@ -721,7 +707,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
             XMLElement* LXEnd = LXLine->FirstChildElement("End");
             if (LXEnd)
             {
-                if (ParsePoint(LXEnd, endPnt))
+                if (ParsePoint(LXEnd, endPnt, landxmlCGPoints))
                 {
                     OutReturnPointList.push_back(endPnt);
                 }
@@ -738,7 +724,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
 
 
 // Parse a single point element
-bool LXParser::ParsePoint(XMLNode* LXPointList, LandXMLPoint3D& outReturnPoint3D)
+bool LXParser::ParsePoint(XMLElement* LXPointList, LandXMLPoint3D& outReturnPoint3D, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
     std::vector<std::string> pointYXZArray;
 
@@ -757,7 +743,18 @@ bool LXParser::ParsePoint(XMLNode* LXPointList, LandXMLPoint3D& outReturnPoint3D
         outReturnPoint3D.z = std::atof(pointYXZArray[2].c_str());
     }
 
-    return (pointYXZArray.size() >= 2);
+    if (pointYXZArray.size() < 2)
+    {
+        const XMLAttribute* pntRefAt = LXPointList->FindAttribute("pntRef");
+        if (pntRefAt && pntRefAt->Value())
+        {
+            std::string pointRefName = pntRefAt->Value();
+
+            outReturnPoint3D = landxmlCGPoints[pointRefName];
+        }
+    }
+
+    return ((outReturnPoint3D.x != 0.0) && (outReturnPoint3D.y != 0.0));
 }
 
 // Parse a point list element
@@ -799,15 +796,18 @@ bool LXParser::ParseFace(XMLNode* LXFaceList, LandXMLSurfaceFace& outReturnFace)
 
 void LXParser::SplitCData(XMLNode* LXPointList, std::vector<std::string>& outPointYXZArray)
 {
-    std::string pointList = LXPointList->FirstChild()->Value();
+    if (LXPointList->FirstChild())
+    {
+        std::string pointList = LXPointList->FirstChild()->Value();
 
-    std::regex reg("\\s+");
-    std::sregex_token_iterator iter(pointList.begin(), pointList.end(), reg, -1);
-    std::sregex_token_iterator end;
+        std::regex reg("\\s+");
+        std::sregex_token_iterator iter(pointList.begin(), pointList.end(), reg, -1);
+        std::sregex_token_iterator end;
 
-    std::vector<std::string> pointYXZArray(iter, end);
+        std::vector<std::string> pointYXZArray(iter, end);
 
-    outPointYXZArray = pointYXZArray;
+        outPointYXZArray = pointYXZArray;
+    }
 }
 
 void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G, float& B)
@@ -822,15 +822,21 @@ void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G,
     {
         nextNum = strtok(tokBuffer, ",");
         if (nextNum)
+        {
             r = atof(nextNum);
+        }
 
-        nextNum = strtok(NULL, ",");
+        nextNum = strtok(nullptr, ",");
         if (nextNum)
+        {
             g = atof(nextNum);
+        }
 
-        nextNum = strtok(NULL, ",");
+        nextNum = strtok(nullptr, ",");
         if (nextNum)
+        {
             b = atof(nextNum);
+        }
     }
 
     R = (r / 255.0);

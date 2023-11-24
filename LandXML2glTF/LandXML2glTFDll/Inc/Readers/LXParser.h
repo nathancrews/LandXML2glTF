@@ -24,8 +24,8 @@ namespace LANDXML2GLTF
     private:
 
         bool ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials);
-        bool ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface);
-        bool ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface);
+        bool ParseSurface(XMLElement* LXSurfaceNode, LandXMLMaterialTable& inLandXMLMaterials, LandXMLSurface& outLandXMLSurface, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints);
+        bool ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints);
         bool ParseSurfaceFaces(XMLElement* LXSurfaceDefNode, LandXMLSurface& outLandXMLSurface);
         bool ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface& outLandXMLSurface);
 
@@ -34,10 +34,10 @@ namespace LANDXML2GLTF
         bool ParsePlanFeatures(XMLElement* LXPlanFeatures, LandXMLModel& outLandXMLMDoc);
         bool ParseCgPoints(XMLElement* LXCgPoints, LandXMLModel& outLandXMLMDoc);
 
-        bool ParsePoint(XMLNode* LXPointList, LandXMLPoint3D& OutReturnPoint3D);
+        bool ParsePoint(XMLElement* LXPointList, LandXMLPoint3D& OutReturnPoint3D, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints);
         bool ParsePointList3D(XMLNode* LXPointList, std::vector<LandXMLPoint3D>& OutReturnPointList);
-        bool ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly);
-        bool ParseCoordGeom(XMLElement* LXCordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList);
+        bool ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints);
+        bool ParseCoordGeom(XMLElement* LXCordGeom, std::vector<LandXMLPoint3D>& OutReturnPointList, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints);
         bool ParseFace(XMLNode* LXFaceList, LandXMLSurfaceFace& outReturnFace);
         void SplitCData(XMLNode* LXPointList, std::vector<std::string>& OutPointYXZArray);
     };

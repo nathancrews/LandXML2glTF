@@ -91,3 +91,4 @@ gdal/
 /LandXML2glTF/LandXML/NewSubdivision
 *.ilk
 *.enc
+/LandXML2glTF/LXML2glTF/LXML2glTF.vcxproj.user

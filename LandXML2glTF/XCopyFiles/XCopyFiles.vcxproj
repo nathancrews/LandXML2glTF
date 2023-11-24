@@ -58,11 +58,12 @@
       <EnableUAC>false</EnableUAC>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy ..\LandXML2glTFDLL\bin\x64\Debug\*.dll ..\LXML2glTF\bin\x64\Debug /D /Y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy ..\3rdparty\gdal\*.dll ..\LXML2glTF\bin\x64\Debug /D /Y
-xcopy ..\landxml\defaulttexture.xml ..\LXML2glTF\bin\x64\Debug\data /D /Y</Command>
+      <Command>xcopy ..\3rdparty\gdal\*.dll ..\LXML2glTF\bin\x64\Debug\*.* /D /Y
+xcopy ..\landxml\defaulttexture.xml ..\LXML2glTF\bin\x64\Debug\data\*.* /D /Y</Command>
     </PreBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -95,8 +96,8 @@ xcopy ..\landxml\defaulttexture.xml ..\LXML2glTF\bin\x64\Debug\data /D /Y</Comma
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy ..\3rdparty\gdal\*.dll ..\LXML2glTF\bin\x64\Release /D /Y
-xcopy ..\landxml\defaulttexture.xml ..\LXML2glTF\bin\x64\Release\data /D /Y</Command>
+      <Command>xcopy ..\3rdparty\gdal\*.dll ..\LXML2glTF\bin\x64\Release\*.* /D /Y
+xcopy ..\landxml\defaulttexture.xml ..\LXML2glTF\bin\x64\Release\data\*.* /D /Y</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

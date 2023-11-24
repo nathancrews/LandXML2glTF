@@ -57,25 +57,33 @@ int main(int argc, char* argv[])
 
         searchPath._Remove_filename_and_separator();
 
-        if (doSubDirectories)
+        if (std::filesystem::exists(searchPath))
         {
-            for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(searchPath))
+            if (doSubDirectories)
             {
-                if (dir_entry.is_regular_file() && !dir_entry.path().extension().compare(".xml"))
+                for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(searchPath))
                 {
-                    batchModeXMLFilenames.push_back(dir_entry.path());
+                    if (dir_entry.is_regular_file() && !dir_entry.path().extension().compare(".xml"))
+                    {
+                        batchModeXMLFilenames.push_back(dir_entry.path());
+                    }
+                }
+            }
+            else
+            {
+                for (auto const& dir_entry : std::filesystem::directory_iterator(searchPath))
+                {
+                    if (dir_entry.is_regular_file() && !dir_entry.path().extension().compare(".xml"))
+                    {
+                        batchModeXMLFilenames.push_back(dir_entry.path());
+                    }
                 }
             }
         }
         else
         {
-            for (auto const& dir_entry : std::filesystem::directory_iterator(searchPath))
-            {
-                if (dir_entry.is_regular_file() && !dir_entry.path().extension().compare(".xml"))
-                {
-                    batchModeXMLFilenames.push_back(dir_entry.path());
-                }
-            }
+            std::cout << "Error: path not found: " << searchPath << "\n";
+            return 1;
         }
     }
     else
@@ -105,6 +113,7 @@ int main(int argc, char* argv[])
 
         fcount++;
     }
+
     }
 
 

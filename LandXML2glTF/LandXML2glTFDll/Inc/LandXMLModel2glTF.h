@@ -32,7 +32,7 @@ private:
     void BuildGLTFMaterialTable(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
     bool BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
     bool BuildGLTFPolylineModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
-    GLTFPolylineModel* BuildGLTFPolyline(LandXMLPolyline& LXPoly);
+    GLTFPolylineModel* BuildGLTFPolyline(LandXMLPolyline& LXPoly, double& planeElev);
 
     void AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
     void AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene);

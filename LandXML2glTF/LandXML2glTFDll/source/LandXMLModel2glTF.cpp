@@ -264,10 +264,22 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
 {
     bool retVal = false;
 
+    double planarElev = 0.0;
+
+    for (LandXMLSurface* lxsurf : landXMLModel.m_landxmlSurfaces)
+    {
+        if (lxsurf->m_maxSurfPoint.z > planarElev)
+        {
+            planarElev = lxsurf->m_maxSurfPoint.z;
+        }
+    }
+
+    planarElev += 50.0;
+
     // build the GLTF Polyline Meshes
     for (LandXMLPolyline LXPlan : landXMLModel.m_landxmlPlanFeatures)
     {
-        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXPlan);
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXPlan, planarElev);
 
         if (newPoly)
         {
@@ -277,7 +289,7 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
 
     for (LandXMLPolyline LXAlign : landXMLModel.m_landxmlAlignments)
     {
-        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXAlign);
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXAlign, planarElev);
 
         if (newPoly)
         {
@@ -287,7 +299,7 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
 
     for (LandXMLPolyline LXParcel : landXMLModel.m_landxmlParcels)
     {
-        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXParcel);
+        GLTFPolylineModel* newPoly = BuildGLTFPolyline(LXParcel, planarElev);
 
         if (newPoly)
         {
@@ -314,7 +326,7 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
     return retVal;
 }
 
-GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly)
+GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly, double& planeElev)
 {
     GLTFPolylineModel* gltfPolyModel = new GLTFPolylineModel();
 
@@ -329,6 +341,9 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly)
     for (unsigned int pid = 0; pid < LXPoly.m_polylinePoints.size(); pid++)
     {
         LandXMLPoint3D lxPnt = LXPoly.m_polylinePoints[pid];
+
+        // set polyline planar elevation about highest surface
+        lxPnt.z = planeElev;
 
         std::vector<float> glpnt1(3U);
 

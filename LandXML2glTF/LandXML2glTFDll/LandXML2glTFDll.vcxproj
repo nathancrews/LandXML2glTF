@@ -18,6 +18,7 @@
     <ClInclude Include="Inc\Helpers\MathHelper.h" />
     <ClInclude Include="Inc\LandXML2glTFDll.h" />
     <ClInclude Include="Inc\LandXMLModel2glTF.h" />
+    <ClInclude Include="Inc\Models\GLTFModel.h" />
     <ClInclude Include="Inc\Models\LandXML.h" />
     <ClInclude Include="Inc\Readers\LXParser.h" />
     <ClInclude Include="Inc\targetver.h" />

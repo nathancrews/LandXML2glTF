@@ -61,6 +61,9 @@
     <ClInclude Include="Inc\Writers\GLTFWriter.h">
       <Filter>Header Files\Writers</Filter>
     </ClInclude>
+    <ClInclude Include="Inc\Models\GLTFModel.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\LandXMLModel2glTF.cpp">

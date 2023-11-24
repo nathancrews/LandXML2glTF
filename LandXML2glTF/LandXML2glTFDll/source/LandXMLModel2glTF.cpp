@@ -340,15 +340,18 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
     bool isDraped = false;
     double aveElev = 0.0;
 
-    for (unsigned int pid = 0; pid < 3; pid++)
+    if (LXPoly.m_polylinePoints.size() > 2)
     {
-        aveElev += LXPoly.m_polylinePoints[pid].z;
-    }
-    
-    aveElev /= 3;
-    if (!MathHelper::IsFuzzyEqual(aveElev, 0.0))
-    {
-        isDraped = true;
+        for (unsigned int pid = 0; pid < 3; pid++)
+        {
+            aveElev += LXPoly.m_polylinePoints[pid].z;
+        }
+
+        aveElev /= 3;
+        if (!MathHelper::IsFuzzyEqual(aveElev, 0.0))
+        {
+            isDraped = true;
+        }
     }
 
     // build the polyline mesh

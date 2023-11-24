@@ -24,7 +24,7 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
     std::string m_name;
     std::string m_description;
     std::string m_code;
-    unsigned int m_materialID = 0;
+    unsigned int m_materialID = 1;
 
     double x = 0.0;
     double y = 0.0;
@@ -33,7 +33,7 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 
 struct LANDXML2GLTFDLLAPI LandXMLMaterial
 {
-    unsigned int m_ID = 0;
+    unsigned int m_ID = 1;
     double m_textureImageScale = 1.0;
     double m_symbolXScale = 1.0;
     double m_symbolYScale = 1.0;
@@ -59,7 +59,7 @@ struct LANDXML2GLTFDLLAPI LandXMLMaterialTable
 
 struct LANDXML2GLTFDLLAPI LandXMLPolyline
 {
-    unsigned int m_materialID = 0;
+    unsigned int m_materialID = 1;
     double m_area = 0.0;
 
     std::string m_name;

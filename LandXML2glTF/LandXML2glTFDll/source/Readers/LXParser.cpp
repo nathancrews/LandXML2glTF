@@ -671,6 +671,10 @@ bool LXParser::ParsePolyline(XMLElement* LXPolyline, LandXMLPolyline* LXPoly, st
     {
         LXPoly->m_materialID = std::atoi(materialAt->Value());
     }
+    else
+    {
+        LXPoly->m_materialID = 1;
+    }
 
     XMLElement* LXCoordGeom = LXPolyline->FirstChildElement("CoordGeom");
 

@@ -36,12 +36,18 @@ struct GLTFSurfaceModel
 struct GLTFPolylineModel
 {
     std::string name;
-    unsigned int m_materialId;
+    unsigned int m_materialId = 0;
 
     std::vector<float> gltfPolylinePoints;
-    std::vector<std::string> accessorIdPolylinePositions;
-    std::vector<std::string> accessorIdPolylineIndices;
     std::vector<unsigned int> gltfPolylineIndexIDs;
+    std::string accessorIdPolylineIndex;
+};
+
+struct GLTFMultiPolyModel
+{
+    std::string accessorId;
+    std::vector<float> gltfMultiPolylinePoints;
+    std::vector<GLTFPolylineModel*> gltfPolylines;
 };
 
 struct GLTFModel
@@ -53,7 +59,7 @@ struct GLTFModel
             delete gltfSurfModel;
         }
 
-        for (GLTFPolylineModel* gltfPolyModel : gltfPolylineModels)
+        for (GLTFPolylineModel* gltfPolyModel : gltfMultiPolyModel.gltfPolylines)
         {
             delete gltfPolyModel;
         }
@@ -63,7 +69,9 @@ struct GLTFModel
 
     std::vector<GLTFSurfaceMaterial> gltfMeshMaterials;
     std::vector<GLTFSurfaceModel*> gltfSurfaceModels;
-    std::vector<GLTFPolylineModel*> gltfPolylineModels;
+    GLTFMultiPolyModel gltfMultiPolyModel;
+
+//    std::vector<GLTFPolylineModel*> gltfPolylineModels;
 };
 
 }

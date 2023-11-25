@@ -9,17 +9,16 @@
 #   pragma warning(disable: 4251)
 #endif
 
+namespace LANDXML2GLTF
+{
+
 struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 {
-    inline LandXMLPoint3D() {};
-    inline LandXMLPoint3D(double inX, double inY, double inZ)
-    {
-        x = inX;
-        y = inY;
-        z = inZ;
-    };
+    LandXMLPoint3D() {};
+    LandXMLPoint3D(double inX, double inY, double inZ);
 
-    inline void operator=(const LandXMLPoint3D& vec) { x = vec.x; y = vec.y; z = vec.z; };
+    void operator=(const LandXMLPoint3D& vec) { x = vec.x; y = vec.y; z = vec.z; };
+    bool operator==(const LandXMLPoint3D& vec);
 
     std::string m_name;
     std::string m_description;
@@ -100,7 +99,7 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
         m_maxSurfPoint.z = -DBL_MAX;
     }
 
-    ~LandXMLSurface(){}
+    ~LandXMLSurface() {}
 
     std::string m_name;
     std::string m_description;
@@ -120,7 +119,7 @@ struct LANDXML2GLTFDLLAPI LandXMLUnits
 
 struct LANDXML2GLTFDLLAPI LandXMLModel
 {
-    ~LandXMLModel() 
+    ~LandXMLModel()
     {
         for (int j = 0; j < m_landxmlSurfaces.size(); j++)
         {
@@ -141,6 +140,7 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
     std::map<std::string, LandXMLPoint3D> m_landxmlPoints;
 };
 
+}
 
 #ifdef _MSC_VER
 #   pragma warning(pop)

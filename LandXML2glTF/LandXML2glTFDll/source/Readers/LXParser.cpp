@@ -692,32 +692,67 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
 
     if (LXCoordGeom)
     {
-        XMLElement* LXLine = LXCoordGeom->FirstChildElement("Line");
+        XMLElement* LXSegment = LXCoordGeom->FirstChildElement();
 
-        while (LXLine)
+        while (LXSegment)
         {
-            LandXMLPoint3D startPnt, endPnt;
+            LandXMLPoint3D startPnt, endPnt, centerPoint;
 
-            XMLElement* LXStart = LXLine->FirstChildElement("Start");
-            if (LXStart)
+            XMLElement* LXStart = LXSegment->FirstChildElement("Start");
+            XMLElement* LXEnd = LXSegment->FirstChildElement("End");
+
+            if (!LXStart || !LXEnd)
+            {
+                LXSegment = LXSegment->NextSiblingElement();
+                continue;
+            }
+
+            if (!_stricmp(LXSegment->Name(), "Line"))
             {
                 if (ParsePoint(LXStart, startPnt, landxmlCGPoints))
                 {
                     OutReturnPointList.push_back(startPnt);
                 }
 
-            }
-
-            XMLElement* LXEnd = LXLine->FirstChildElement("End");
-            if (LXEnd)
-            {
                 if (ParsePoint(LXEnd, endPnt, landxmlCGPoints))
                 {
                     OutReturnPointList.push_back(endPnt);
                 }
             }
+            else if (!_stricmp(LXSegment->Name(), "Curve"))
+            {
+                if (ParsePoint(LXStart, startPnt, landxmlCGPoints))
+                {
+                    OutReturnPointList.push_back(startPnt);
+                }
 
-            LXLine = LXLine->NextSiblingElement("Line");
+                ParsePoint(LXEnd, endPnt, landxmlCGPoints);
+
+                const XMLAttribute* rotAtt = LXSegment->FindAttribute("rot");
+                bool isClockwise = false;
+
+                if (rotAtt && rotAtt->Value() && !_stricmp(rotAtt->Value(), "cw"))
+                {
+                    isClockwise = true;
+                }
+
+                XMLElement* LXCenter = LXSegment->FirstChildElement("Center");
+
+                if (ParsePoint(LXCenter, centerPoint, landxmlCGPoints))
+                {
+                    std::vector<LandXMLPoint3D> curveTessPointList;
+
+                    if (MathHelper::Tesselate2DCurve(startPnt, centerPoint, endPnt, curveTessPointList))
+                    {
+                        OutReturnPointList.reserve(OutReturnPointList.size() + curveTessPointList.size());
+                        OutReturnPointList.insert(OutReturnPointList.end(), curveTessPointList.begin(), curveTessPointList.end());
+                    }
+                }
+
+                OutReturnPointList.push_back(endPnt);
+            }
+
+            LXSegment = LXSegment->NextSiblingElement();
 
             retStat = true;
         }
@@ -730,8 +765,12 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
 // Parse a single point element
 bool LXParser::ParsePoint(XMLElement* LXPointList, LandXMLPoint3D& outReturnPoint3D, std::map<std::string, LandXMLPoint3D>& landxmlCGPoints)
 {
-    std::vector<std::string> pointYXZArray;
+    if (!LXPointList)
+    {
+        return false;
+    }
 
+    std::vector<std::string> pointYXZArray;
     outReturnPoint3D.z = 0.0;
 
     SplitCData(LXPointList, pointYXZArray);

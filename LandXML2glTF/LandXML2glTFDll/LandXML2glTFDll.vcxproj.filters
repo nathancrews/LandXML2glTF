@@ -31,6 +31,9 @@
     <Filter Include="Header Files\Models">
       <UniqueIdentifier>{e584521e-9184-491d-9d58-64dfc0d398fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{3406a345-4af6-4748-8d07-b5a155065e25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inc\framework.h">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="source\Readers\LXParser.cpp">
       <Filter>Source Files\Readers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Models\LandXML.cpp">
+      <Filter>Source Files\Models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

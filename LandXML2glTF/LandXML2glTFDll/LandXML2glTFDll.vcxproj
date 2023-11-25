@@ -29,6 +29,7 @@
     <ClCompile Include="source\Helpers\MathHelper.cpp" />
     <ClCompile Include="source\LandXML2glTFDll.cpp" />
     <ClCompile Include="source\LandXMLModel2glTF.cpp" />
+    <ClCompile Include="source\Models\LandXML.cpp" />
     <ClCompile Include="source\Readers\LXParser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,4 +1,3 @@
-
 #include "LandXMLModel2glTF.h"
 #include "Readers/LXParser.h"
 #include "Helpers/MathHelper.h"
@@ -49,7 +48,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         m_unitConversionToWG84 = IFT2M;
     }
 
-    // NOT in use yet
+    // TODO: NOT in use yet
     //landXMLSpatialRef = new OGRSpatialReference();
 
     //OGRErr tStat = landXMLSpatialRef->importFromWkt(landXMLModel.m_wktString.c_str());
@@ -76,7 +75,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     glTFDoc.asset.copyright = "Nathan Crews";
     std::cout << "Building glTF model...\n";
 
- //   try {
+    try {
         retval = CreateGLTFModel(landXMLModel, gltfModel);
 
         if (gltfModel.gltfSurfaceModels.size() > 0 || gltfModel.gltfMultiPolyModel.gltfPolylines.size() > 0)
@@ -88,11 +87,11 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         {
             std::cout << "Error: No surfaces or polyline data found in " << InLandXMLFilename << "\n";
         }
- //   }
- //   catch (...)
- //   {
- //       std::cout << "Critical Error occurred.\n";
- //   }
+    }
+    catch (...)
+    {
+        std::cout << "Critical Error occurred.\n";
+    }
 
     // cleanup memory
     delete LXDocument;
@@ -311,9 +310,8 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
 
     for (GLTFPolylineModel* poly : gltfModel.gltfMultiPolyModel.gltfPolylines)
     {
-        indexOffset = gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() / 3;
+        indexOffset = gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() / 3U;
 
-        // Reserve space first
         gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.reserve(gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() + poly->gltfPolylinePoints.size());
         gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.insert(gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.end(), poly->gltfPolylinePoints.begin(), poly->gltfPolylinePoints.end());
 
@@ -367,6 +365,7 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
 
         std::vector<float> glpnt1(3U);
 
+        // TODO: Need to figure out GLTF world coordinates
         //if (m_wgsTrans)
         //{
         //    m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
@@ -391,9 +390,7 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
         }
     }
 
-    size_t pointCount = gltfPolyModel->gltfPolylinePoints.size();
-
-    pointCount /= 3U;
+    size_t pointCount = gltfPolyModel->gltfPolylinePoints.size() / 3U;
 
     for (size_t i = 0U; i < (pointCount - 1); ++i)
     {
@@ -464,10 +461,6 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsof
         // ***************************************************************************************
 
     }
-
-    // Add all of the Buffers, BufferViews and Accessors that were created using BufferBuilder to
-    // the Document. Note that after this point, no further calls should be made to BufferBuilder
-    //bufferBuilder.Output(document);
 }
 
 void LandXMLModel2glTF::AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene)

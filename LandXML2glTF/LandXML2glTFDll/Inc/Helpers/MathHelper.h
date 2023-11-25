@@ -27,6 +27,8 @@ class OGRCoordinateTransformation;
 namespace LANDXML2GLTF
 {
 
+#define PI 3.1415926535897932384626433832795
+
 class LANDXML2GLTFDLLAPI MathHelper
 {
 public:
@@ -34,6 +36,9 @@ public:
     static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
     static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
     static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
+    static double Distance2D(LandXMLPoint3D& P1, LandXMLPoint3D& P2);
+    static double Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint);
+    static bool Tesselate2DCurve(LandXMLPoint3D& startPnt, LandXMLPoint3D& centerPoint, LandXMLPoint3D& endPnt, std::vector<LandXMLPoint3D>& OutTesselatedPointList);
 
     static bool IsFuzzyEqual(double lhs, double rhs, double tol = 0.001)
     {

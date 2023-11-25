@@ -76,7 +76,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     glTFDoc.asset.copyright = "Nathan Crews";
     std::cout << "Building glTF model...\n";
 
-    try {
+ //   try {
         retval = CreateGLTFModel(landXMLModel, gltfModel);
 
         if (gltfModel.gltfSurfaceModels.size() > 0 || gltfModel.gltfMultiPolyModel.gltfPolylines.size() > 0)
@@ -88,11 +88,11 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         {
             std::cout << "Error: No surfaces or polyline data found in " << InLandXMLFilename << "\n";
         }
-    }
-    catch (...)
-    {
-        std::cout << "Critical Error occurred.\n";
-    }
+ //   }
+ //   catch (...)
+ //   {
+ //       std::cout << "Critical Error occurred.\n";
+ //   }
 
     // cleanup memory
     delete LXDocument;
@@ -514,6 +514,12 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::gl
 
 void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
+    if (gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() == 0 ||
+        gltfModel.gltfMultiPolyModel.gltfPolylines.size() == 0)
+    {
+        return;
+    }
+
     // Create all the resource data (e.g. triangle indices and
     // vertex positions) that will be written to the binary buffer
     const char* bufferId = nullptr;

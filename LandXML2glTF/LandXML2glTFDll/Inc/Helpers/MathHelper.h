@@ -2,7 +2,7 @@
 
 #include "framework.h"
 #include "Models/LandXML.h"
-
+#include <cfloat>
 
 #ifdef _MSC_VER
 #pragma warning(push)

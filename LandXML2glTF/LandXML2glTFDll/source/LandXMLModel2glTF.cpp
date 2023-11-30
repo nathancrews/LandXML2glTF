@@ -432,8 +432,8 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsof
         // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
-        std::vector<float> minValues(3U, std::numeric_limits<float>::max());
-        std::vector<float> maxValues(3U, -std::numeric_limits<float>::max());
+        std::vector<float> minValues(3U, FLT_MAX);
+        std::vector<float> maxValues(3U, -FLT_MAX);
 
         const size_t positionCount = gltfSurfModel->gltfMeshPoints.size();
 
@@ -538,8 +538,8 @@ void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microso
     // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
     bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
-    std::vector<float> maxValues(3U, -std::numeric_limits<float>::max());
-    std::vector<float> minValues(3U, std::numeric_limits<float>::max());
+    std::vector<float> maxValues(3U, -FLT_MAX);
+    std::vector<float> minValues(3U, FLT_MAX);
 
     const size_t positionCount = gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size();
 

@@ -3,15 +3,19 @@
 #include "framework.h"
 #include "Models/LandXML.h"
 
-#pragma warning(push)
-#pragma warning(disable: 4005)
-#include "gdal.h"
-#include "ogr_spatialref.h"
-#pragma warning(pop)
 
 #ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable: 4251)
+#pragma warning(push)
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4005)
+#pragma warning(disable: 4251)
+#endif
+
+#ifdef USE_GDAL
+#include "gdal.h"
+#include "ogr_spatialref.h"
+
+class OGRCoordinateTransformation;
 #endif
 
 #ifndef USFT2M			// U.S. feet to meters
@@ -21,8 +25,6 @@
 #ifndef IFT2M			// International feet to meters
 #	define IFT2M		0.3048
 #endif
-
-class OGRCoordinateTransformation;
 
 namespace LANDXML2GLTF
 {
@@ -35,7 +37,6 @@ public:
 
     static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
     static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
-    static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
     static double Distance2D(LandXMLPoint3D& P1, LandXMLPoint3D& P2);
     static double Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint);
     static bool Tesselate2DCurve(LandXMLPoint3D& startPnt, LandXMLPoint3D& centerPoint, LandXMLPoint3D& endPnt, std::vector<LandXMLPoint3D>& OutTesselatedPointList);
@@ -75,10 +76,15 @@ public:
     {
         glTFPnt.x = LXPnt.x; glTFPnt.y = LXPnt.y; glTFPnt.z = LXPnt.z;
     }
+
+#ifdef USE_GDAL
+    static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);
+#endif
+
 };
 
 }
 
 #ifdef _MSC_VER
-#   pragma warning(pop)
+#pragma warning(pop)
 #endif

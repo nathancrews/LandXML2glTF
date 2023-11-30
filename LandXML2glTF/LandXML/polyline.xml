@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<LandXML xmlns="http://www.landxml.org/schema/LandXML-1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.landxml.org/schema/LandXML-1.1 http://www.landxml.org/schema/LandXML-1.1/LandXML-1.1.xsd" date="2006-04-16" time="11:17:59" version="1.1" language="English" readOnly="false">
+	<Units>
+		<Imperial areaUnit="squareFoot" linearUnit="foot" volumeUnit="cubicYard" temperatureUnit="fahrenheit" pressureUnit="inchHG" angularUnit="decimal dd.mm.ss" directionUnit="decimal dd.mm.ss"></Imperial>
+	</Units>
+	<Project name="Partridge"></Project>
+	<Application name="Autodesk Civil 3D" desc="Civil 3D" manufacturer="Autodesk, Inc." version="2007" manufacturerURL="www.autodesk.com/civil" timeStamp="2006-04-16T11:17:59"></Application>
+	<PlanFeatures name="Figures">
+		<PlanFeature name="Parcel 3">
+      <CoordGeom>
+        <Line>
+          <Start>2155.347140 1219.780526 0.000000</Start>
+          <End>2308.988338 1119.338867 0.000000</End>
+        </Line>
+        <Line>
+          <Start>2308.988338 1119.338867 0.000000</Start>
+          <End>2179.986034 982.864119 0.000000</End>
+        </Line>
+        <Curve rot="ccw">
+          <Start>2179.986034 982.864119 0.000000</Start>
+          <Center>2148.736986 1012.402178 0.000000</Center>
+          <End>2128.615026 974.400774 0.000000</End>
+        </Curve>
+        <Line>
+          <Start>2128.615026 974.400774 0.000000</Start>
+          <End>1976.555212 1054.917309 0.000000</End>
+        </Line>
+        <Line>
+          <Start>1976.555212 1054.917309 0.000000</Start>
+          <End>2155.347140 1219.780526 0.000000</End>
+        </Line>
+      </CoordGeom>
+		</PlanFeature>
+  </PlanFeatures>
+</LandXML>

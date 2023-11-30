@@ -19,7 +19,7 @@
 #   pragma warning(disable: 4251)
 #endif
 
-class LANDXML2GLTFDLLAPI StreamWriter : public Microsoft::glTF::IStreamWriter
+class StreamWriter : public Microsoft::glTF::IStreamWriter
 {
 public:
     StreamWriter(std::filesystem::path pathBase) : m_pathBase(std::move(pathBase))

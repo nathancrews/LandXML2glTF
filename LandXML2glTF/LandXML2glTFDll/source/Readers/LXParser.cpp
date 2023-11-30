@@ -19,7 +19,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
     XMLElement* LXRoot = LXDocument->RootElement();
 
-    if (!LXRoot || (stricmp(LXRoot->Name(), "LandXML") != 0))
+    if (!LXRoot || (_stricmp(LXRoot->Name(), "LandXML") != 0))
     {
         std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName << "\n";
         return retStat;
@@ -856,7 +856,7 @@ void LXParser::SplitCData(XMLNode* LXPointList, std::vector<std::string>& outPoi
 void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G, float& B)
 {
     char tokBuffer[MAX_PATH] = { 0 };
-    strcpy(tokBuffer, colorValueStr.c_str());
+    strcpy_s(tokBuffer, colorValueStr.size()+1, colorValueStr.c_str());
 
     char* nextNum = nullptr;
     float r = 0.0, g = 0.0, b = 0.0;
@@ -866,25 +866,25 @@ void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G,
         nextNum = strtok(tokBuffer, ",");
         if (nextNum)
         {
-            r = atof(nextNum);
+            r = (float)atof(nextNum);
         }
 
         nextNum = strtok(nullptr, ",");
         if (nextNum)
         {
-            g = atof(nextNum);
+            g = (float)atof(nextNum);
         }
 
         nextNum = strtok(nullptr, ",");
         if (nextNum)
         {
-            b = atof(nextNum);
+            b = (float)atof(nextNum);
         }
     }
 
-    R = (r / 255.0);
-    G = (g / 255.0);
-    B = (b / 255.0);
+    R = (r / 255);
+    G = (g / 255);
+    B = (b / 255);
 }
 
 }

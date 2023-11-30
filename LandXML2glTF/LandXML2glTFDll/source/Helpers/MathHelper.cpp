@@ -1,5 +1,4 @@
 #include "Helpers/MathHelper.h"
-#include <cmath>
 
 namespace LANDXML2GLTF
 {
@@ -38,6 +37,7 @@ double MathHelper::PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints)
     return area;
 }
 
+#ifdef USE_GDAL
 OGRCoordinateTransformation* MathHelper::GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef)
 {
     OGRSpatialReference wgs84Ref;
@@ -49,6 +49,7 @@ OGRCoordinateTransformation* MathHelper::GetWGS84CoordTransform(OGRSpatialRefere
 
     return wgsTrans;
 }
+#endif
 
 double MathHelper::Distance2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint)
 {
@@ -129,7 +130,7 @@ double MathHelper::Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint)
     theta = startAng;
     delta = (endAng - startAng) / TessalationSegments;
 
-    for (int i = 0; i < TessalationSegments; i++)
+    for (unsigned int i = 0; i < TessalationSegments; i++)
     {
         LandXMLPoint3D tessPnt;
 

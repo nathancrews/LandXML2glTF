@@ -1,6 +1,8 @@
 #pragma once
 
 #include "framework.h"
+#include <cstdlib>
+
 #include "Models/LandXML.h"
 #include "Models/GLTFModel.h"
 #include "Helpers/MathHelper.h"
@@ -11,9 +13,6 @@
 #   pragma warning(disable: 4251)
 #endif
 
-class OGRCoordinateTransformation;
-class OGRSpatialReference;
-
 namespace LANDXML2GLTF
 {
 
@@ -23,7 +22,6 @@ public:
 
     bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
     bool CreateGLTFModel(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
-
     void WriteGLTFFile(Microsoft::glTF::Document& document, GLTFModel& gltfModel, std::filesystem::path& glTFFilename);
 
 private:
@@ -47,7 +45,6 @@ private:
 };
 
 }
-
 
 #ifdef _MSC_VER
 #   pragma warning(pop)

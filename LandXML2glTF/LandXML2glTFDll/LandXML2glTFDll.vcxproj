@@ -32,6 +32,10 @@
     <ClCompile Include="source\Models\LandXML.cpp" />
     <ClCompile Include="source\Readers\LXParser.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -87,7 +91,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>.\inc;../3rdparty;..\3rdparty\gltfsdk\inc;..\3rdparty\TinyXML\Inc;..\3rdparty\gdal\gcore;..\3rdparty\gdal\ogr;..\3rdparty\gdal\port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\inc;../3rdparty;..\3rdparty\gltfsdk\gltfsdk\inc;..\3rdparty\gltfsdk\gltfsdk\inc\gltfsdk;..\3rdparty\TinyXML\Inc;..\3rdparty\gdal\gcore;..\3rdparty\gdal\ogr;..\3rdparty\gdal\port;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;DEBUG;_DEBUG;LANDXML2GLTFDLLAPI_EXPORT;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -98,8 +102,8 @@
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
-      <AdditionalDependencies>$(CoreLibraryDependencies);GLTFSDKD.lib;gdal_i.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\3rdparty\GLTFSDK\lib;..\3rdparty\gdal</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);GLTFSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\build\3rdparty\GLTFSDK\GLTFSDK\Debug;..\3rdparty\gdal</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <PostBuildEvent>
@@ -122,7 +126,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <AdditionalLibraryDirectories>..\3rdparty\GLTFSDK\lib;..\3rdparty\gdal</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GLTFSDK.lib;gdal_i.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLTFSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>

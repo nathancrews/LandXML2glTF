@@ -13,8 +13,11 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     LandXMLModel landXMLModel;
     LXParser LXHelper;
     tinyxml2::XMLDocument* LXDocument = nullptr;
+
+#ifdef USE_GDAL
     OGRSpatialReference* landXMLSpatialRef = nullptr;
     OGRCoordinateTransformation* wgsTrans = nullptr;
+#endif
 
     if (false == std::filesystem::exists(InLandXMLFilename))
     {
@@ -48,6 +51,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         m_unitConversionToWG84 = IFT2M;
     }
 
+#ifdef USE_GDAL
     // TODO: NOT in use yet
     //landXMLSpatialRef = new OGRSpatialReference();
 
@@ -59,6 +63,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     //    char* units = nullptr;
     //    m_unitConversionToWG84 = landXMLSpatialRef->GetLinearUnits(&units);
     //}
+#endif
 
     std::cout << "Parsing and building LandXML model...\n";
 
@@ -168,8 +173,8 @@ void LandXMLModel2glTF::BuildGLTFMaterialTable(const LandXMLModel& landXMLModel,
             idToUse = LXMat->second.m_ID - 1;
         }
 
-        char idAsChar[4] = { 0,0,0,0 };
-        sprintf(idAsChar, "%d", idToUse);
+        char idAsChar[50] = { 0 };
+        sprintf_s(idAsChar, 50, "%d", idToUse);
 
         matToAdd.m_material.id = idAsChar;
         matToAdd.m_material.name = LXMat->second.m_name;
@@ -310,7 +315,7 @@ bool LandXMLModel2glTF::BuildGLTFPolylineModels(const LandXMLModel& landXMLModel
 
     for (GLTFPolylineModel* poly : gltfModel.gltfMultiPolyModel.gltfPolylines)
     {
-        indexOffset = gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() / 3U;
+        indexOffset = (unsigned int)gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() / 3U;
 
         gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.reserve(gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() + poly->gltfPolylinePoints.size());
         gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.insert(gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.end(), poly->gltfPolylinePoints.begin(), poly->gltfPolylinePoints.end());
@@ -392,7 +397,7 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
 
     size_t pointCount = gltfPolyModel->gltfPolylinePoints.size() / 3U;
 
-    for (size_t i = 0U; i < (pointCount - 1); ++i)
+    for (unsigned int i = 0U; i < (pointCount - 1); ++i)
     {
         gltfPolyModel->gltfPolylineIndexIDs.push_back(i);
         gltfPolyModel->gltfPolylineIndexIDs.push_back(i + 1);

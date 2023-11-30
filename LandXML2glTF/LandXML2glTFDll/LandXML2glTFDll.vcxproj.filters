@@ -84,4 +84,8 @@
       <Filter>Source Files\Models</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
 </Project>

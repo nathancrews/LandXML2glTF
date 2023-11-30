@@ -86,7 +86,8 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
         if (gltfModel.gltfSurfaceModels.size() > 0 || gltfModel.gltfMultiPolyModel.gltfPolylines.size() > 0)
         {
             std::cout << "Writing glTF file: " << glTFFilename << "\n";
-            WriteGLTFFile(glTFDoc, gltfModel, std::filesystem::path(glTFFilename));
+            std::filesystem::path glTFFilenameAsPath = glTFFilename;
+            WriteGLTFFile(glTFDoc, gltfModel, glTFFilenameAsPath);
         }
         else
         {
@@ -174,7 +175,7 @@ void LandXMLModel2glTF::BuildGLTFMaterialTable(const LandXMLModel& landXMLModel,
         }
 
         char idAsChar[50] = { 0 };
-        sprintf_s(idAsChar, 50, "%d", idToUse);
+        sprintf(idAsChar, "%d", idToUse);
 
         matToAdd.m_material.id = idAsChar;
         matToAdd.m_material.name = LXMat->second.m_name;
@@ -237,14 +238,14 @@ bool LandXMLModel2glTF::BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel,
         int txCount = 0;
         for (auto txb = LXSurf->m_textureBoundaries.begin(); txb != LXSurf->m_textureBoundaries.end(); txb++)
         {
-            std::vector<UINT> localgltfMeshIndices;
+            std::vector<unsigned int> localgltfMeshIndices;
 
             for (LandXMLSurfaceFace lxFace : txb->m_surfaceFaces)
             {
                 // LandXML uses 1 based index values, glTF uses zero based indices.
-                UINT a = lxFace.m_pointIndices[0] - 1;
-                UINT b = lxFace.m_pointIndices[1] - 1;
-                UINT c = lxFace.m_pointIndices[2] - 1;
+                unsigned int a = lxFace.m_pointIndices[0] - 1;
+                unsigned int b = lxFace.m_pointIndices[1] - 1;
+                unsigned int c = lxFace.m_pointIndices[2] - 1;
 
                 localgltfMeshIndices.push_back(a);
                 localgltfMeshIndices.push_back(b);
@@ -431,8 +432,8 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsof
         // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
-        std::vector<float> minValues(3U, FLT_MAX);
-        std::vector<float> maxValues(3U, -FLT_MAX);
+        std::vector<float> minValues(3U, std::numeric_limits<float>::max());
+        std::vector<float> maxValues(3U, -std::numeric_limits<float>::max());
 
         const size_t positionCount = gltfSurfModel->gltfMeshPoints.size();
 
@@ -537,8 +538,8 @@ void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microso
     // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
     bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
 
-    std::vector<float> maxValues(3U, -FLT_MAX);
-    std::vector<float> minValues(3U, FLT_MAX);
+    std::vector<float> maxValues(3U, -std::numeric_limits<float>::max());
+    std::vector<float> minValues(3U, std::numeric_limits<float>::max());
 
     const size_t positionCount = gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size();
 

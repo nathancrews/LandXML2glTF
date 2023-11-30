@@ -22,8 +22,6 @@
 #   define LANDXML2GLTFDLLAPI
 #endif
 
-
-
 #include <cstdlib>
 #include <iostream>
-
+#include <numeric>

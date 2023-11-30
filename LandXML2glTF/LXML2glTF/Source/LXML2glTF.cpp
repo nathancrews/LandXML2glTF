@@ -28,13 +28,13 @@ int main(int argc, char* argv[])
     for (int u = 1; u < argc; u++)
     {
         // convert to .glb file
-        if (!_stricmp(argv[u], "/b"))
+        if (!strcmp(argv[u], "/b") || !strcmp(argv[u], "/B"))
         {
             gltfExt = "glb";
         }
         
         // Recursively search sub-directories
-        if (!_stricmp(argv[u], "/s"))
+        if (!strcmp(argv[u], "/s") || !strcmp(argv[u], "/S"))
         {
             doSubDirectories = true;
         }
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     {
         std::filesystem::path searchPath = LandXMLFilenameABS;
 
-        searchPath._Remove_filename_and_separator();
+        searchPath.remove_filename();
 
         if (std::filesystem::exists(searchPath))
         {

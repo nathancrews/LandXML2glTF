@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "GLTF.h"
 #include <map>
+#include <list>
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -78,7 +79,7 @@ struct LANDXML2GLTFDLLAPI LandXMLParcel : public LandXMLPolyline
 
 struct LANDXML2GLTFDLLAPI LandXMLSurfaceFace
 {
-    std::vector<UINT> m_pointIndices;
+    std::vector<unsigned int> m_pointIndices;
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLTextureBoundary : public LandXMLPolyline
@@ -90,13 +91,13 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
 {
     LandXMLSurface()
     {
-        m_minSurfPoint.x = DBL_MAX;
-        m_minSurfPoint.y = DBL_MAX;
-        m_minSurfPoint.z = DBL_MAX;
+        m_minSurfPoint.x = std::numeric_limits<double>::max();
+        m_minSurfPoint.y = std::numeric_limits<double>::max();
+        m_minSurfPoint.z = std::numeric_limits<double>::max();
 
-        m_maxSurfPoint.x = -DBL_MAX;
-        m_maxSurfPoint.y = -DBL_MAX;
-        m_maxSurfPoint.z = -DBL_MAX;
+        m_maxSurfPoint.x = -std::numeric_limits<double>::max();
+        m_maxSurfPoint.y = -std::numeric_limits<double>::max();
+        m_maxSurfPoint.z = -std::numeric_limits<double>::max();
     }
 
     ~LandXMLSurface() {}

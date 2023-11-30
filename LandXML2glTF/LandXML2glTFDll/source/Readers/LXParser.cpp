@@ -19,7 +19,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
 
     XMLElement* LXRoot = LXDocument->RootElement();
 
-    if (!LXRoot || (_stricmp(LXRoot->Name(), "LandXML") != 0))
+    if (!LXRoot || (strcmp(LXRoot->Name(), "LandXML") != 0))
     {
         std::cout << "error: The XML file does not contain valid LandXML data: " << outLandXMLMDoc.m_fileName << "\n";
         return retStat;
@@ -425,9 +425,9 @@ bool LXParser::ParseSurfaceFaces(XMLElement* LXSurfaceDefNode, LandXMLSurface& o
         {
             // LandXML surface ids start at 1, reduce point IDs by 1 to make vertex face point ids match zero based surface TIN point array
 
-            UINT facedPointId1 = surfFace.m_pointIndices[0];// -1;
-            UINT facedPointId2 = surfFace.m_pointIndices[1];// -1;
-            UINT facedPointId3 = surfFace.m_pointIndices[2];// -1;
+            unsigned int facedPointId1 = surfFace.m_pointIndices[0];// -1;
+            unsigned int facedPointId2 = surfFace.m_pointIndices[1];// -1;
+            unsigned int facedPointId3 = surfFace.m_pointIndices[2];// -1;
 
             LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
             LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];
@@ -495,7 +495,7 @@ bool LXParser::ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface&
                 bndryPoly.m_description = typeAt->Value();
             }
 
-            if (!_stricmp(bndryPoly.m_description.c_str(), "texture"))
+            if (!strcmp(bndryPoly.m_description.c_str(), "texture"))
             {
 
                 const XMLAttribute* materialAt = LXSurfaceBndry->FindAttribute("m");
@@ -707,7 +707,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
                 continue;
             }
 
-            if (!_stricmp(LXSegment->Name(), "Line"))
+            if (!strcmp(LXSegment->Name(), "Line"))
             {
                 if (ParsePoint(LXStart, startPnt, landxmlCGPoints))
                 {
@@ -719,7 +719,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
                     OutReturnPointList.push_back(endPnt);
                 }
             }
-            else if (!_stricmp(LXSegment->Name(), "Curve"))
+            else if (!strcmp(LXSegment->Name(), "Curve"))
             {
                 if (ParsePoint(LXStart, startPnt, landxmlCGPoints))
                 {
@@ -731,7 +731,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
                 const XMLAttribute* rotAtt = LXSegment->FindAttribute("rot");
                 bool isClockwise = false;
 
-                if (rotAtt && rotAtt->Value() && !_stricmp(rotAtt->Value(), "cw"))
+                if (rotAtt && rotAtt->Value() && !strcmp(rotAtt->Value(), "cw"))
                 {
                     isClockwise = true;
                 }
@@ -855,8 +855,8 @@ void LXParser::SplitCData(XMLNode* LXPointList, std::vector<std::string>& outPoi
 
 void LXParser::LXColor2RGB(const std::string& colorValueStr, float& R, float& G, float& B)
 {
-    char tokBuffer[MAX_PATH] = { 0 };
-    strcpy_s(tokBuffer, colorValueStr.size()+1, colorValueStr.c_str());
+    char tokBuffer[255] = { 0 };
+    strcpy(tokBuffer, colorValueStr.c_str());
 
     char* nextNum = nullptr;
     float r = 0.0, g = 0.0, b = 0.0;

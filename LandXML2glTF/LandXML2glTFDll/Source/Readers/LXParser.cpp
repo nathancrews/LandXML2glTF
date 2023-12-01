@@ -71,7 +71,7 @@ bool LXParser::ParseLandXMLHeader(tinyxml2::XMLDocument* LXDocument, LandXMLMode
     return retStat;
 }
 
-bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc)
+bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel& outLandXMLMDoc, std::string& exePath)
 {
     bool retStat = false;
 
@@ -90,7 +90,7 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
     // Not all LandXML files contain materials, so create a single texture material table to use
     // if no materials are loaded, then fail
 
-    if (!ParseMaterialTable(LXMaterials, outLandXMLMDoc.m_landXMLMaterials))
+    if (!ParseMaterialTable(LXMaterials, outLandXMLMDoc.m_landXMLMaterials, exePath))
     {
         std::cout << "error: Unable to find LandXML <MaterialTable> element in ./data/DefaultTexture.xml\n";
         return retStat;
@@ -154,11 +154,11 @@ bool LXParser::ParseLandXMLFile(tinyxml2::XMLDocument* LXDocument, LandXMLModel&
     return retStat;
 }
 
-bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials)
+bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTable& outLandXMLMaterials, std::string& exeDataPath)
 {
     bool retStat = false;
     tinyxml2::XMLDocument defaultMatDoc;
-    std::filesystem::path defaultMatDocPath = "./data/DefaultTexture.xml";
+    std::filesystem::path defaultMatDocPath = exeDataPath + "/DefaultTexture.xml";
     std::filesystem::path defaultMatDocPathABS = std::filesystem::absolute(defaultMatDocPath);
 
     std::string defaultMatDocFullPath = defaultMatDocPathABS.string().c_str();
@@ -239,7 +239,8 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
 
                         if (TextureHexString && TextureHexString->FirstChild())
                         {
-                            size_t hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
+                            size_t hexStrLen = 0;
+                            hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
                             LXMaterialEntry.m_textureImageHexString = TextureHexString->FirstChild()->Value();
                         }
 

@@ -7,12 +7,14 @@
 namespace LANDXML2GLTF
 {
 
-bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename)
+bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename,const std::string& exeDataPath)
 {
     bool retval = false;
     LandXMLModel landXMLModel;
     LXParser LXHelper;
     tinyxml2::XMLDocument* LXDocument = nullptr;
+
+    m_exeDataPath = exeDataPath;
 
 #ifdef USE_GDAL
     OGRSpatialReference* landXMLSpatialRef = nullptr;
@@ -67,7 +69,7 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
     std::cout << "Parsing and building LandXML model...\n";
 
-    if (!LXHelper.ParseLandXMLFile(LXDocument, landXMLModel))
+    if (!LXHelper.ParseLandXMLFile(LXDocument, landXMLModel, m_exeDataPath))
     {
         std::cout << "Error: failed to load and parse valid LandXML data from file: " << InLandXMLFilename << "\n";
         return retval;
@@ -108,12 +110,14 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 bool LandXMLModel2glTF::CreateGLTFModel(const LandXMLModel& landXMLModel, GLTFModel& gltfModel)
 {
     bool retVal = false;
-    int success = 0;
+    bool surfSuccess = false, polySuccess = false;
 
     SetGLTFModelSceneOffset(landXMLModel);
     BuildGLTFMaterialTable(landXMLModel, gltfModel);
-    BuildGLTFSurfaceModels(landXMLModel, gltfModel);
-    BuildGLTFPolylineModels(landXMLModel, gltfModel);
+    surfSuccess = BuildGLTFSurfaceModels(landXMLModel, gltfModel);
+    polySuccess = BuildGLTFPolylineModels(landXMLModel, gltfModel);
+
+    retVal = surfSuccess | polySuccess;
 
     return retVal;
 }
@@ -409,7 +413,7 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
     return gltfPolyModel;
 }
 
-void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
+void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
     for (GLTFSurfaceModel* gltfSurfModel : gltfModel.gltfSurfaceModels)
     {
@@ -511,7 +515,7 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::gl
     }
 }
 
-void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder)
+void LandXMLModel2glTF::AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
     if (gltfModel.gltfMultiPolyModel.gltfMultiPolylinePoints.size() == 0 ||
         gltfModel.gltfMultiPolyModel.gltfPolylines.size() == 0)
@@ -666,7 +670,7 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFM
     Microsoft::glTF::BufferBuilder bufferBuilder(std::move(resourceWriter));
     std::string manifest;
 
-    AddGLTFSurfaceMeshBuffers(gltfModel, document, bufferBuilder);
+    AddGLTFSurfaceMeshBuffers(gltfModel, bufferBuilder);
     AddGLTFSurfaceMeshes(gltfModel, document, gltfScene);
 
     Microsoft::glTF::ResourceWriter& localGLTFResourceWriter = bufferBuilder.GetResourceWriter();
@@ -677,7 +681,7 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFM
         localGLTFWriter->SetUriPrefix(bufferURI);
     }
 
-    AddGLTFPolylineMeshBuffers(gltfModel, document, bufferBuilder);
+    AddGLTFPolylineMeshBuffers(gltfModel, bufferBuilder);
     AddGLTFPolylineMeshes(gltfModel, document, gltfScene);
 
     // Add Materials from LandXML material table

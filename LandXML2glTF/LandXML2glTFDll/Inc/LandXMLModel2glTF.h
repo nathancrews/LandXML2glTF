@@ -20,7 +20,7 @@ class LANDXML2GLTFDLLAPI LandXMLModel2glTF
 {
 public:
 
-    bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename);
+    bool Convert2glTFModel(const std::string& InLandXMLFilename, const std::string& glTFFilename, const std::string& exePath);
     bool CreateGLTFModel(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
     void WriteGLTFFile(Microsoft::glTF::Document& document, GLTFModel& gltfModel, std::filesystem::path& glTFFilename);
 
@@ -32,16 +32,18 @@ private:
     bool BuildGLTFPolylineModels(const LandXMLModel& landXMLModel, GLTFModel& gltfModel);
     GLTFPolylineModel* BuildGLTFPolyline(LandXMLPolyline& LXPoly, double& planeElev);
 
-    void AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+    void AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::BufferBuilder& bufferBuilder);
     void AddGLTFSurfaceMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene);
 
-    void AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::BufferBuilder& bufferBuilder);
+    void AddGLTFPolylineMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::BufferBuilder& bufferBuilder);
     void AddGLTFPolylineMeshes(GLTFModel& gltfModel, Microsoft::glTF::Document& document, Microsoft::glTF::Scene& scene);
 
     double m_unitConversionToWG84 = USFT2M; // no conversion if LandXML linearUnit is meters
     double m_sceneOriginOffsetX = 0.0;
     double m_sceneOriginOffsetY = 0.0;
     double m_sceneOriginOffsetZ = 0.0;
+
+    std::string m_exeDataPath;
 };
 
 }

@@ -4,6 +4,15 @@ project(LandXML2glTFDLL)
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(LANDXML2GLTFDLLAPI_EXPORT)
 
+if (WIN32)
+    add_compile_definitions(
+        _CRT_SECURE_NO_WARNINGS _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+    )
+    add_compile_options(
+        /MP
+    )
+endif()
+
 # Add project source directories
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/Source" PROJECT_SRCS)
 aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/Source/Helpers" PROJECT_SRCS)
@@ -13,17 +22,26 @@ aux_source_directory("${CMAKE_CURRENT_SOURCE_DIR}/Source/Writers" PROJECT_SRCS)
 aux_source_directory("../3rdparty/TinyXML/Source" PROJECT_SRCS)
 
 # Add project include directories
-
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Inc")
 include_directories("../3rdparty/TinyXML/Inc")
 include_directories("../3rdparty/GLTFSDK/GLTFSDK/Inc/")
 
 add_library(LandXML2glTFDLL SHARED ${PROJECT_SRCS})
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-target_compile_options(LandXML2glTFDLL PRIVATE "-fPIC")
+if (MSVC)
+    target_compile_options(LandXML2glTFDLL PRIVATE "/Zi;/W4;/EHsc")
+
+    set_target_properties(LandXML2glTFDLL PROPERTIES COMPILE_PDB_NAME "LandXML2glTFDLL" COMPILE_PDB_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_DIRECTORY}")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(LandXML2glTFDLL
+        PRIVATE "-Wunguarded-availability"
+        PRIVATE "-Wall"
+        PRIVATE "-Werror"
+        PUBLIC "-Wno-unknown-pragmas")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(LandXML2glTFDLL
+        PRIVATE "-fPIC")
 endif()
 
-# Link against libraries
 target_link_libraries(LandXML2glTFDLL PRIVATE GLTFSDK)
 

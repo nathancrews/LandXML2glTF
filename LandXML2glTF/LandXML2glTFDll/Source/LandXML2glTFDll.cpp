@@ -33,8 +33,8 @@ bool LandXMLModel2GLTFDLL::ConvertFile(const std::string& inLandXMLFilename, con
     CPLSetConfigOption("PROJ_LIB", inAppDataPath.c_str());
 #endif
 
-    LANDXML2GLTF::LandXMLModel2glTF LXMLModel;
+    LANDXML2GLTF::LandXMLModel2glTF LXMLModelConverter;
 
-    return LXMLModel.Convert2glTFModel(inLandXMLFilename, glTFFilename);
+    return LXMLModelConverter.Convert2glTFModel(inLandXMLFilename, glTFFilename, inAppDataPath);
 }
 

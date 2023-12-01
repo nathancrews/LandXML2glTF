@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
 {
     std::filesystem::path LandXMLFilename;
     std::filesystem::path glTFFilename;
-    std::filesystem::path gdalDataPath;
+    std::filesystem::path exeDataPath;
 
     bool doSubDirectories = false;
     std::string gltfExt = "gltf";
@@ -17,9 +17,9 @@ int main(int argc, char* argv[])
     {
         // gdal needs this
         std::filesystem::path exePath = argv[0];
-        gdalDataPath = exePath.remove_filename();
+        exeDataPath = exePath.remove_filename();
 
-        gdalDataPath.append("data");
+        exeDataPath.append("data");
     }
 
     if (argc > 1)
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 
             std::cout << "Converting " "[" << fcount << " of " << batchModeXMLFilenames.size() << "] " << localLandXMLFilename << " to " << glTFFilename << "\n";
 
-            LandXML2glTFConverter.ConvertFile(localLandXMLFilename.string(), glTFFilename.string(), gdalDataPath.string());
+            LandXML2glTFConverter.ConvertFile(localLandXMLFilename.string(), glTFFilename.string(), exeDataPath.string());
         }
         else
         {

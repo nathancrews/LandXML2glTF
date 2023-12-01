@@ -1,10 +1,11 @@
 # LandXML2glTF
-Converts LandXML file format, versions 2.0 and 1.2, to .glTF files for 3D viewing integration
+Converts LandXML files, versions 2.0 and 1.2, to .glTF files for 3D viewing integration. This project is setup using CMake for Windows, Linux and MacOS
 
 <h2>Build Instructions</h2>
-Use CMake to generate the Visual Studio solution and project files. Open Windows Powershell or any other terminal that can run cmake, then:
+Use CMake to generate the build files. On Windows, a Visual Studio solution and project files will be produced.
+On Linux, Makefile will be produced. On MacOS, use >cmake -G Xcode .. to produce an Xcode project.
 
-Example:
+ Open Windows Powershell, VSCode terminal or any other terminal that can run cmake, then:
 
 c:\\>d:
 
@@ -14,16 +15,29 @@ d:\\GitHub\\LandXML2glTF>mkdir build
 
 d:\\GitHub\\LandXML2glTF>CD build
 
+<b>[Windows and Linux]</b>
+
 d:\\GitHub\\LandXML2glTF\build>cmake ..
 
-Assuming no errors, when cmake completes, the \build\LandXML2GLTF.sln should exist.
+<b>[MacOS]</b>
 
-<h3>Visual Studio for x64:</h3>
+d:\\GitHub\\LandXML2glTF\build>cmake -G Xcode ..
+
+Assuming no errors, when cmake completes, the \build\LandXML2GLTF.xxx (or Makefile) project files should exist.
+
+<b>CMake build for Windows, MacOs and Linux:</b>
+
+d:\\GitHub\\LandXML2glTF\build>cmake --build .
+
+<h3>Windows, Open in Visual Studio for x64:</h3>
 Open the \build\LandXML2glTF.sln solution file and build release or debug x64 targets.
 Once build is complete, the debug and release exe's are located in \landxml2gltf\build\debug\ and \landxml2gltf\build\release\ respectively.
 
+<h3>MacOS, Open in Xcode:</h3>
+Open the \build\LANDXML2GLTF.xcodeproj project file and build release or debug x64 targets.
+
 <h2>Usage:</h2>
-LXML2glTF.exe [path to LandXML file] [/s]
+.LXML2glTF.exe [path to LandXML file] [/s]
 
 <b>Required:</b> [path to LandXML file] full or relative path to the LandXML file(s). If the path contains a trailing wild char ".\\LandXML\\*", all .xml files in that directory will be converted.
 
@@ -32,7 +46,7 @@ LXML2glTF.exe [path to LandXML file] [/s]
 
 Example Usage 1:
 
-LXML2glTF.exe "..\\..\\..\\..\\LandXML\subdivision-2.0.xml"
+.LXML2glTF.exe "..\\..\\..\\..\\LandXML\subdivision-2.0.xml"
 
 Output:
 Converting "..\\..\\..\\..\\LandXML\\subdivision-2.0\\subdivision-2.0.xml" to "D:\\GitHub\\LandXML2glTF\\LandXML\\subdivision-2.0\\subdivision-2.0.gltf"

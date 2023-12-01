@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
+
+message("before:")
+message(">    ${CMAKE_CXX_COMPILER}")
+message(">    ${CMAKE_CXX_COMPILER_ID}")
+message(">    ${CMAKE_COMPILER_IS_GNUCXX}")
+message("-----------------")
+
 project (GLTFSDK)
 
 include(GLTFPlatform)
@@ -52,7 +59,11 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         PRIVATE "-Wall"
         PRIVATE "-Werror"
         PUBLIC "-Wno-unknown-pragmas")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(GLTFSDK
+        PRIVATE "-fPIC")
 endif()
+
 
 target_include_directories(GLTFSDK
     PUBLIC "${CMAKE_CURRENT_LIST_DIR}/Inc"

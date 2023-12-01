@@ -6,6 +6,7 @@
 #include <GLTFSDK/StreamCache.h>
 
 #include <list>
+#include <limits>
 
 namespace Microsoft
 {

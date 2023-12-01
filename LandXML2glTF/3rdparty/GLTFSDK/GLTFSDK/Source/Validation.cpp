@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
+#include <limits>
 #include <GLTFSDK/Validation.h>
 
 #include <GLTFSDK/BufferBuilder.h>

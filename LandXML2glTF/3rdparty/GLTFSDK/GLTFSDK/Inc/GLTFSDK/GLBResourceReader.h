@@ -4,6 +4,7 @@
 #pragma once
 
 #include <GLTFSDK/GLTFResourceReader.h>
+#include <limits>
 
 namespace Microsoft
 {

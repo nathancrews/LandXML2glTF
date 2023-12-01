@@ -1,7 +1,7 @@
 #pragma once
 
 #include "framework.h"
-#include "GLTF.h"
+#include <GLTFSDK/GLTF.h>
 #include <cfloat>
 #include <map>
 #include <list>

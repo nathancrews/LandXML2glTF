@@ -1,9 +1,9 @@
 #pragma once
 #include "framework.h"
 #include "Models/LandXML.h"
-#include <Serialize.h>
+#include <GLTFSDK/Serialize.h>
 #include <regex>
-#include "tinyxml2.h"
+#include <tinyxml2.h>
 
 using namespace tinyxml2;
 

@@ -5,14 +5,14 @@
 #include <cmath>
 #include <fstream>
 #include <filesystem>
-#include <GLTF.h>
-#include <Document.h>
-#include <Serialize.h>
-#include <Deserialize.h>
-#include <IStreamWriter.h>
-#include <BufferBuilder.h>
-#include <GLTFResourceWriter.h>
-#include <GLBResourceWriter.h>
+#include <GLTFSDK/GLTF.h>
+#include <GLTFSDK/Document.h>
+#include <GLTFSDK/Serialize.h>
+#include <GLTFSDK/Deserialize.h>
+#include <GLTFSDK/IStreamWriter.h>
+#include <GLTFSDK/BufferBuilder.h>
+#include <GLTFSDK/GLTFResourceWriter.h>
+#include <GLTFSDK/GLBResourceWriter.h>
 
 #ifdef _MSC_VER
 #   pragma warning(push)

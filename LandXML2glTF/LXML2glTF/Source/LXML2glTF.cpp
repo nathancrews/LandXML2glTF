@@ -1,4 +1,6 @@
 #include "LandXML2glTFDll.h"
+#include <string.h>
+#include <vector>
 #include <iostream>
 #include <filesystem>
 
@@ -23,6 +25,12 @@ int main(int argc, char* argv[])
     if (argc > 1)
     {
         LandXMLFilename = argv[1];
+    }
+
+    if (LandXMLFilename.empty())
+    {
+            std::cout << "Error: No .xml filename or path specified.\n";
+            return 1;
     }
 
     for (int u = 1; u < argc; u++)
@@ -114,6 +122,7 @@ int main(int argc, char* argv[])
         fcount++;
     }
 
+        return 0;
     }
 
 

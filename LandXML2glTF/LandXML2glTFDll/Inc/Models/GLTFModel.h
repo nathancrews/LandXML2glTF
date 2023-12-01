@@ -1,6 +1,6 @@
 #pragma once
 #include "framework.h"
-#include <IStreamWriter.h>
+#include <GLTFSDK/IStreamWriter.h>
 #include "Writers/GLTFWriter.h"
 
 namespace LANDXML2GLTF

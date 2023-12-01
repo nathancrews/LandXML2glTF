@@ -3,9 +3,9 @@ Converts LandXML files, versions 2.0 and 1.2, to .glTF files for 3D viewing inte
 
 <h2>Build Instructions</h2>
 Use CMake to generate the build files. On Windows, a Visual Studio solution and project files will be produced.
-On Linux, Makefile will be produced. On MacOS, use >cmake -G Xcode .. to produce an Xcode project.
+On Linux, Makefile will be produced. On MacOS, an Xcode project will be produced.
 
- Open Windows Powershell, VSCode terminal or any other terminal that can run cmake, then:
+Example: Open Windows Powershell, VSCode terminal or any other terminal that can run cmake, then:
 
 c:\\>d:
 

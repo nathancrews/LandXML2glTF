@@ -65,5 +65,6 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "editor.fontSize": 18
 }

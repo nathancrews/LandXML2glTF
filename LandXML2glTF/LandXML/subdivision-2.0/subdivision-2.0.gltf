@@ -1388,7 +1388,7 @@
         {
             "pbrMetallicRoughness": {
                 "baseColorFactor": [
-                    0.0,
+                    1.0,
                     1.0,
                     0.0,
                     1.0
@@ -1396,29 +1396,19 @@
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
-            "name": "just add bison",
-            "doubleSided": true
-        },
-        {
-            "pbrMetallicRoughness": {
-                "metallicFactor": 0.20000000298023224,
-                "roughnessFactor": 0.4000000059604645
-            },
-            "name": "concrete_bare_2135_2607_small",
             "doubleSided": true
         },
         {
             "pbrMetallicRoughness": {
                 "baseColorFactor": [
+                    1.0,
                     0.0,
-                    0.0,
-                    0.0,
+                    1.0,
                     1.0
                 ],
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
-            "name": "ashphalt_1",
             "doubleSided": true
         },
         {
@@ -1438,20 +1428,29 @@
         {
             "pbrMetallicRoughness": {
                 "baseColorFactor": [
-                    1.0,
                     0.0,
-                    1.0,
+                    0.0,
+                    0.0,
                     1.0
                 ],
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
+            "name": "ashphalt_1",
+            "doubleSided": true
+        },
+        {
+            "pbrMetallicRoughness": {
+                "metallicFactor": 0.20000000298023224,
+                "roughnessFactor": 0.4000000059604645
+            },
+            "name": "concrete_bare_2135_2607_small",
             "doubleSided": true
         },
         {
             "pbrMetallicRoughness": {
                 "baseColorFactor": [
-                    1.0,
+                    0.0,
                     1.0,
                     0.0,
                     1.0
@@ -1459,6 +1458,7 @@
                 "metallicFactor": 0.20000000298023224,
                 "roughnessFactor": 0.4000000059604645
             },
+            "name": "just add bison",
             "doubleSided": true
         }
     ],
@@ -1602,7 +1602,7 @@
                         "POSITION": 19
                     },
                     "indices": 20,
-                    "material": 0
+                    "material": 5
                 }
             ]
         },

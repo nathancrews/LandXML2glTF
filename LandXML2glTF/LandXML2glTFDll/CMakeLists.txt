@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
+
 project(LandXML2glTFDLL)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -34,9 +35,11 @@ if (MSVC)
     set_target_properties(LandXML2glTFDLL PROPERTIES COMPILE_PDB_NAME "LandXML2glTFDLL" COMPILE_PDB_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_DIRECTORY}")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(LandXML2glTFDLL
+        PRIVATE "-fpic"
         PRIVATE "-Wunguarded-availability"
         PRIVATE "-Wall"
         PRIVATE "-Werror"
+        PRIVATE "-Wunused-but-set-variable"
         PUBLIC "-Wno-unknown-pragmas")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     target_compile_options(LandXML2glTFDLL

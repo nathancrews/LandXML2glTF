@@ -3,6 +3,7 @@
 #include "Helpers/MathHelper.h"
 #include "Writers/GLTFWriter.h"
 #include <sstream>
+#include <stdio.h>
 
 namespace LANDXML2GLTF
 {
@@ -179,7 +180,7 @@ void LandXMLModel2glTF::BuildGLTFMaterialTable(const LandXMLModel& landXMLModel,
         }
 
         char idAsChar[50] = { 0 };
-        sprintf(idAsChar, "%d", idToUse);
+        snprintf(idAsChar, 50, "%d", idToUse);
 
         matToAdd.m_material.id = idAsChar;
         matToAdd.m_material.name = LXMat->second.m_name;

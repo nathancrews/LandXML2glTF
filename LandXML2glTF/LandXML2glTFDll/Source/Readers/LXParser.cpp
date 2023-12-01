@@ -239,8 +239,8 @@ bool LXParser::ParseMaterialTable(XMLElement* LXMaterialsNode, LandXMLMaterialTa
 
                         if (TextureHexString && TextureHexString->FirstChild())
                         {
-                            size_t hexStrLen = 0;
-                            hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
+                            //size_t hexStrLen = 0;
+                            //hexStrLen = strlen(TextureHexString->FirstChild()->Value()) + 1;
                             LXMaterialEntry.m_textureImageHexString = TextureHexString->FirstChild()->Value();
                         }
 
@@ -346,7 +346,7 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
         {
             pointID = std::atoi(pIDAtt->Value());
 
-            if (outLandXMLSurface.m_surfacePointCount == 0)
+            if (outLandXMLSurface.m_surfacePointCount > 0)
             {
                 pointIDFix = pointID - 1;
             }
@@ -354,7 +354,7 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
 
         if (ParsePoint(LXSurfacePnt, surfPnt, landxmlCGPoints))
         {
-            outLandXMLSurface.m_surfacePoints[pointID] = surfPnt;
+            outLandXMLSurface.m_surfacePoints[pointIDFix] = surfPnt;
 
             // find min surf coords
             if (surfPnt.x < outLandXMLSurface.m_minSurfPoint.x)
@@ -729,13 +729,7 @@ bool LXParser::ParseCoordGeom(XMLElement* LXCoordGeom, std::vector<LandXMLPoint3
 
                 ParsePoint(LXEnd, endPnt, landxmlCGPoints);
 
-                const XMLAttribute* rotAtt = LXSegment->FindAttribute("rot");
-                bool isClockwise = false;
-
-                if (rotAtt && rotAtt->Value() && !strcmp(rotAtt->Value(), "cw"))
-                {
-                    isClockwise = true;
-                }
+                //const XMLAttribute* rotAtt = LXSegment->FindAttribute("rot");
 
                 XMLElement* LXCenter = LXSegment->FirstChildElement("Center");
 

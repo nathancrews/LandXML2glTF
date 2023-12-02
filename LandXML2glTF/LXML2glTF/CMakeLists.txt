@@ -10,7 +10,8 @@ include_directories("../LandXML2glTFDll/Inc")
 
 add_executable(LXML2GLTF "${CMAKE_CURRENT_SOURCE_DIR}/Source/LXML2glTF.cpp")
 
+add_custom_command(TARGET LXML2GLTF POST_BUILD
+                   COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${CMAKE_CURRENT_LIST_DIR}/data" "${CMAKE_BINARY_DIR}/bin/$<CONFIG>/"
+)
+
 target_link_libraries(LXML2GLTF PRIVATE LandXML2glTFDLL)
-
-
-

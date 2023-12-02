@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LandXML2glTFDLL)
 
-set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(LANDXML2GLTFDLLAPI_EXPORT)
 
 if (WIN32)
     add_compile_definitions(
-        _CRT_SECURE_NO_WARNINGS _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-    )
-    add_compile_options(
-        /MP
+        _CRT_SECURE_NO_WARNINGS
     )
 endif()
 
@@ -30,8 +26,6 @@ include_directories("../3rdparty/GLTFSDK/GLTFSDK/Inc/")
 add_library(LandXML2glTFDLL SHARED ${PROJECT_SRCS})
 
 if (MSVC)
-    target_compile_options(LandXML2glTFDLL PRIVATE "/Zi;/W4;/EHsc")
-
     set_target_properties(LandXML2glTFDLL PROPERTIES COMPILE_PDB_NAME "LandXML2glTFDLL" COMPILE_PDB_OUTPUT_DIRECTORY "${LIBRARY_OUTPUT_DIRECTORY}")
 elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(LandXML2glTFDLL

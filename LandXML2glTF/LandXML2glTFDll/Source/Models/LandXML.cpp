@@ -11,6 +11,16 @@ LandXMLPoint3D::LandXMLPoint3D(double inX, double inY, double inZ)
     z = inZ;
 };
 
+bool LandXMLPoint3D::operator<(const LandXMLPoint3D& vec)
+{
+    return ((x < vec.x) || (y < vec.y) || (z < vec.z));
+}
+
+bool LandXMLPoint3D::operator>(const LandXMLPoint3D& vec)
+{
+    return ((x > vec.x) || (y > vec.y) || (z > vec.z));
+}
+
 bool LandXMLPoint3D::operator==(const LandXMLPoint3D& vec)
 {
     return (MathHelper::IsFuzzyEqual(x, vec.x) && MathHelper::IsFuzzyEqual(y, vec.y) && MathHelper::IsFuzzyEqual(z, vec.z));

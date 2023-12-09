@@ -56,16 +56,16 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
 
 #ifdef USE_GDAL
     // TODO: NOT in use yet
-    //landXMLSpatialRef = new OGRSpatialReference();
+    landXMLSpatialRef = new OGRSpatialReference();
 
-    //OGRErr tStat = landXMLSpatialRef->importFromWkt(landXMLModel.m_wktString.c_str());
+    OGRErr tStat = landXMLSpatialRef->importFromWkt(landXMLModel.m_wktString.c_str());
 
-    //if (tStat == OGRERR_NONE)
-    //{
-    //    wgsTrans = MathHelper::GetWGS84CoordTransform(*landXMLSpatialRef);
-    //    char* units = nullptr;
-    //    m_unitConversionToWG84 = landXMLSpatialRef->GetLinearUnits(&units);
-    //}
+    if (tStat == OGRERR_NONE)
+    {
+        wgsTrans = MathHelper::GetWGS84CoordTransform(*landXMLSpatialRef);
+        char* units = nullptr;
+        m_unitConversionToWG84 = landXMLSpatialRef->GetLinearUnits(&units);
+    }
 #endif
 
     std::cout << "Parsing and building LandXML model...\n";
@@ -211,16 +211,18 @@ bool LandXMLModel2glTF::BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel,
         gltfSurfModel->name = LXSurf->m_name;
 
         // build the surface meshes
-        for (unsigned int pid = 1; pid <= LXSurf->m_surfacePointCount; pid++)
+        for (unsigned int pid = 0; pid <= LXSurf->m_surfacePointCount; pid++)
         {
             LandXMLPoint3D lxPnt = LXSurf->m_surfacePoints[pid];
             std::vector<float> glpnt1(3U);
 
-            //if (m_wgsTrans)
-            //{
-            //    m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
-            //    lxPnt.z = lxPnt.z * m_unitConversionToWG84;
-            //}
+#ifdef USE_GDAL
+            if (m_wgsTrans)
+            {
+                m_wgsTrans->Transform(1, &lxPnt.x, &lxPnt.y, &lxPnt.z, &success);
+                lxPnt.z = lxPnt.z * m_unitConversionToWG84;
+            }
+#endif
 
             lxPnt.x -= m_sceneOriginOffsetX;
             lxPnt.y -= m_sceneOriginOffsetY;
@@ -248,19 +250,22 @@ bool LandXMLModel2glTF::BuildGLTFSurfaceModels(const LandXMLModel& landXMLModel,
             for (LandXMLSurfaceFace lxFace : txb->m_surfaceFaces)
             {
                 // LandXML uses 1 based index values, glTF uses zero based indices.
-                unsigned int a = lxFace.m_pointIndices[0] - 1;
-                unsigned int b = lxFace.m_pointIndices[1] - 1;
-                unsigned int c = lxFace.m_pointIndices[2] - 1;
+                unsigned int a = lxFace.m_pointIndices[0] - 1U;
+                unsigned int b = lxFace.m_pointIndices[1] - 1U;
+                unsigned int c = lxFace.m_pointIndices[2] - 1U;
 
                 localgltfMeshIndices.push_back(a);
                 localgltfMeshIndices.push_back(b);
                 localgltfMeshIndices.push_back(c);
             }
 
-            gltfSurfModel->gltfSubMeshIndexIDs[txCount] = localgltfMeshIndices;
-            gltfSurfModel->gltfSubMeshIndicesMaterialMap[txCount] = (txb->m_materialID - 1);
+            if (localgltfMeshIndices.size() > 0)
+            {
+                gltfSurfModel->gltfSubMeshIndexIDs[txCount] = localgltfMeshIndices;
+                gltfSurfModel->gltfSubMeshIndicesMaterialMap[txCount] = (txb->m_materialID - 1);
 
-            txCount++;
+                txCount++;
+            }
         }
 
         gltfModel.gltfSurfaceModels.push_back(gltfSurfModel);

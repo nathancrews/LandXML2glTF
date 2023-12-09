@@ -354,43 +354,54 @@ bool LXParser::ParseSurfacePoints(XMLElement* LXSurfaceDefNode, LandXMLSurface& 
 
         if (ParsePoint(LXSurfacePnt, surfPnt, landxmlCGPoints))
         {
+            outLandXMLSurface.m_surfacePointCount++;
             outLandXMLSurface.m_surfacePoints[pointIDFix] = surfPnt;
 
             // find min surf coords
-            if (surfPnt.x < outLandXMLSurface.m_minSurfPoint.x)
+
+            if (surfPnt < outLandXMLSurface.m_minSurfPoint)
             {
-                outLandXMLSurface.m_minSurfPoint.x = surfPnt.x;
+                outLandXMLSurface.m_minSurfPoint = surfPnt;
             }
 
-            if (surfPnt.y < outLandXMLSurface.m_minSurfPoint.y)
-            {
-                outLandXMLSurface.m_minSurfPoint.y = surfPnt.y;
-            }
+            //if (surfPnt.x < outLandXMLSurface.m_minSurfPoint.x)
+            //{
+            //    outLandXMLSurface.m_minSurfPoint.x = surfPnt.x;
+            //}
 
-            if (surfPnt.z < outLandXMLSurface.m_minSurfPoint.z)
-            {
-                outLandXMLSurface.m_minSurfPoint.z = surfPnt.z;
-            }
+            //if (surfPnt.y < outLandXMLSurface.m_minSurfPoint.y)
+            //{
+            //    outLandXMLSurface.m_minSurfPoint.y = surfPnt.y;
+            //}
+
+            //if (surfPnt.z < outLandXMLSurface.m_minSurfPoint.z)
+            //{
+            //    outLandXMLSurface.m_minSurfPoint.z = surfPnt.z;
+            //}
 
             // find max surf coords
-            if (surfPnt.x > outLandXMLSurface.m_maxSurfPoint.x)
+            if (surfPnt > outLandXMLSurface.m_maxSurfPoint)
             {
-                outLandXMLSurface.m_maxSurfPoint.x = surfPnt.x;
+                outLandXMLSurface.m_maxSurfPoint = surfPnt;
             }
 
-            if (surfPnt.y > outLandXMLSurface.m_maxSurfPoint.y)
-            {
-                outLandXMLSurface.m_maxSurfPoint.y = surfPnt.y;
-            }
+            //if (surfPnt.x > outLandXMLSurface.m_maxSurfPoint.x)
+            //{
+            //    outLandXMLSurface.m_maxSurfPoint.x = surfPnt.x;
+            //}
 
-            if (surfPnt.z > outLandXMLSurface.m_maxSurfPoint.z)
-            {
-                outLandXMLSurface.m_maxSurfPoint.z = surfPnt.z;
-            }
+            //if (surfPnt.y > outLandXMLSurface.m_maxSurfPoint.y)
+            //{
+            //    outLandXMLSurface.m_maxSurfPoint.y = surfPnt.y;
+            //}
+
+            //if (surfPnt.z > outLandXMLSurface.m_maxSurfPoint.z)
+            //{
+            //    outLandXMLSurface.m_maxSurfPoint.z = surfPnt.z;
+            //}
         }
 
         LXSurfacePnt = LXSurfacePnt->NextSiblingElement("P");
-        outLandXMLSurface.m_surfacePointCount++;
     }
 
     if (outLandXMLSurface.m_surfacePointCount > 2)
@@ -426,9 +437,9 @@ bool LXParser::ParseSurfaceFaces(XMLElement* LXSurfaceDefNode, LandXMLSurface& o
         {
             // LandXML surface ids start at 1, reduce point IDs by 1 to make vertex face point ids match zero based surface TIN point array
 
-            unsigned int facedPointId1 = surfFace.m_pointIndices[0];// -1;
-            unsigned int facedPointId2 = surfFace.m_pointIndices[1];// -1;
-            unsigned int facedPointId3 = surfFace.m_pointIndices[2];// -1;
+            unsigned int facedPointId1 = surfFace.m_pointIndices[0] - 1U;
+            unsigned int facedPointId2 = surfFace.m_pointIndices[1] - 1U;
+            unsigned int facedPointId3 = surfFace.m_pointIndices[2] - 1U;
 
             LandXMLPoint3D p1 = outLandXMLSurface.m_surfacePoints[facedPointId1];
             LandXMLPoint3D p2 = outLandXMLSurface.m_surfacePoints[facedPointId2];

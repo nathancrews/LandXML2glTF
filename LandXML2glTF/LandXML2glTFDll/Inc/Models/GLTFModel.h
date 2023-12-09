@@ -70,8 +70,6 @@ struct GLTFModel
     std::vector<GLTFSurfaceMaterial> gltfMeshMaterials;
     std::vector<GLTFSurfaceModel*> gltfSurfaceModels;
     GLTFMultiPolyModel gltfMultiPolyModel;
-
-//    std::vector<GLTFPolylineModel*> gltfPolylineModels;
 };
 
 }

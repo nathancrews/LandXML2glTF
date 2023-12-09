@@ -20,6 +20,8 @@ struct LANDXML2GLTFDLLAPI LandXMLPoint3D
     LandXMLPoint3D(double inX, double inY, double inZ);
 
     void operator=(const LandXMLPoint3D& vec) { x = vec.x; y = vec.y; z = vec.z; };
+    bool operator<(const LandXMLPoint3D& vec);
+    bool operator>(const LandXMLPoint3D& vec);
     bool operator==(const LandXMLPoint3D& vec);
 
     std::string m_name;

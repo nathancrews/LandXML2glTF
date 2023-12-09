@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LandXML2glTFDLL)
 
+#find_package(PROJ REQUIRED CONFIG)
+
 add_compile_definitions(LANDXML2GLTFDLLAPI_EXPORT)
 
 if (WIN32)

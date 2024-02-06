@@ -12,3 +12,5 @@
 /Open3DTest/src/RenderToImage.cpp
 /Open3DTest/src/TestVisualizer.cpp
 /Open3DTest/ref
+/Open3DTest/Clear_and_Reset_Thumbnail_Cache.bat
+/Open3DTest/re-explorer.bat

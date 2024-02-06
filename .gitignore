@@ -14,3 +14,12 @@
 /Open3DTest/ref
 /Open3DTest/Clear_and_Reset_Thumbnail_Cache.bat
 /Open3DTest/re-explorer.bat
+/LandXML2glTF/.gitignore
+/LandXML2glTF/LICENSE
+/LandXML2glTF/README.md
+/LandXML2glTF/LandXML2glTF
+/LandXML2glTF/LandXML/Olympus/olympus-new.xml
+/LandXML2glTF/LandXML/Partridge/Partridge_Survey.gltf
+/LandXML2glTF/LandXML/subdivision/subdivision.gltf
+/LandXML2glTF/LandXML/subdivision-2.0/subdivision-2.0.xml
+/LandXML2glTF/LandXML/polyline.gltf

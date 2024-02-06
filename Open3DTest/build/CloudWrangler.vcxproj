@@ -26,30 +26,30 @@
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
-    <ProjectName>TestVisualizer</ProjectName>
+    <ProjectName>CloudWrangler</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
     <VCToolsVersion>
     </VCToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -62,26 +62,26 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Projects\Open3DTest\build\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TestVisualizer.dir\Debug\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TestVisualizer</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CloudWrangler.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CloudWrangler</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestVisualizer.dir\Release\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestVisualizer</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CloudWrangler.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CloudWrangler</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Projects\Open3DTest\build\MinSizeRel\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">TestVisualizer.dir\MinSizeRel\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">TestVisualizer</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CloudWrangler.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CloudWrangler</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.\RelWithDebInfo\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">TestVisualizer.dir\RelWithDebInfo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">TestVisualizer</TargetName>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CloudWrangler.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CloudWrangler</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
@@ -105,7 +105,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;WINDOWS;FMT_HEADER_ONLY=0;FMT_USE_WINDOWS_H=0;FMT_STRING_ALIAS=1;CMAKE_INTDIR="Debug";_CRT_SECURE_NO_WARNINGS;_GLIBCXX_USE_CXX11_ABI=1;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;NOMINMAX;_USE_MATH_DEFINES;_ENABLE_EXTENDED_ALIGNED_STORAGE;MKL_ILP64</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TinyXML\inc;D:\3rdpartylibs\opencv\build\include;..\..\NCraftImageGen\inc;D:\3rdpartylibs\TinyXML</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>
@@ -134,7 +134,7 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Debug\Open3D.*" "D:\Projects\Open3DTest\
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>D:/Projects/Open3DTest/build/Debug/TestVisualizer.lib</ImportLibrary>
+      <ImportLibrary>D:/Projects/Open3DTest/build/Debug/CloudWrangler.lib</ImportLibrary>
       <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -164,7 +164,7 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Debug\Open3D.*" "D:\Projects\Open3DTest\
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TBB\tbb2018\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TinyXML\inc;D:\3rdpartylibs\opencv\build\include;D:\3rdpartylibs\TBB\tbb2018\include;D:\3rdpartylibs\TinyXML</AdditionalIncludeDirectories>
       <CompileAsWinRT>false</CompileAsWinRT>
       <CompileAsManaged>false</CompileAsManaged>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -192,12 +192,13 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Debug\Open3D.*" "D:\Projects\Open3DTest\
 xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DTest\build\Release\*" /E /D /Y</Command>
     </PostBuildEvent>
     <Link>
-      <AdditionalDependencies>Open3D.lib;.\Release\NCraftImageGen.lib;tbb.lib;pdalcpp.lib;pcl_search.lib;pcl_common.lib;pcl_surface.lib;pcl_io.lib;pcl_features.lib;pcl_segmentation.lib;pcl_filters.lib;pcl_octree.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>Open3D.lib;D:\3rdpartylibs\opencv\build\x64\vc16\lib\opencv_world490.lib;tbb.lib;pdalcpp.lib;pcl_search.lib;pcl_common.lib;pcl_surface.lib;pcl_io.lib;pcl_features.lib;pcl_segmentation.lib;pcl_filters.lib;pcl_octree.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Ws2_32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\3rdpartylibs\Open3D\build\lib\Release;%(AdditionalLibraryDirectories);D:\3rdpartylibs\pdal\Library\lib;D:\3rdpartylibs\PCL1.13\lib;D:\3rdpartylibs\TBB\tbb2018\lib\intel64\vc14</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>D:/Projects/Open3DTest/build/Release/TestVisualizer.lib</ImportLibrary>
+      <ImportLibrary>
+      </ImportLibrary>
       <ProgramDataBaseFile>$(OutDir)$(TargetName).pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
       <GenerateMapFile>false</GenerateMapFile>
@@ -225,7 +226,7 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DT
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TinyXML\inc;D:\3rdpartylibs\opencv\build\include;;D:\3rdpartylibs\TinyXML</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <ResourceCompile>
@@ -253,8 +254,8 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DT
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>D:/Projects/Open3DTest/build/MinSizeRel/TestVisualizer.lib</ImportLibrary>
-      <ProgramDataBaseFile>D:/Projects/Open3DTest/build/MinSizeRel/TestVisualizer.pdb</ProgramDataBaseFile>
+      <ImportLibrary>D:/Projects/Open3DTest/build/MinSizeRel/CloudWrangler.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Projects/Open3DTest/build/MinSizeRel/CloudWrangler.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -268,8 +269,8 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DT
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <ExternalWarningLevel>Level2</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -277,10 +278,12 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DT
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;WINDOWS;DEBUG;FMT_HEADER_ONLY=0;FMT_USE_WINDOWS_H=0;FMT_STRING_ALIAS=1;CMAKE_INTDIR="RelWithDebInfo";_CRT_SECURE_NO_WARNINGS;_GLIBCXX_USE_CXX11_ABI=1;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;NOMINMAX;_USE_MATH_DEFINES;_ENABLE_EXTENDED_ALIGNED_STORAGE;MKL_ILP64</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_WIN32;_WINDOWS;WIN32;WINDOWS;DEBUG;UNICODE;FMT_HEADER_ONLY=0;FMT_USE_WINDOWS_H=0;FMT_STRING_ALIAS=1;_CRT_SECURE_NO_WARNINGS;_GLIBCXX_USE_CXX11_ABI=1;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;NOMINMAX;_USE_MATH_DEFINES;_ENABLE_EXTENDED_ALIGNED_STORAGE</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\Open3D\include;D:/3rdpartylibs/Open3D/include/open3d/3rdparty;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TBB\tbb2018\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;.;D:\3rdpartylibs\tinyfiledialogs;D:\3rdpartylibs\Open3D18\include;D:\3rdpartylibs\Open3D18\include\open3d\3rdparty;D:\3rdpartylibs\opencv\build\include;D:\3rdpartylibs\PCL1.13\include\pcl-1.13;D:\3rdpartylibs\PCL1.13\3rdParty\Boost\include\boost-1_82;D:\3rdpartylibs\pdal\Library\include;D:\3rdpartylibs\TinyXML\inc;D:\3rdpartylibs\TinyXML;D:\3rdpartylibs\TBB\tbb2018\include</AdditionalIncludeDirectories>
       <OpenMPSupport>true</OpenMPSupport>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLIBCXX_USE_CXX11_ABI=0;GLEW_STATIC;FMT_HEADER_ONLY=0;FMT_USE_WINDOWS_H=0;FMT_STRING_ALIAS=1;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
@@ -297,17 +300,17 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\Release\Open3D.dll" "D:\Projects\Open3DT
     <PostBuildEvent>
       <Message>
       </Message>
-      <Command>xcopy D:\3rdpartylibs\open3d\build\bin\resources\*.* D:\Projects\Open3DTest\build\RelWithDebInfo\resources\* /E /D /Y /I
-xcopy "D:\3rdpartylibs\open3d\build\bin\RelWithDebInfo\Open3D.*" "D:\Projects\Open3DTest\build\RelWithDebInfo\*" /E /D /Y</Command>
+      <Command>xcopy "D:\3rdpartylibs\open3d18\build\bin\resources\*.*" "D:\Projects\Open3DTest\build\RelWithDebInfo\resources\*" /E /D /Y /I
+xcopy "D:\3rdpartylibs\open3d18\build\bin\RelWithDebInfo\Open3D.*" "D:\Projects\Open3DTest\build\RelWithDebInfo\*" /E /D /Y</Command>
     </PostBuildEvent>
     <Link>
-      <AdditionalDependencies>D:\3rdpartylibs\Open3D\build\lib\RelWithDebInfo\Open3D.lib;.\RelWithDebInfo\NCraftImageGen.lib;tbb.lib;pdalcpp.lib;pcl_search.lib;pcl_common.lib;pcl_surface.lib;pcl_io.lib;pcl_features.lib;pcl_segmentation.lib;pcl_filters.lib;pcl_octree.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Ws2_32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\3rdpartylibs\Open3D\build\lib\RelWithDebInfo;D:\3rdpartylibs\pdal\Library\lib;D:\3rdpartylibs\PCL1.13\lib;D:\3rdpartylibs\TBB\tbb2018\lib\intel64\vc14</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Open3D.lib;opencv_world490d.lib;tbb.lib;pdalcpp.lib;pcl_search.lib;pcl_common.lib;pcl_surface.lib;pcl_io.lib;pcl_features.lib;pcl_segmentation.lib;pcl_filters.lib;pcl_octree.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;Ws2_32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\3rdpartylibs\Open3D18\build\lib\RelWithDebInfo;D:\3rdpartylibs\opencv\build\x64\vc16\lib;D:\3rdpartylibs\pdal\Library\lib;D:\3rdpartylibs\PCL1.13\lib;D:\3rdpartylibs\TBB\tbb2018\lib\intel64\vc14</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>D:/Projects/Open3DTest/build/RelWithDebInfo/TestVisualizer.lib</ImportLibrary>
-      <ProgramDataBaseFile>D:/Projects/Open3DTest/build/RelWithDebInfo/TestVisualizer.pdb</ProgramDataBaseFile>
+      <ImportLibrary>D:/Projects/Open3DTest/build/RelWithDebInfo/CloudWrangler.lib</ImportLibrary>
+      <ProgramDataBaseFile>D:/Projects/Open3DTest/build/RelWithDebInfo/CloudWrangler.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -315,12 +318,21 @@ xcopy "D:\3rdpartylibs\open3d\build\bin\RelWithDebInfo\Open3D.*" "D:\Projects\Op
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\3rdpartylibs\Open3D\3rdparty\tinyfiledialogs\include\tinyfiledialogs\tinyfiledialogs.c" />
-    <ClCompile Include="..\src\TestVisualizer.cpp" />
+    <ClCompile Include="..\..\..\3rdpartylibs\tinyfiledialogs\tinyfiledialogs.c" />
+    <ClCompile Include="..\..\..\3rdpartylibs\TinyXML\Source\tinyxml2.cpp" />
+    <ClCompile Include="..\src\EditWindow.cpp" />
+    <ClCompile Include="..\src\CloudWrangler.cpp" />
+    <ClCompile Include="..\src\Tools\PointCloudCommon.cpp" />
+    <ClCompile Include="..\src\Tools\PointCloudIO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\CloudWranglerApp.h" />
+    <ClInclude Include="..\inc\EditWindow.h" />
     <ClInclude Include="..\inc\framework.h" />
+    <ClInclude Include="..\inc\shaders\pointCloudShaders.h" />
     <ClInclude Include="..\inc\targetver.h" />
+    <ClInclude Include="..\inc\Tools\PointCloudCommon.h" />
+    <ClInclude Include="..\inc\Tools\PointCloudIO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

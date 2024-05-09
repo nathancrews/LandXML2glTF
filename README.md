@@ -1,6 +1,6 @@
 # LandXML2glTF
 Converts LandXML files, versions 2.0 and 1.2, to .glTF files for 3D viewing integration. This project is setup using CMake for Windows, Linux and MacOS.
-For assistance on build instructions: nathan@nathancrews.com
+
 
 <h2>Build Instructions</h2>
 Use CMake to generate the build files. On Windows, a Visual Studio solution and project files will be produced.

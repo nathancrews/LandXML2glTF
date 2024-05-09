@@ -421,18 +421,23 @@ GLTFPolylineModel* LandXMLModel2glTF::BuildGLTFPolyline(LandXMLPolyline& LXPoly,
 
 void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsoft::glTF::BufferBuilder& bufferBuilder)
 {
+    const char* bufferId = nullptr;
+
+    // Specify the 'special' GLB buffer ID. This informs the GLBResourceWriter that it should use
+    // the GLB container's binary chunk (usually the desired buffer location when creating GLBs)
+    if (dynamic_cast<const Microsoft::glTF::GLBResourceWriter*>(&bufferBuilder.GetResourceWriter()))
+    {
+        bufferId = Microsoft::glTF::GLB_BUFFER_ID;
+    }
+
     for (GLTFSurfaceModel* gltfSurfModel : gltfModel.gltfSurfaceModels)
     {
         // Create all the resource data (e.g. triangle indices and
         // vertex positions) that will be written to the binary buffer
-        const char* bufferId = nullptr;
-
-        // Specify the 'special' GLB buffer ID. This informs the GLBResourceWriter that it should use
-        // the GLB container's binary chunk (usually the desired buffer location when creating GLBs)
-        if (dynamic_cast<const Microsoft::glTF::GLBResourceWriter*>(&bufferBuilder.GetResourceWriter()))
-        {
-            bufferId = Microsoft::glTF::GLB_BUFFER_ID;
-        }
+ 
+        const size_t positionCount = gltfSurfModel->gltfMeshPoints.size();
+        std::vector<float> minValues(3, FLT_MAX);
+        std::vector<float> maxValues(3, FLT_MIN);
 
         // Create a Buffer - it will be the 'current' Buffer that all the BufferViews
         // created by this BufferBuilder will automatically reference
@@ -441,11 +446,6 @@ void LandXMLModel2glTF::AddGLTFSurfaceMeshBuffers(GLTFModel& gltfModel, Microsof
         // ******* Surface Points ***************************************************************
         // Create a BufferView with target ARRAY_BUFFER (as it will reference vertex attribute data)
         bufferBuilder.AddBufferView(Microsoft::glTF::BufferViewTarget::ARRAY_BUFFER);
-
-        std::vector<float> minValues(3U, FLT_MAX);
-        std::vector<float> maxValues(3U, -FLT_MAX);
-
-        const size_t positionCount = gltfSurfModel->gltfMeshPoints.size();
 
         // Accessor min/max properties must be set for vertex position data so calculate them here
         for (size_t i = 0U, j = 0U; (i + j) < positionCount; i += 3, j = (i % 3U))

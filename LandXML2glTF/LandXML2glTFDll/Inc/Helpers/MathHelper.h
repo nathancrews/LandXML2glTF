@@ -59,23 +59,27 @@ public:
         return false;
     }
 
+    //**********************************************************************************************************
+    // Swap the incoming LandXML YZ axis to match GLTF Y up, z forward axis orientation
+
     static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, std::vector<float>& glTFPnt)
     {
         if (glTFPnt.size() > 2)
         {
-            glTFPnt[0] = LXPnt.x; glTFPnt[1] = LXPnt.y; glTFPnt[2] = LXPnt.z;
+            glTFPnt[0] = LXPnt.x; glTFPnt[2] = LXPnt.y; glTFPnt[1] = LXPnt.z;
         }
     }
 
     static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, float& glTFPnt1, float& glTFPnt2, float& glTFPnt3)
     {
-        glTFPnt1 = LXPnt.x; glTFPnt2 = LXPnt.y; glTFPnt3 = LXPnt.z;
+        glTFPnt1 = LXPnt.x; glTFPnt3 = LXPnt.y; glTFPnt2 = LXPnt.z;
     }
 
     static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, Microsoft::glTF::Vector3& glTFPnt)
     {
-        glTFPnt.x = LXPnt.x; glTFPnt.y = LXPnt.y; glTFPnt.z = LXPnt.z;
+        glTFPnt.x = LXPnt.x; glTFPnt.z = LXPnt.y; glTFPnt.y = LXPnt.z;
     }
+    //**********************************************************************************************************
 
 #ifdef USE_GDAL
     static OGRCoordinateTransformation* GetWGS84CoordTransform(OGRSpatialReference& LXCoordRef);

@@ -43,7 +43,7 @@ private:
     double m_sceneOriginOffsetY = 0.0;
     double m_sceneOriginOffsetZ = 0.0;
 
-    std::string m_exeDataPath;
+    std::string m_exeDataPath = "";
 };
 
 }

@@ -17,18 +17,19 @@ namespace LANDXML2GLTF
 struct LANDXML2GLTFDLLAPI LandXMLPoint3D
 {
     LandXMLPoint3D() {};
-    LandXMLPoint3D(double inX, double inY, double inZ);
+    LandXMLPoint3D(const double inX, const double inY, const double inZ);
 
     void operator=(const LandXMLPoint3D& vec) { x = vec.x; y = vec.y; z = vec.z; };
     bool operator<(const LandXMLPoint3D& vec);
     bool operator>(const LandXMLPoint3D& vec);
-    bool operator==(const LandXMLPoint3D& vec);
+    bool operator==(const LandXMLPoint3D& vec) const;
 
-    std::string m_name;
-    std::string m_description;
-    std::string m_code;
     unsigned int m_materialID = 1;
 
+    std::string m_name = "";
+    std::string m_description = "";
+    std::string m_code = "";
+ 
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
@@ -42,17 +43,17 @@ struct LANDXML2GLTFDLLAPI LandXMLMaterial
     double m_symbolYScale = 1.0;
     double m_symbolZScale = 1.0;
     double m_symbolRotation = 0.0;
-    std::string m_name;
-    std::string m_description;
+    std::string m_name = "";
+    std::string m_description = "";
     std::string m_RGBColorStr = "0,255,0";
-    std::string m_layerName;
-    std::string m_textureName;
-    std::string m_lineType;
-    std::string m_textureImageRef;
-    std::string m_textureImageWorldFile;
-    std::string m_textureImageWKT;
-    std::string m_symbolReferenceStr;
-    std::string m_textureImageHexString;
+    std::string m_layerName = "";
+    std::string m_textureName = "";
+    std::string m_lineType = "";
+    std::string m_textureImageRef = "";
+    std::string m_textureImageWorldFile = "";
+    std::string m_textureImageWKT = "";
+    std::string m_symbolReferenceStr = "";
+    std::string m_textureImageHexString = "";
 };
 
 struct LANDXML2GLTFDLLAPI LandXMLMaterialTable
@@ -65,8 +66,8 @@ struct LANDXML2GLTFDLLAPI LandXMLPolyline
     unsigned int m_materialID = 1;
     double m_area = 0.0;
 
-    std::string m_name;
-    std::string m_description;
+    std::string m_name = "";
+    std::string m_description = "";
     std::vector<LandXMLPoint3D> m_polylinePoints;
 };
 
@@ -105,8 +106,8 @@ struct LANDXML2GLTFDLLAPI LandXMLSurface
 
     ~LandXMLSurface() {}
 
-    std::string m_name;
-    std::string m_description;
+    std::string m_name = "";
+    std::string m_description = "";
 
     LandXMLPoint3D m_minSurfPoint;
     LandXMLPoint3D m_maxSurfPoint;
@@ -131,8 +132,8 @@ struct LANDXML2GLTFDLLAPI LandXMLModel
         }
     }
 
-    std::string m_fileName;
-    std::string m_wktString;
+    std::string m_fileName = "";
+    std::string m_wktString = "";
 
     LandXMLUnits m_units;
     LandXMLMaterialTable m_landXMLMaterials;

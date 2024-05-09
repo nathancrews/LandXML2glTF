@@ -517,7 +517,7 @@ bool LXParser::ParseSurfaceBoundaries(XMLElement* LXSurfaceNode, LandXMLSurface&
                 }
 
                 ParsePointList3D(LXPntList, bndryPoly.m_polylinePoints);
-                bndryPoly.m_area = MathHelper::PolygonArea(bndryPoly.m_polylinePoints);
+                bndryPoly.m_area = MathHelper::GetPolygonArea(bndryPoly.m_polylinePoints);
 
                 outLandXMLSurface.m_textureBoundaries.push_back(bndryPoly);
             }

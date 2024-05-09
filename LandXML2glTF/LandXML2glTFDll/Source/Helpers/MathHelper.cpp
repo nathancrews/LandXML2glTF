@@ -3,7 +3,7 @@
 namespace LANDXML2GLTF
 {
 
-bool MathHelper::PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints)
+bool MathHelper::PointInPolygon(const LandXMLPoint3D& point, const std::vector<LandXMLPoint3D>& polygonPoints)
 {
     size_t i = 0, j = 0, numVertices = polygonPoints.size();
     bool PointInside = false;
@@ -20,7 +20,7 @@ bool MathHelper::PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3
     return PointInside;
 }
 
-double MathHelper::PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints)
+double MathHelper::GetPolygonArea(const std::vector<LandXMLPoint3D>& polygonPoints)
 {
     double area = 0.0;
     size_t numVertices = polygonPoints.size();
@@ -51,12 +51,12 @@ OGRCoordinateTransformation* MathHelper::GetWGS84CoordTransform(OGRSpatialRefere
 }
 #endif
 
-double MathHelper::Distance2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint)
+double MathHelper::GetDistance2D(const LandXMLPoint3D& fromPoint, const LandXMLPoint3D& toPoint)
 {
     return std::sqrt(std::pow((toPoint.x - fromPoint.x), 2) + std::pow((toPoint.y - fromPoint.y), 2));
 }
 
-double MathHelper::Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint)
+double MathHelper::GetAngle2D(const LandXMLPoint3D& fromPoint, const LandXMLPoint3D& toPoint)
 {
     double angle = 0.0;
 
@@ -109,14 +109,15 @@ double MathHelper::Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint)
     return angle;
 }
 
- bool MathHelper::Tesselate2DCurve(LandXMLPoint3D& startPnt, LandXMLPoint3D& centerPoint, LandXMLPoint3D& endPnt, std::vector<LandXMLPoint3D>& OutTesselatedPointList)
+ bool MathHelper::Tesselate2DCurve(const LandXMLPoint3D& startPnt, const LandXMLPoint3D& centerPoint, const LandXMLPoint3D& endPnt, 
+                                   std::vector<LandXMLPoint3D>& OutTesselatedPointList)
 {
     unsigned int TessalationSegments = 8;
     double theta = 0.0;
     double delta = 0.0;
-    double radius = MathHelper::Distance2D(startPnt, centerPoint);
-    double startAng = MathHelper::Angle2D(centerPoint, startPnt);
-    double endAng = MathHelper::Angle2D(centerPoint, endPnt);
+    double radius = MathHelper::GetDistance2D(startPnt, centerPoint);
+    double startAng = MathHelper::GetAngle2D(centerPoint, startPnt);
+    double endAng = MathHelper::GetAngle2D(centerPoint, endPnt);
 
     if (endAng < (PI / 2.0) && startAng > PI)
     {

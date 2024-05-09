@@ -18,6 +18,8 @@
 class OGRCoordinateTransformation;
 #endif
 
+namespace LANDXML2GLTF
+{
 #ifndef USFT2M			// U.S. feet to meters
 #	define USFT2M		0.3048006096012192
 #endif
@@ -26,22 +28,20 @@ class OGRCoordinateTransformation;
 #	define IFT2M		0.3048
 #endif
 
-namespace LANDXML2GLTF
-{
-
 #define PI 3.1415926535897932384626433832795
 
 class LANDXML2GLTFDLLAPI MathHelper
 {
 public:
 
-    static bool PointInPolygon(LandXMLPoint3D& point, std::vector<LandXMLPoint3D>& polygonPoints);
-    static double PolygonArea(std::vector<LandXMLPoint3D>& polygonPoints);
-    static double Distance2D(LandXMLPoint3D& P1, LandXMLPoint3D& P2);
-    static double Angle2D(LandXMLPoint3D& fromPoint, LandXMLPoint3D& toPoint);
-    static bool Tesselate2DCurve(LandXMLPoint3D& startPnt, LandXMLPoint3D& centerPoint, LandXMLPoint3D& endPnt, std::vector<LandXMLPoint3D>& OutTesselatedPointList);
+    static bool PointInPolygon(const LandXMLPoint3D& point, const std::vector<LandXMLPoint3D>& polygonPoints);
+    static double GetPolygonArea(const std::vector<LandXMLPoint3D>& polygonPoints);
+    static double GetDistance2D(const LandXMLPoint3D& P1, const LandXMLPoint3D& P2);
+    static double GetAngle2D(const LandXMLPoint3D& fromPoint, const LandXMLPoint3D& toPoint);
+    static bool Tesselate2DCurve(const LandXMLPoint3D& startPnt, const LandXMLPoint3D& centerPoint, const LandXMLPoint3D& endPnt, 
+                                 std::vector<LandXMLPoint3D>& OutTesselatedPointList);
 
-    static bool IsFuzzyEqual(double lhs, double rhs, double tol = 0.001)
+    static bool IsFuzzyEqual(const double lhs, const double rhs, const double tol = 0.001)
     {
         if (std::abs(lhs - rhs) < tol)
         {
@@ -50,7 +50,7 @@ public:
         return false;
     }
 
-    static bool IsFuzzyEqual(float lhs, float rhs, float tol = 0.001)
+    static bool IsFuzzyEqual(const float lhs, const float rhs, const float tol = 0.001)
     {
         if (std::abs(lhs - rhs) < tol)
         {
@@ -62,7 +62,7 @@ public:
     //**********************************************************************************************************
     // Swap the incoming LandXML YZ axis to match GLTF Y up, z forward axis orientation
 
-    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, std::vector<float>& glTFPnt)
+    static inline void CopyLXTOGLTFPoint(const LandXMLPoint3D& LXPnt, std::vector<float>& glTFPnt)
     {
         if (glTFPnt.size() > 2)
         {
@@ -70,12 +70,12 @@ public:
         }
     }
 
-    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, float& glTFPnt1, float& glTFPnt2, float& glTFPnt3)
+    static inline void CopyLXTOGLTFPoint(const LandXMLPoint3D& LXPnt, float& glTFPnt1, float& glTFPnt2, float& glTFPnt3)
     {
         glTFPnt1 = LXPnt.x; glTFPnt3 = LXPnt.y; glTFPnt2 = LXPnt.z;
     }
 
-    static inline void CopyLXTOGLTFPoint(LandXMLPoint3D& LXPnt, Microsoft::glTF::Vector3& glTFPnt)
+    static inline void CopyLXTOGLTFPoint(const LandXMLPoint3D& LXPnt, Microsoft::glTF::Vector3& glTFPnt)
     {
         glTFPnt.x = LXPnt.x; glTFPnt.z = LXPnt.y; glTFPnt.y = LXPnt.z;
     }

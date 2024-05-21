@@ -5,6 +5,12 @@
 #include <sstream>
 #include <stdio.h>
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include "tiny_gltf.h"
+
 namespace LANDXML2GLTF
 {
 
@@ -86,11 +92,35 @@ bool LandXMLModel2glTF::Convert2glTFModel(const std::string& InLandXMLFilename, 
     try {
         retval = CreateGLTFModel(landXMLModel, gltfModel);
 
+
         if (gltfModel.gltfSurfaceModels.size() > 0 || gltfModel.gltfMultiPolyModel.gltfPolylines.size() > 0)
         {
             std::cout << "Writing glTF file: " << glTFFilename << "\n";
             std::filesystem::path glTFFilenameAsPath = glTFFilename;
             WriteGLTFFile(glTFDoc, gltfModel, glTFFilenameAsPath);
+
+            // Used to test TinyGLTF writer to .glb files
+            //tinygltf::Model RE_model;
+            //tinygltf::TinyGLTF RE_loader;
+            //std::string err;
+            //std::string warn;
+
+            //bool ret = RE_loader.LoadASCIIFromFile(&RE_model, &err, &warn, glTFFilenameAsPath.string().c_str());
+            //if (!warn.empty())
+            //{
+            //    std::cout << "warn : " << warn << std::endl;
+            //}
+            //if (!ret)
+            //{
+            //    if (!err.empty())
+            //    {
+            //        std::cerr << err << std::endl;
+            //    }
+            //}
+
+            //glTFFilenameAsPath = glTFFilenameAsPath.replace_extension("glb");
+            //RE_loader.WriteGltfSceneToFile(&RE_model, glTFFilenameAsPath.string().c_str(), true, true, false, true);
+
         }
         else
         {
@@ -658,6 +688,7 @@ void LandXMLModel2glTF::WriteGLTFFile(Microsoft::glTF::Document& document, GLTFM
         }
 
     }
+
 
     // If the file has a '.glb' extension then create a GLBResourceWriter. This class derives
     // from GLTFResourceWriter and adds support for writing manifests to a GLB container's

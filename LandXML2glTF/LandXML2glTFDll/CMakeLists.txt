@@ -24,6 +24,7 @@ aux_source_directory("../3rdparty/TinyXML/Source" PROJECT_SRCS)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Inc")
 include_directories("../3rdparty/TinyXML/Inc")
 include_directories("../3rdparty/GLTFSDK/GLTFSDK/Inc/")
+include_directories("../3rdparty/TinyGLTF")
 
 add_library(LandXML2glTFDLL SHARED ${PROJECT_SRCS})
 

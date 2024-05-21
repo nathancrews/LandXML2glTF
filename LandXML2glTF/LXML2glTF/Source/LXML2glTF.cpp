@@ -6,6 +6,11 @@
 
 int main(int argc, char* argv[])
 {
+
+#ifdef _WIN32
+    ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+#endif
+
     std::filesystem::path LandXMLFilename;
     std::filesystem::path glTFFilename;
     std::filesystem::path exeDataPath;
@@ -29,20 +34,20 @@ int main(int argc, char* argv[])
 
     if (LandXMLFilename.empty())
     {
-            std::cout << "Error: No .xml filename or path specified.\n";
+            std::cout << "Error: No .xml filename or path specified." << std::endl;
             return 1;
     }
 
     for (int u = 1; u < argc; u++)
     {
         // convert to .glb file
-        if (!strcmp(argv[u], "/b") || !strcmp(argv[u], "/B"))
+        if (!stricmp(argv[u], "/b") || !strcmp(argv[u], "/B"))
         {
             gltfExt = "glb";
         }
         
         // Recursively search sub-directories
-        if (!strcmp(argv[u], "/s") || !strcmp(argv[u], "/S"))
+        if (!stricmp(argv[u], "/s") || !strcmp(argv[u], "/S"))
         {
             doSubDirectories = true;
         }

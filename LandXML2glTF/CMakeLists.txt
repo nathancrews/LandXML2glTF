@@ -14,4 +14,5 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/GLTFSDK")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/TinyGLTF")
 add_subdirectory(LandXML2glTFDll)
 add_subdirectory(LXML2glTF)
+add_subdirectory(LXML2glTF_CGI)
 

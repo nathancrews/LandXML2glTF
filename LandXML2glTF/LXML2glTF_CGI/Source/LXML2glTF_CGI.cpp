@@ -34,7 +34,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <fstream>
 
 #pragma warning (push)
@@ -55,13 +55,13 @@ int main(int argc, char** argv, char** env)
     std::cout << header;
 #endif
 
-    const std::string landxml_default_dir = "landxml";
-    const std::string gltf_default_dir = "gltf";
+    const std::string landxml_default_dir = "uploads/landxml";
+    const std::string gltf_default_dir = "uploads/gltf";
     const std::string data_default_dir = "data";
 
     bool isPostRequest = false;
 
-    std::experimental::filesystem::path doc_root, app_path, uploaded_file_name;
+    std::filesystem::path doc_root, app_path, uploaded_file_name;
     std::string queryStr, fileStr;
 
 
@@ -179,9 +179,9 @@ int main(int argc, char** argv, char** env)
 
     bool doSubDirectories = false;
     std::string gltfExt = "gltf";
-    std::experimental::filesystem::path LandXMLFilename;
-    std::experimental::filesystem::path glTFFilename;
-    std::experimental::filesystem::path exeDataPath;
+    std::filesystem::path LandXMLFilename;
+    std::filesystem::path glTFFilename;
+    std::filesystem::path exeDataPath;
 
     if (uploaded_file_name.string().size() > 0)
     {
@@ -215,9 +215,9 @@ int main(int argc, char** argv, char** env)
     LandXMLModel2GLTFDLL LandXML2glTFConverter;
     LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string(), exeDataPath.string());
 
-    if (std::experimental::filesystem::exists(glTFFilename))
+    if (std::filesystem::exists(glTFFilename))
     {
-        std::experimental::filesystem::path outfileName = glTFFilename.filename();
+        std::filesystem::path outfileName = glTFFilename.filename();
         outfileName.replace_extension(gltfExt);
 
         std::string toURL = "ncimagegen_cgi.exe?file=" + outfileName.string();

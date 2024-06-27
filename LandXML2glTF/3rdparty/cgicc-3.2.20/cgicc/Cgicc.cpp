@@ -42,7 +42,7 @@ namespace cgicc {
   // ============================================================
   // Class FE_nameCompare
   // ============================================================
-  class FE_nameCompare : public std::unary_function<FormEntry, bool>
+  class FE_nameCompare /*: public std::unary_function<FormEntry, bool>*/
   {
   public:
     
@@ -59,7 +59,7 @@ namespace cgicc {
   // ============================================================
   // Class FE_valueCompare
   // ============================================================
-  class FE_valueCompare : public std::unary_function<FormEntry, bool>
+  class FE_valueCompare /*: public std::unary_function<FormEntry, bool>*/
   {
   public:
     
@@ -77,7 +77,7 @@ namespace cgicc {
   // ============================================================
   // Class FF_compare
   // ============================================================
-  class FF_compare : public std::unary_function<FormFile, bool>
+  class FF_compare /*: public std::unary_function<FormFile, bool>*/
   {
   public:
     

@@ -1,3 +1,5 @@
+#pragma once
+
 /* -*-c++-*- */
 /*
  *  $Id: CgiDefs.h.in,v 1.10 2014/04/23 20:55:03 sebdiaz Exp $
@@ -21,8 +23,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
-#ifndef _CGIDEFS_H_
-#define _CGIDEFS_H_ 1
 
 /*! \file CgiDefs.h
  * \brief Platform and operating system specific macro definitions.
@@ -45,19 +45,12 @@
 
 // Win32-specific setup
 #ifdef WIN32
-
-// export library symbols
-#  ifdef CGICC_EXPORTS
-#    define CGICC_API __declspec(dllexport)
-#  else
-#    define CGICC_API __declspec(dllimport)
-#  endif
-
-#  define HOST "Win32"
-#  define VERSION "@VERSION@"
-
+#define CGICC_API
+#define HOST "Win32"
+#define VERSION "@VERSION@"
 #else
-#  define CGICC_API
+#define CGICC_API
+#define HOST "Linux"
+#define VERSION "@VERSION@"
 #endif /* WIN32 */
 
-#endif /* ! _CGIDEFS_H_ */

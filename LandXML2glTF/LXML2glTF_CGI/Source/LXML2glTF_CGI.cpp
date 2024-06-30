@@ -212,8 +212,17 @@ int main(int argc, char** argv, char** env)
 
     Debug_log("glTFFilename: %s\n", glTFFilename.string().c_str());
 
-    LandXMLModel2GLTFDLL LandXML2glTFConverter;
-    LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string(), exeDataPath.string());
+
+    if (std::filesystem::exists(glTFFilename))
+    {
+        Debug_log("Skipping GLTF Generation, file exists %s\n", glTFFilename.string().c_str());
+    }
+    else
+    {
+
+        LandXMLModel2GLTFDLL LandXML2glTFConverter;
+        LandXML2glTFConverter.ConvertFile(LandXMLFilename.string(), glTFFilename.string(), exeDataPath.string());
+    }
 
     if (std::filesystem::exists(glTFFilename))
     {
